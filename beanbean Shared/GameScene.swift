@@ -10,21 +10,8 @@ import SpriteKit
 class GameScene: SKScene {
     
     fileprivate var label : SKLabelNode?
-    fileprivate var spinnyNode : SKShapeNode?
-    fileprivate var bean = SKShapeNode()
-    
-//    override init(size: CGSize) {
-//            self.bean = SKShapeNode() // Initialize bean
-//            
-////            super.init(size: size)
-//            
-//            // Your additional initialization code here
-//    }
-//    required init?(coder aDecoder: NSCoder) {
-//        super.init(coder: aDecoder)
-//        // Add your custom initialization code here
-//    }
-    
+    fileprivate var beans : [Bean] = []
+    fileprivate var grid : Grid!
     
     class func newGameScene() -> GameScene {
         // Load 'GameScene.sks' as an SKScene.
@@ -41,57 +28,22 @@ class GameScene: SKScene {
     
     func setUpScene() {
         
+        let bounds = self.view!.bounds
+        let cellSize = Int(bounds.size.width / 11)
+        
         // todo make create board into function
         // draw board
-        let board = SKShapeNode(rectOf: CGSize(
-            width: self.view!.bounds.width / 1.5,
-            height: self.size.height / 1.5
-        ))
-        // Set the position of the rectangle
-        board.position = CGPoint(x: 0, y:0)
-        // Set the fill color of the rectangle
-        board.fillColor = SKColor.black
-        // Set the stroke color of the rectangle
-        board.strokeColor = SKColor.white
-        // Add the rectangle to the scene
-        self.addChild(board)
+        let grid = Grid(rowCount: 12, columnCount: 6, cellSize: cellSize, bounds: bounds, showCells: true)
+        self.grid = grid
+//        self.addChild(grid.shape)
         
-        // todo add function / array of beans
-        self.bean = SKShapeNode(rectOf: CGSize(
-            width: self.size.width / 24,
-            height: self.size.width / 30
-        ), cornerRadius : self.size.width * 0.011)
-        
-        // Set the position of the rectangle
-        self.bean.position = CGPoint(x: 0, y:0)
-        // Set the fill color of the rectangle
-        self.bean.fillColor = SKColor.green
-        // Set the stroke color of the rectangle
-        self.bean.strokeColor = SKColor.white
-        // Add the rectangle to the scene
-        self.addChild(self.bean)
-        
-        
-//        print(self.size.width)
-        
-        // Get label node from scene and store it for use later
-//        self.label = self.childNode(withName: "//helloLabel") as? SKLabelNode
-//        if let label = self.label {
-//            label.alpha = 0.0
-//            label.run(SKAction.fadeIn(withDuration: 2.0))
-//        }
-        
-        // Create shape node to use during mouse interaction
-        let w = (self.size.width + self.size.height) * 0.05
-        self.spinnyNode = SKShapeNode.init(rectOf: CGSize.init(width: w, height: w), cornerRadius: w * 0.3)
-        
-        if let spinnyNode = self.spinnyNode {
-            spinnyNode.lineWidth = 4.0
-            spinnyNode.run(SKAction.repeatForever(SKAction.rotate(byAngle: CGFloat(Double.pi), duration: 1)))
-            spinnyNode.run(SKAction.sequence([SKAction.wait(forDuration: 0.5),
-                                              SKAction.fadeOut(withDuration: 0.5),
-                                              SKAction.removeFromParent()]))
+        for (_,cell) in grid.cells {
+            self.addChild(cell.shape)
         }
+
+        let bean = Bean(color: SKColor.green, cellSize: cellSize)
+        self.addChild(bean.shape)
+        self.beans.append(bean)
     }
     
 
@@ -99,26 +51,25 @@ class GameScene: SKScene {
     override func didMove(to view: SKView) {
         self.setUpScene()
     }
-
-    func makeSpinny(at pos: CGPoint, color: SKColor) {
-        if let spinny = self.spinnyNode?.copy() as! SKShapeNode? {
-            spinny.position = pos
-            spinny.strokeColor = color
-            self.addChild(spinny)
-        }
-    }
+    
     
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
-        self.bean.position.y -= 3
-        while self.bean.position.y <= -200 {
-            
-            self.bean.position.y = 200
-
-            
-        }
-        print(self.bean.position.y)
         
+        for bean in self.beans {
+            if bean.active {
+                
+                let cord = grid.getCellCord(x: bean.shape.position.x, y: bean.shape.position.y + Double(grid.cellSize / 2))
+                let cordY = cord.1
+                print(cordY)
+                if CGFloat(cordY) > 0 {
+                    bean.shape.position.y -= 4
+                }
+                let corda = grid.getCellCord(x: bean.shape.position.x, y: bean.shape.position.y + Double(grid.cellSize / 2))
+                let cordYa = corda.1
+                print(cordYa)
+            }
+        }
     }
 }
 
@@ -132,25 +83,21 @@ extension GameScene {
 //        }
         
         for t in touches {
-            self.makeSpinny(at: t.location(in: self), color: SKColor.green)
         }
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         for t in touches {
-            self.makeSpinny(at: t.location(in: self), color: SKColor.blue)
         }
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         for t in touches {
-            self.makeSpinny(at: t.location(in: self), color: SKColor.red)
         }
     }
     
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
         for t in touches {
-            self.makeSpinny(at: t.location(in: self), color: SKColor.red)
         }
     }
     
@@ -166,15 +113,17 @@ extension GameScene {
 //        if let label = self.label {
 //            label.run(SKAction.init(named: "Pulse")!, withKey: "fadeInOut")
 //        }
-        self.makeSpinny(at: event.location(in: self), color: SKColor.green)
     }
     
     override func mouseDragged(with event: NSEvent) {
-        self.makeSpinny(at: event.location(in: self), color: SKColor.blue)
     }
     
     override func mouseUp(with event: NSEvent) {
-        self.makeSpinny(at: event.location(in: self), color: SKColor.red)
+        let location = event.location(in: self)
+        let cord = self.grid.getCellCord(x: location.x, y: location.y)
+        print(cord.0, cord.1)
+
+        
     }
 
 }
