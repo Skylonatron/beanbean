@@ -2,7 +2,7 @@
 //  GameScene.swift
 //  beanbean Shared
 //
-//  Created by Skylar Jones and possibly Sammy Willemsum on 3/7/24.
+//  Created by Skyler Jomes and Salmon Willemsum on 3/7/24.
 //
 
 import SpriteKit
@@ -44,7 +44,7 @@ class GameScene: SKScene {
         // todo make create board into function
         // draw board
         let board = SKShapeNode(rectOf: CGSize(
-            width: self.size.width / 2,
+            width: self.view!.bounds.width / 1.5,
             height: self.size.height / 1.5
         ))
         // Set the position of the rectangle
@@ -58,9 +58,9 @@ class GameScene: SKScene {
         
         // todo add function / array of beans
         self.bean = SKShapeNode(rectOf: CGSize(
-            width: self.size.width / 12,
-            height: self.size.height / 12
-        ))
+            width: self.size.width / 24,
+            height: self.size.width / 30
+        ), cornerRadius : self.size.width * 0.011)
         
         // Set the position of the rectangle
         self.bean.position = CGPoint(x: 0, y:0)
@@ -70,6 +70,9 @@ class GameScene: SKScene {
         self.bean.strokeColor = SKColor.white
         // Add the rectangle to the scene
         self.addChild(self.bean)
+        
+        
+//        print(self.size.width)
         
         // Get label node from scene and store it for use later
 //        self.label = self.childNode(withName: "//helloLabel") as? SKLabelNode
@@ -91,6 +94,8 @@ class GameScene: SKScene {
         }
     }
     
+
+    
     override func didMove(to view: SKView) {
         self.setUpScene()
     }
@@ -105,7 +110,15 @@ class GameScene: SKScene {
     
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
-        self.bean.position.y -= 5
+        self.bean.position.y -= 3
+        while self.bean.position.y <= -200 {
+            
+            self.bean.position.y = 200
+
+            
+        }
+        print(self.bean.position.y)
+        
     }
 }
 
