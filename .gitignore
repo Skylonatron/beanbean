@@ -1,3 +1,4 @@
 .DS_Store
 beanbean Shared/.DS_Store
-*.xcodeproj
+beanbean.xcodeproj/project.xcworkspace/xcuserdata/*
+beanbean.xcodeproj/xcuserdata/*
