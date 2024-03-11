@@ -76,7 +76,6 @@ class GameScene: SKScene {
         
         var beanOverNil = false
         var sideBeanOverNil = false
-
         
         for bean in self.beans {
             if bean.active {
@@ -151,17 +150,17 @@ class GameScene: SKScene {
                         }
                     }
             
-                    if downCell == nil || downCell?.bean != nil {
-                        beanOverNil = true
-                    }
-                    
-                    let sideBeanCurrentCell = grid.getCell(x: self.sideBean.shape.position.x, y: self.sideBean.shape.position.y)
-                    
-                    let sideBeanDownCell = sideBeanCurrentCell?.getDownCell(grid: self.grid)
-                    
-                    if sideBeanDownCell == nil || sideBeanDownCell?.bean != nil {
-                                            sideBeanOverNil = true
-                                        }
+//                    if downCell == nil || downCell?.bean != nil {
+//                        beanOverNil = true
+//                    }
+//                    
+//                    let sideBeanCurrentCell = grid.getCell(x: self.sideBean.shape.position.x, y: self.sideBean.shape.position.y)
+//                    
+//                    let sideBeanDownCell = sideBeanCurrentCell?.getDownCell(grid: self.grid)
+//                    
+//                    if sideBeanDownCell == nil || sideBeanDownCell?.bean != nil {
+//                                            sideBeanOverNil = true
+//                                        }
                     
 //                    // only generate new beans when pair has settled
 //                    if !self.newBeansGenerated {
@@ -176,14 +175,18 @@ class GameScene: SKScene {
                 
             }
         }
-        if beanOverNil && sideBeanOverNil && !self.newBeansGenerated {
-                    self.generateNewBeans()
-                    self.newBeansGenerated = true
-                }
-        
-        if beanOverNil && sideBeanOverNil && self.newBeansGenerated {
-                    self.newBeansGenerated = false
-                }
+        // both beans are not moving anymore
+        if !activeBean.active && !sideBean.active {
+            self.generateNewBeans()
+        }
+//        if beanOverNil && sideBeanOverNil && !self.newBeansGenerated {
+//                    self.generateNewBeans()
+//                    self.newBeansGenerated = true
+//                }
+//        
+//        if beanOverNil && sideBeanOverNil && self.newBeansGenerated {
+//                    self.newBeansGenerated = false
+//                }
 //        self.newBeansGenerated = false
     }
     
