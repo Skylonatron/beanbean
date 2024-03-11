@@ -17,7 +17,7 @@ class Grid {
     var rowCount: Int
 
     
-    init(rowCount: Int, columnCount: Int, cellSize: Int, bounds: NSRect, showCells: Bool) {
+    init(rowCount: Int, columnCount: Int, cellSize: Int, bounds: CGRect, showCells: Bool) {
         self.shape = SKShapeNode(rectOf: CGSize(
             width: bounds.width / 1.5,
             height: bounds.height / 1.5

@@ -51,6 +51,8 @@ class Bean: Equatable {
         return lhs.cell?.column == rhs.cell?.column && lhs.cell?.row == rhs.cell?.row
     }
     
+
+    
 }
 
 

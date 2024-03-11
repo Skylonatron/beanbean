@@ -12,8 +12,11 @@ class GameScene: SKScene {
     fileprivate var label : SKLabelNode?
     fileprivate var beans : [Bean] = []
     fileprivate var activeBean: Bean!
+    fileprivate var sideBean: Bean!
     fileprivate var grid : Grid!
     fileprivate var movementSpeed : Double = 4
+    fileprivate var newBeansGenerated: Bool = false // new beans this cycle check
+    
     
     class func newGameScene() -> GameScene {
         // Load 'GameScene.sks' as an SKScene.
@@ -45,10 +48,18 @@ class GameScene: SKScene {
             }
         }
 
+        
+        // initialize main bean
         let bean = Bean(color: SKColor.green, cellSize: cellSize, startingPosition: grid.getStartingCell()!.shape.position)
         self.addChild(bean.shape)
         self.beans.append(bean)
         self.activeBean = bean
+        
+        //initialize side bean
+        let sideBean = Bean(color: SKColor.green, cellSize: cellSize, startingPosition: grid.getStartingCell()!.getRightCell(grid: grid)!.shape.position)
+        self.addChild(sideBean.shape)
+        self.beans.append(sideBean)
+        self.sideBean = sideBean
     }
     
 
@@ -61,11 +72,19 @@ class GameScene: SKScene {
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
         
+        self.sideBean.shape.position.x = self.activeBean.shape.position.x + CGFloat(grid.cellSize)
+        
+        var beanOverNil = false
+        var sideBeanOverNil = false
+
+        
         for bean in self.beans {
             if bean.active {
                 
                 let currentCell = grid.getCell(x: bean.shape.position.x, y: bean.shape.position.y)
                 let futureCell = grid.getCell(x: bean.shape.position.x, y: bean.shape.position.y - self.movementSpeed)
+                
+
                 
                 // stops moving
                 if futureCell == nil || futureCell?.bean != nil {
@@ -131,25 +150,67 @@ class GameScene: SKScene {
                             
                         }
                     }
+            
+                    if downCell == nil || downCell?.bean != nil {
+                        beanOverNil = true
+                    }
                     
+                    let sideBeanCurrentCell = grid.getCell(x: self.sideBean.shape.position.x, y: self.sideBean.shape.position.y)
                     
-                    // make another bean
-                    let colors = [SKColor.green, SKColor.yellow, SKColor.red, SKColor.purple]
-                    let color = colors.randomElement()!
-                    let bean = Bean(
-                        color: color,
-                        cellSize: grid.cellSize,
-                        startingPosition: grid.getStartingCell()!.shape.position
-                    )
-                    self.activeBean = bean
-                    self.addChild(bean.shape)
-                    self.beans.append(bean)
+                    let sideBeanDownCell = sideBeanCurrentCell?.getDownCell(grid: self.grid)
+                    
+                    if sideBeanDownCell == nil || sideBeanDownCell?.bean != nil {
+                                            sideBeanOverNil = true
+                                        }
+                    
+//                    // only generate new beans when pair has settled
+//                    if !self.newBeansGenerated {
+//                        self.generateNewBeans()
+//                        self.newBeansGenerated = true
+//                    }
+                     
+                        
                 } else {
                     bean.shape.position.y -= self.movementSpeed
                 }
                 
             }
         }
+        if beanOverNil && sideBeanOverNil && !self.newBeansGenerated {
+                    self.generateNewBeans()
+                    self.newBeansGenerated = true
+                }
+        
+        if beanOverNil && sideBeanOverNil && self.newBeansGenerated {
+                    self.newBeansGenerated = false
+                }
+//        self.newBeansGenerated = false
+    }
+    
+    func generateNewBeans(){
+        // make another bean
+        let colors = [SKColor.green, SKColor.yellow, SKColor.red, SKColor.purple]
+        let color = colors.randomElement()!
+        let color2 = colors.randomElement()!
+        let bean = Bean(
+            color: color,
+            cellSize: grid.cellSize,
+            startingPosition: grid.getStartingCell()!.shape.position
+        )
+        self.activeBean = bean
+        self.addChild(bean.shape)
+        self.beans.append(bean)
+        
+        let sideBean = Bean(
+            color: color2,
+            cellSize: grid.cellSize,
+            startingPosition: grid.getStartingCell()!.getRightCell(grid: grid)!.shape.position
+        )
+        self.sideBean = sideBean
+        self.addChild(sideBean.shape)
+        self.beans.append(sideBean)
+        
+        
     }
 }
 
