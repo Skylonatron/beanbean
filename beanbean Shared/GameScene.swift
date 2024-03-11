@@ -272,15 +272,16 @@ extension GameScene {
     }
     override func keyDown(with event: NSEvent) {
 //      2 is D
-        if event.keyCode == 2 {
+        if event.keyCode == 2 && activeBean.active && sideBean.active {
             let currentCell = grid.getCell(x: activeBean.shape.position.x, y: activeBean.shape.position.y)
             let futureCell = grid.cells[currentCell!.column + 1]?[currentCell!.row]
             if futureCell != nil && futureCell!.bean == nil {
                 activeBean.shape.position.x = futureCell!.shape.position.x
             }
         }
+        
 //      0 is A
-        if event.keyCode == 0 {
+        if event.keyCode == 0 && activeBean.active && sideBean.active {
             let currentCell = grid.getCell(x: activeBean.shape.position.x, y: activeBean.shape.position.y)
             let futureCell = grid.cells[currentCell!.column-1]?[currentCell!.row]
             if futureCell != nil && futureCell!.bean == nil {
@@ -288,7 +289,7 @@ extension GameScene {
             }
         }
 //      1 is S
-        if event.keyCode == 1 {
+        if event.keyCode == 1 && activeBean.active && sideBean.active {
             self.movementSpeed = 8
         }
     }
