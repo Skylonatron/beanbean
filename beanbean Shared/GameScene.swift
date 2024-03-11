@@ -15,7 +15,7 @@ class GameScene: SKScene {
     fileprivate var sideBean: Bean!
     fileprivate var grid : Grid!
     fileprivate var movementSpeed : Double = 4
-    fileprivate var newBeansGenerated: Bool = false // new beans this cycle check
+    fileprivate var newBeansGenerated: Bool = false // check: new beans this cycle?
     
     
     class func newGameScene() -> GameScene {
@@ -275,7 +275,9 @@ extension GameScene {
         if event.keyCode == 2 && activeBean.active && sideBean.active {
             let currentCell = grid.getCell(x: activeBean.shape.position.x, y: activeBean.shape.position.y)
             let futureCell = grid.cells[currentCell!.column + 1]?[currentCell!.row]
-            if futureCell != nil && futureCell!.bean == nil {
+            let currentCellSide = grid.getCell(x: sideBean.shape.position.x, y: sideBean.shape.position.y)
+            let futureCellSide = grid.cells[currentCellSide!.column + 1]?[currentCellSide!.row]
+            if futureCell != nil && futureCell!.bean == nil && futureCellSide != nil && futureCellSide!.bean == nil {
                 activeBean.shape.position.x = futureCell!.shape.position.x
             }
         }
@@ -284,7 +286,9 @@ extension GameScene {
         if event.keyCode == 0 && activeBean.active && sideBean.active {
             let currentCell = grid.getCell(x: activeBean.shape.position.x, y: activeBean.shape.position.y)
             let futureCell = grid.cells[currentCell!.column-1]?[currentCell!.row]
-            if futureCell != nil && futureCell!.bean == nil {
+            let currentCellSide = grid.getCell(x: sideBean.shape.position.x, y: sideBean.shape.position.y)
+            let futureCellSide = grid.cells[currentCellSide!.column - 1]?[currentCellSide!.row]
+            if futureCell != nil && futureCell!.bean == nil && futureCellSide != nil && futureCellSide!.bean == nil{
                 activeBean.shape.position.x = futureCell!.shape.position.x
             }
         }
