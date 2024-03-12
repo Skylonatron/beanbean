@@ -95,6 +95,7 @@ class GameScene: SKScene {
                         currentCell?.mergeAllGroups(grid: self.grid)
                     }
                 } else {
+                    bean.elapsedTime = 0
                     bean.shape.position.y -= self.movementSpeed
                 }
             }
