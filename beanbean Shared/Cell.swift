@@ -7,11 +7,12 @@
 
 import SpriteKit
 
-class Cell {
+class Cell: Equatable{
     var shape: SKShapeNode
     var bean: Bean?
     var column: Int
     var row: Int
+    var group: [Cell]
     
     
     init(cellSize: Int, x: CGFloat, y: CGFloat, column: Int, row: Int, show: Bool) {
@@ -29,6 +30,42 @@ class Cell {
         self.row = row
         if show {
             self.shape.strokeColor = SKColor.black
+        }
+        
+        self.group = []
+        self.group.append(self)
+    }
+    
+    
+    static func == (lhs: Cell, rhs: Cell) -> Bool {
+        return lhs.column == rhs.column && lhs.row == rhs.row
+    }
+    
+    func mergeAllGroups(grid: Grid) {
+        let upCell = self.getUpCell(grid: grid)
+        let downCell = self.getDownCell(grid: grid)
+        let rightCell = self.getRightCell(grid: grid)
+        let leftCell = self.getLeftCell(grid: grid)
+        
+        for c in [upCell, downCell, rightCell, leftCell]{
+            self.mergeGroups(c: c)
+            
+        }
+    }
+    
+    func mergeGroups(c: Cell?) {
+        if c != nil && c!.bean != nil {
+            if c!.bean!.shape.fillColor == self.bean!.shape.fillColor {
+                if !c!.group.contains(self) {
+                    var newGroup: [Cell] = c!.group
+                    newGroup += self.group
+                    
+                    for c in newGroup{
+                        c.group = newGroup
+                        c.bean!.labelNode.text = "\(c.group.count)"
+                    }
+                }
+            }
         }
     }
     
