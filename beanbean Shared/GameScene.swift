@@ -11,8 +11,6 @@ class GameScene: SKScene {
     
     fileprivate var label : SKLabelNode?
     fileprivate var beans : [Bean] = []
-    fileprivate var activeBean: Bean!
-    fileprivate var sideBean: Bean!
     fileprivate var grid : Grid!
     fileprivate var beanPod: BeanPod!
     fileprivate var movementSpeed : Double = 1
@@ -58,13 +56,11 @@ class GameScene: SKScene {
         let bean = Bean(color: SKColor.green, cellSize: cellSize, startingPosition: grid.getStartingCell()!.shape.position)
         self.addChild(bean.shape)
         self.beans.append(bean)
-        self.activeBean = bean
         
         //initialize side bean
         let sideBean = Bean(color: SKColor.green, cellSize: cellSize, startingPosition: grid.getStartingCell()!.getRightCell(grid: grid)!.shape.position)
         self.addChild(sideBean.shape)
         self.beans.append(sideBean)
-        self.sideBean = sideBean
         
         self.beanPod = BeanPod(activeBean: bean, sideBean: sideBean)
     }
@@ -83,36 +79,26 @@ class GameScene: SKScene {
 //        self.sideBean.shape.position.x = self.activeBean.shape.position.x + CGFloat(grid.cellSize)
 //        self.sideBean.shape.position.y = self.activeBean.shape.position.y
         
-        if activeBean.active {
-            let currentCell = activeBean.getCell(grid: self.grid)
-            let futureCell = activeBean.getCellOffsetY(grid: self.grid, offset: -self.movementSpeed)
+        if beanPod.active {
             
-            let sideCurrentCell = sideBean.getCell(grid: self.grid)
-            let futureSideCurrentCell = sideBean.getCellOffsetY(grid: self.grid, offset: -self.movementSpeed)
-
-            if futureCell == nil || futureCell?.bean != nil || futureSideCurrentCell == nil || futureSideCurrentCell?.bean != nil {
-                
-                activeBean.elapsedTime += 1/60 //60 FPS
-                activeBean.shape.position = currentCell!.shape.position
-                sideBean.shape.position = sideCurrentCell!.shape.position
+            if beanPod.canMoveDown(grid: self.grid, speed: self.movementSpeed) {
+                beanPod.moveDown(speed: self.movementSpeed)
+                beanPod.elapsedTime = 0
+            } else {
+                // bean pod has hit the ground or a bean
+                beanPod.elapsedTime += 1/60 //60 FPS
+                let setCells = beanPod.snapToCell(grid: grid)
                     
-                if activeBean.elapsedTime >= 0.3 {
-                    activeBean.active = false
-                    sideBean.active = false
-                    currentCell!.bean = activeBean
-                    sideCurrentCell!.bean = sideBean
+                if beanPod.elapsedTime >= 0.3 {
+                    beanPod.active = false
+                    setCells.0.bean = beanPod.mainBean
+                    setCells.1.bean = beanPod.sideBean
                     allBeansAtRest = false
-                    activeBean.elapsedTime = 0
+                    beanPod.elapsedTime = 0
                     
                 }
-  
-            } else {
-                activeBean.shape.position.y -= self.movementSpeed
-                sideBean.shape.position.y -= self.movementSpeed
-                activeBean.elapsedTime = 0
-//                self.sideBean.shape.position.x = self.activeBean.shape.position.x + CGFloat(grid.cellSize)
-//                self.sideBean.shape.position.y = self.activeBean.shape.position.y
             }
+    
         // lower all beans that are not on the ground
         } else if allBeansAtRest == false {
             if self.beans.count == 0 {
@@ -135,7 +121,6 @@ class GameScene: SKScene {
                     currentCell?.bean = nil
                     bean.shape.position.y -= self.gravity
                 }
-                //            }
             }
             allBeansAtRest = self.beans.allSatisfy { $0.checked }
             for bean in self.beans {
@@ -222,25 +207,23 @@ class GameScene: SKScene {
 
         let color = colors.randomElement()!
         let color2 = colors.randomElement()!
-        let bean = Bean(
+        let mainBean = Bean(
             color: color,
             cellSize: grid.cellSize,
             startingPosition: grid.getStartingCell()!.shape.position
         )
-        self.activeBean = bean
-        self.addChild(bean.shape)
-        self.beans.append(bean)
+        self.addChild(mainBean.shape)
+        self.beans.append(mainBean)
         
         let sideBean = Bean(
             color: color2,
             cellSize: grid.cellSize,
             startingPosition: grid.getStartingCell()!.getRightCell(grid: grid)!.shape.position
         )
-        self.sideBean = sideBean
         self.addChild(sideBean.shape)
         self.beans.append(sideBean)
         
-        
+        self.beanPod = BeanPod(activeBean: mainBean, sideBean: sideBean)
     }
 }
 
@@ -303,31 +286,22 @@ extension GameScene {
     }
     override func keyDown(with event: NSEvent) {
 //      2 is D
-        if event.keyCode == 2 && activeBean.active && sideBean.active {
-            let currentCell = grid.getCell(x: activeBean.shape.position.x, y: activeBean.shape.position.y)
-            let futureCell = grid.cells[currentCell!.column + 1]?[currentCell!.row]
-            let currentCellSide = grid.getCell(x: sideBean.shape.position.x, y: sideBean.shape.position.y)
-            let futureCellSide = grid.cells[currentCellSide!.column + 1]?[currentCellSide!.row]
-            if futureCell != nil && futureCell!.bean == nil && futureCellSide != nil && futureCellSide!.bean == nil {
-                activeBean.shape.position.x = futureCell!.shape.position.x
-                sideBean.shape.position.x = futureCellSide!.shape.position.x
+        if event.keyCode == 2 {
+            if beanPod.canMoveRight(grid: self.grid) {
+                beanPod.moveRight(grid: grid)
             }
         }
         
 //      0 is A
-        if event.keyCode == 0 && activeBean.active && sideBean.active {
-            let currentCell = grid.getCell(x: activeBean.shape.position.x, y: activeBean.shape.position.y)
-            let futureCell = grid.cells[currentCell!.column-1]?[currentCell!.row]
-            let currentCellSide = grid.getCell(x: sideBean.shape.position.x, y: sideBean.shape.position.y)
-            let futureCellSide = grid.cells[currentCellSide!.column - 1]?[currentCellSide!.row]
-            if futureCell != nil && futureCell!.bean == nil && futureCellSide != nil && futureCellSide!.bean == nil{
-                activeBean.shape.position.x = futureCell!.shape.position.x
-                sideBean.shape.position.x = futureCellSide!.shape.position.x
+        if event.keyCode == 0 && beanPod.active {
+            if beanPod.canMoveLeft(grid: grid) {
+                beanPod.moveLeft(grid: grid)
             }
+            
         }
 //      1 is S
-        if event.keyCode == 1 && activeBean.active && sideBean.active {
-            self.movementSpeed = 12
+        if event.keyCode == 1 && beanPod.active {
+            self.movementSpeed = 10
         }
     }
 

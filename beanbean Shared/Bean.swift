@@ -9,15 +9,12 @@ import SpriteKit
 
 class Bean {
     var shape: SKShapeNode
-    var active: Bool
     var labelNode: SKLabelNode
     var checked: Bool
-    var elapsedTime: TimeInterval = 0 // handle delay over nil/bean
     var markForDelete: Bool = false
 
     
     init(color: SKColor, cellSize: Int, startingPosition: CGPoint) {
-        self.active = true
         self.shape = SKShapeNode(
             rectOf: CGSize(
                 width: cellSize,
