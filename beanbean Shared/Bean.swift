@@ -12,6 +12,7 @@ class Bean {
     var labelNode: SKLabelNode
     var checked: Bool
     var markForDelete: Bool = false
+    var group: [Bean]
 
     
     init(color: SKColor, cellSize: Int, startingPosition: CGPoint) {
@@ -41,6 +42,14 @@ class Bean {
         labelNode.verticalAlignmentMode = .center // Center vertically
         self.shape.addChild(self.labelNode) // Add label as child of shape node
         
+        self.group = []
+        self.group.append(self)
+        
+    }
+    
+    func canMoveDown(grid: Grid, speed: Double) -> Bool {
+        let futureCell = self.getCellOffsetY(grid: grid, offset: -speed)
+        return futureCell != nil && futureCell?.bean == nil
     }
     
     func getCell(grid: Grid) -> Cell! {

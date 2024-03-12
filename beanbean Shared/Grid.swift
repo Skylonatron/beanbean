@@ -51,6 +51,32 @@ class Grid {
                     
     }
     
+    func getCellsWithBeans() -> [Cell] {
+        var allCells = [Cell]()
+        for (_,cellColumn) in self.cells {
+            for (_, cell) in cellColumn {
+                if cell.bean != nil {
+                    allCells.append(cell)
+                }
+            }
+        }
+        
+        return allCells
+    }
+    
+    func getBeans() -> [Bean] {
+        var beans = [Bean]()
+        for (_,cellColumn) in self.cells {
+            for (_, cell) in cellColumn {
+                if cell.bean != nil {
+                    beans.append(cell.bean!)
+                }
+            }
+        }
+        
+        return beans
+    }
+    
     func getCellCord(x: Double, y: Double) -> (Int, Int) {
         let cellY = (y + self.offsetDown) / Double(self.cellSize)
         let cellX = (x + self.offsetLeft) / Double(self.cellSize)

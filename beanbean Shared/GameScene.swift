@@ -17,8 +17,8 @@ class GameScene: SKScene {
     fileprivate var gravity : Double = 10
     fileprivate var newBeansGenerated: Bool = false // check: new beans this cycle?
     fileprivate var validBeanPosition: Bool = true // check: both beans above non nil/bean cells
-    fileprivate var allBeansAtRest: Bool = false
-    fileprivate var beansPopped: Bool = false
+    fileprivate var allBeansAtRest: Bool = true
+    fileprivate var checkbeansForPop: Bool = false
     
     
     class func newGameScene() -> GameScene {
@@ -39,30 +39,17 @@ class GameScene: SKScene {
         let bounds = self.view!.bounds
         let cellSize = Int(bounds.size.width / 11)
         
-        // todo make create board into function
         // draw board
         let grid = Grid(rowCount: 12, columnCount: 6, cellSize: cellSize, bounds: bounds, showCells: true)
         self.grid = grid
-//        self.addChild(grid.shape)
         
         for (_,cellColumn) in grid.cells {
             for (_, cell) in cellColumn {
                 self.addChild(cell.shape)
             }
         }
-
         
-        // initialize main bean
-        let bean = Bean(color: SKColor.green, cellSize: cellSize, startingPosition: grid.getStartingCell()!.shape.position)
-        self.addChild(bean.shape)
-        self.beans.append(bean)
-        
-        //initialize side bean
-        let sideBean = Bean(color: SKColor.green, cellSize: cellSize, startingPosition: grid.getStartingCell()!.getRightCell(grid: grid)!.shape.position)
-        self.addChild(sideBean.shape)
-        self.beans.append(sideBean)
-        
-        self.beanPod = BeanPod(activeBean: bean, sideBean: sideBean)
+        generateNewBeans()
     }
     
 
@@ -74,10 +61,6 @@ class GameScene: SKScene {
     
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
-        
-        // keep side bean around active bean
-//        self.sideBean.shape.position.x = self.activeBean.shape.position.x + CGFloat(grid.cellSize)
-//        self.sideBean.shape.position.y = self.activeBean.shape.position.y
         
         if beanPod.active {
             
@@ -95,7 +78,7 @@ class GameScene: SKScene {
                     setCells.1.bean = beanPod.sideBean
                     allBeansAtRest = false
                     beanPod.elapsedTime = 0
-                    
+                    self.beans = self.grid.getBeans()
                 }
             }
     
@@ -103,102 +86,55 @@ class GameScene: SKScene {
         } else if allBeansAtRest == false {
             if self.beans.count == 0 {
                 allBeansAtRest = true
+                // todo skip rest of logic in this case
             }
-            for (i, bean) in self.beans.enumerated().reversed() {
-                if bean.markForDelete {
-                    self.beans.remove(at: i)
-                    continue
-                }
-                
+            for bean in self.beans {
                 let currentCell = grid.getCell(x: bean.shape.position.x, y: bean.shape.position.y)
-                let futureCell = grid.getCell(x: bean.shape.position.x, y: bean.shape.position.y - self.gravity)
                 
-                if futureCell == nil || futureCell?.bean != nil {
+                if bean.canMoveDown(grid: self.grid, speed: self.gravity) {
+                    // release the bean from the cell so others above can move down
+                    currentCell?.bean = nil
+                    bean.shape.position.y -= self.gravity
+                } else {
                     bean.shape.position = currentCell!.shape.position
                     currentCell!.bean = bean
                     bean.checked = true
-                } else {
-                    currentCell?.bean = nil
-                    bean.shape.position.y -= self.gravity
                 }
             }
+            // if all beans can't move down anymore is true then we can move on
             allBeansAtRest = self.beans.allSatisfy { $0.checked }
+            // set checked to false for next time
             for bean in self.beans {
                 bean.checked = false
             }
             if allBeansAtRest {
-                beansPopped = false
+                self.beans = grid.getBeans()
+                checkbeansForPop = true
             }
         // pop
-        } else if beansPopped == false {
-            for (_,cellColumn) in grid.cells {
-                for (_, cell) in cellColumn {
-                    if cell.bean != nil {
-                        cell.mergeAllGroups(grid: grid)
-                    }
-                }
+        } else if checkbeansForPop == true {
+            for cell in grid.getCellsWithBeans() {
+                cell.mergeAllGroups(grid: grid)
             }
-            for (_,cellColumn) in grid.cells {
-                for (_, cell) in cellColumn {
-                    
-                    if cell.group.count >= 4 {
-                        Thread.sleep(forTimeInterval: 0.3)
+            for cell in grid.getCellsWithBeans() {
+                if cell.group.count >= 4 {
+                    Thread.sleep(forTimeInterval: 0.3)
 
-                        for cell in cell.group {
-                            cell.bean?.shape.removeFromParent()
-                            cell.bean?.markForDelete = true
-                            cell.bean = nil
-                            cell.group = [cell]
-                            allBeansAtRest = false
-                        }
+                    for cell in cell.group {
+                        cell.bean?.shape.removeFromParent()
+                        cell.bean = nil
+                        cell.group = [cell]
                     }
-                    cell.group = [cell]
+                    allBeansAtRest = false
                 }
+                cell.group = [cell]
             }
-            beansPopped = true
-            
+            checkbeansForPop = false
+            self.beans = grid.getBeans()
+
         } else {
             self.generateNewBeans()
         }
-        
-//        for bean in self.beans {
-//            if bean.active {
-//                
-//                let currentCell = grid.getCell(x: bean.shape.position.x, y: bean.shape.position.y)
-//                let futureCell = grid.getCell(x: bean.shape.position.x, y: bean.shape.position.y - self.movementSpeed)
-//                
-//                // stops moving
-//                if futureCell == nil || futureCell?.bean != nil {
-//
-//                    //start timer
-//                    bean.elapsedTime += 1/60 //60 FPS
-//                    if bean.elapsedTime >= 0.3 {
-//                        
-//                        bean.shape.position = currentCell!.shape.position
-//                        bean.active = false
-//                        currentCell!.bean = bean
-//                        bean.elapsedTime = 0
-//                        
-//                        currentCell?.mergeAllGroups(grid: self.grid)
-//                    }
-//                } else {
-//                    bean.elapsedTime = 0
-//                    bean.shape.position.y -= self.movementSpeed
-//                }
-//            }
-//        }
-        
-        //only one bean is moving AKA gravity
-//        if !activeBean.active && sideBean.active || activeBean.active && !sideBean.active {
-//            
-//            self.movementSpeed = 12
-//        }
-        
-        // both beans are not moving anymore
-//        if !activeBean.active && !sideBean.active {
-//            self.movementSpeed = 4
-//            self.generateNewBeans()
-//        }
     }
     
     func generateNewBeans(){
@@ -213,7 +149,6 @@ class GameScene: SKScene {
             startingPosition: grid.getStartingCell()!.shape.position
         )
         self.addChild(mainBean.shape)
-        self.beans.append(mainBean)
         
         let sideBean = Bean(
             color: color2,
@@ -221,9 +156,9 @@ class GameScene: SKScene {
             startingPosition: grid.getStartingCell()!.getRightCell(grid: grid)!.shape.position
         )
         self.addChild(sideBean.shape)
-        self.beans.append(sideBean)
         
         self.beanPod = BeanPod(activeBean: mainBean, sideBean: sideBean)
+
     }
 }
 
@@ -264,14 +199,12 @@ extension GameScene {
 extension GameScene {
 
     override func mouseDown(with event: NSEvent) {
+        // for debugging you can click on a cell and see if there is a bean there
         let location = event.location(in: self)
         let cell = self.grid.getCell(x: location.x + CGFloat(self.grid.cellSize / 2), y: location.y + CGFloat(self.grid.cellSize / 2))
-//        print(cell?.column, cell?.row)
         print(cell?.bean)
-//        if let label = self.label {
-//            label.run(SKAction.init(named: "Pulse")!, withKey: "fadeInOut")
-//        }
     }
+
     
     override func mouseDragged(with event: NSEvent) {
     }
