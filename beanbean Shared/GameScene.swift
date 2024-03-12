@@ -184,7 +184,7 @@ class GameScene: SKScene {
             }
         }
         
-        //only one bean is moving
+        //only one bean is moving AKA gravity
         if !activeBean.active && sideBean.active || activeBean.active && !sideBean.active {
             
             self.movementSpeed = 12
