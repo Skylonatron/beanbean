@@ -16,6 +16,7 @@ class GameScene: SKScene {
     fileprivate var grid : Grid!
     fileprivate var movementSpeed : Double = 4
     fileprivate var newBeansGenerated: Bool = false // check: new beans this cycle?
+    fileprivate var validBeanPosition: Bool = true // check: both beans above non nil/bean cells
     
     
     class func newGameScene() -> GameScene {
@@ -74,8 +75,8 @@ class GameScene: SKScene {
         
         self.sideBean.shape.position.x = self.activeBean.shape.position.x + CGFloat(grid.cellSize)
         
-        var beanOverNil = false
-        var sideBeanOverNil = false
+//        var beanOverNil = false
+//        var sideBeanOverNil = false
         
         for bean in self.beans {
             if bean.active {
@@ -87,96 +88,111 @@ class GameScene: SKScene {
                 
                 // stops moving
                 if futureCell == nil || futureCell?.bean != nil {
-                    bean.shape.position = currentCell!.shape.position
-                    bean.active = false
-                    currentCell!.bean = bean
-                    bean.cell = currentCell
-                    
-                    let upCell = currentCell?.getUpCell(grid: self.grid)
-                    if upCell != nil && upCell?.bean != nil {
-                        if upCell!.bean!.shape.fillColor == bean.shape.fillColor {
-                            if !upCell!.bean!.group.contains(bean) {
-                                var newGroup: [Bean] = upCell!.bean!.group
-                                newGroup += bean.group
-                                
-                                for b in newGroup{
-                                    b.group = newGroup
-                                    b.labelNode.text = "\(b.group.count)"
-                                }
-                            }
-                        }
-                    }
-                    let downCell = currentCell?.getDownCell(grid: self.grid)
-                    if downCell != nil && downCell?.bean != nil {
-                        if downCell!.bean!.shape.fillColor == bean.shape.fillColor {
-                            if !downCell!.bean!.group.contains(bean) {
-                                var newGroup: [Bean] = downCell!.bean!.group
-                                newGroup += bean.group
-                                
-                                for b in newGroup{
-                                    b.group = newGroup
-                                    b.labelNode.text = "\(b.group.count)"
-                                }
-                            }
-                        }
-                    }
-                    let rightCell = currentCell?.getRightCell(grid: self.grid)
-                    if rightCell != nil && rightCell?.bean != nil {
-                        if rightCell!.bean!.shape.fillColor == bean.shape.fillColor {
-                            if !rightCell!.bean!.group.contains(bean) {
-                                var newGroup: [Bean] = rightCell!.bean!.group
-                                newGroup += bean.group
-                                
-                                for b in newGroup{
-                                    b.group = newGroup
-                                    b.labelNode.text = "\(b.group.count)"
-                                }
-                            }
-                        }
-                    }
-                    let leftCell = currentCell?.getLeftCell(grid: self.grid)
-                    if leftCell != nil && leftCell?.bean != nil {
-                        if leftCell!.bean!.shape.fillColor == bean.shape.fillColor {
-                            if !leftCell!.bean!.group.contains(bean) {
-                                var newGroup: [Bean] = leftCell!.bean!.group
-                                newGroup += bean.group
-                                
-                                for b in newGroup{
-                                    b.group = newGroup
-                                    b.labelNode.text = "\(b.group.count)"
-                                }
-                            }
-                            
-                        }
-                    }
-            
-//                    if downCell == nil || downCell?.bean != nil {
-//                        beanOverNil = true
-//                    }
-//                    
-//                    let sideBeanCurrentCell = grid.getCell(x: self.sideBean.shape.position.x, y: self.sideBean.shape.position.y)
-//                    
-//                    let sideBeanDownCell = sideBeanCurrentCell?.getDownCell(grid: self.grid)
-//                    
-//                    if sideBeanDownCell == nil || sideBeanDownCell?.bean != nil {
-//                                            sideBeanOverNil = true
-//                                        }
-                    
-//                    // only generate new beans when pair has settled
-//                    if !self.newBeansGenerated {
-//                        self.generateNewBeans()
-//                        self.newBeansGenerated = true
-//                    }
-                     
+                    //start timer
+                    bean.elapsedTime += 1/60 //60 FPS
+                    if bean.elapsedTime >= 0.3 {
                         
-                } else {
+                        bean.shape.position = currentCell!.shape.position
+                        bean.active = false
+                        currentCell!.bean = bean
+                        bean.cell = currentCell
+                        bean.elapsedTime = 0
+                        
+                        let upCell = currentCell?.getUpCell(grid: self.grid)
+                        if upCell != nil && upCell?.bean != nil {
+                            if upCell!.bean!.shape.fillColor == bean.shape.fillColor {
+                                if !upCell!.bean!.group.contains(bean) {
+                                    var newGroup: [Bean] = upCell!.bean!.group
+                                    newGroup += bean.group
+                                    
+                                    for b in newGroup{
+                                        b.group = newGroup
+                                        b.labelNode.text = "\(b.group.count)"
+                                    }
+                                }
+                            }
+                        }
+                        let downCell = currentCell?.getDownCell(grid: self.grid)
+                        if downCell != nil && downCell?.bean != nil {
+                            if downCell!.bean!.shape.fillColor == bean.shape.fillColor {
+                                if !downCell!.bean!.group.contains(bean) {
+                                    var newGroup: [Bean] = downCell!.bean!.group
+                                    newGroup += bean.group
+                                    
+                                    for b in newGroup{
+                                        b.group = newGroup
+                                        b.labelNode.text = "\(b.group.count)"
+                                    }
+                                }
+                            }
+                        }
+                        let rightCell = currentCell?.getRightCell(grid: self.grid)
+                        if rightCell != nil && rightCell?.bean != nil {
+                            if rightCell!.bean!.shape.fillColor == bean.shape.fillColor {
+                                if !rightCell!.bean!.group.contains(bean) {
+                                    var newGroup: [Bean] = rightCell!.bean!.group
+                                    newGroup += bean.group
+                                    
+                                    for b in newGroup{
+                                        b.group = newGroup
+                                        b.labelNode.text = "\(b.group.count)"
+                                    }
+                                }
+                            }
+                        }
+                        let leftCell = currentCell?.getLeftCell(grid: self.grid)
+                        if leftCell != nil && leftCell?.bean != nil {
+                            if leftCell!.bean!.shape.fillColor == bean.shape.fillColor {
+                                if !leftCell!.bean!.group.contains(bean) {
+                                    var newGroup: [Bean] = leftCell!.bean!.group
+                                    newGroup += bean.group
+                                    
+                                    for b in newGroup{
+                                        b.group = newGroup
+                                        b.labelNode.text = "\(b.group.count)"
+                                    }
+                                }
+                                
+                            }
+                        }
+                        
+                        //                    if downCell == nil || downCell?.bean != nil {
+                        //                        beanOverNil = true
+                        //                    }
+                        //
+                        //                    let sideBeanCurrentCell = grid.getCell(x: self.sideBean.shape.position.x, y: self.sideBean.shape.position.y)
+                        //
+                        //                    let sideBeanDownCell = sideBeanCurrentCell?.getDownCell(grid: self.grid)
+                        //
+                        //                    if sideBeanDownCell == nil || sideBeanDownCell?.bean != nil {
+                        //                                            sideBeanOverNil = true
+                        //                                        }
+                        
+                        //                    // only generate new beans when pair has settled
+                        //                    if !self.newBeansGenerated {
+                        //                        self.generateNewBeans()
+                        //                        self.newBeansGenerated = true
+                        //                    }
+                        
+                        
+                    }
+                }else {
+                    bean.elapsedTime = 0
                     bean.shape.position.y -= self.movementSpeed
                 }
                 
             }
         }
+        
+        //only one bean is moving
+        if !activeBean.active && sideBean.active || activeBean.active && !sideBean.active {
+            
+            self.movementSpeed = 12
+        }
+        
         // both beans are not moving anymore
         if !activeBean.active && !sideBean.active {
+            self.movementSpeed = 4
             self.generateNewBeans()
         }
 //        if beanOverNil && sideBeanOverNil && !self.newBeansGenerated {

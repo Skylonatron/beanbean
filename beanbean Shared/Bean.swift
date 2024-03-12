@@ -13,6 +13,7 @@ class Bean: Equatable {
     var group: [Bean]
     var labelNode: SKLabelNode
     var cell: Cell?
+    var elapsedTime: TimeInterval = 0 // handle delay over nil/bean
     
     init(color: SKColor, cellSize: Int, startingPosition: CGPoint) {
         self.active = true
