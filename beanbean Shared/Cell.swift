@@ -13,6 +13,7 @@ class Cell: Equatable{
     var column: Int
     var row: Int
     var group: [Cell]
+    var markForDelete: Bool = false
     
     
     init(cellSize: Int, x: CGFloat, y: CGFloat, column: Int, row: Int, show: Bool) {
@@ -49,7 +50,6 @@ class Cell: Equatable{
         
         for c in [upCell, downCell, rightCell, leftCell]{
             self.mergeGroups(c: c)
-            
         }
     }
     
@@ -62,7 +62,7 @@ class Cell: Equatable{
                     
                     for c in newGroup{
                         c.group = newGroup
-                        c.bean!.labelNode.text = "\(c.group.count)"
+                        c.bean?.labelNode.text = "\(c.group.count)"
                     }
                 }
             }

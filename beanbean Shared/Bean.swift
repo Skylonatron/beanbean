@@ -11,7 +11,10 @@ class Bean {
     var shape: SKShapeNode
     var active: Bool
     var labelNode: SKLabelNode
+    var checked: Bool
     var elapsedTime: TimeInterval = 0 // handle delay over nil/bean
+    var markForDelete: Bool = false
+
     
     init(color: SKColor, cellSize: Int, startingPosition: CGPoint) {
         self.active = true
@@ -29,6 +32,7 @@ class Bean {
         // Set the stroke color of the rectangle
         self.shape.strokeColor = SKColor.white
         self.labelNode = SKLabelNode()
+        self.checked = false
 
         
         labelNode.text = "1"
@@ -40,6 +44,15 @@ class Bean {
         labelNode.verticalAlignmentMode = .center // Center vertically
         self.shape.addChild(self.labelNode) // Add label as child of shape node
         
+    }
+    
+    func getCell(grid: Grid) -> Cell! {
+        return grid.getCell(x: self.shape.position.x, y: self.shape.position.y)
+    }
+    
+    func getCellOffsetY(grid: Grid, offset: CGFloat) -> Cell! {
+//        return grid.getCell(x: self.shape.position.x, y: self.shape.position.y)
+        return grid.getCell(x: self.shape.position.x, y: self.shape.position.y + offset)
     }
 }
 
