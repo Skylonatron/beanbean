@@ -56,7 +56,7 @@ class BeanPod {
     }
     
     func canMoveDown(grid: Grid, speed: Double) -> Bool {
-        let futureCell = self.mainBean.getCellOffsetY(grid: grid, offset: -speed)        
+        let futureCell = self.mainBean.getCellOffsetY(grid: grid, offset: -speed)
         let futureSideCurrentCell = sideBean.getCellOffsetY(grid: grid, offset: -speed)
         
         return futureCell != nil && futureCell?.bean == nil && futureSideCurrentCell != nil && futureSideCurrentCell?.bean == nil
@@ -79,4 +79,49 @@ class BeanPod {
         return (mainCell!, sideCell!)
         
     }
+    
+    func spinPod(grid: Grid){
+        let mainCell = self.mainBean.getCell(grid: grid)
+        let mainBeanX = mainBean.shape.position.x
+        let mainBeanY = mainBean.shape.position.y
+        let cellSize = CGFloat(grid.cellSize)
+        let sideCell = self.sideBean.getCell(grid: grid)
+        let rightCell = mainCell?.getRightCell(grid: grid)
+        let upCell = mainCell?.getUpCell(grid: grid)
+        let leftCell = mainCell?.getLeftCell(grid: grid)
+        let downCell = mainCell?.getDownCell(grid: grid)
+        
+        if sideCell == rightCell {
+            if let upCell = upCell {
+                if upCell.bean == nil {
+                    self.sideBean.shape.position = CGPoint(x: mainBeanX, y: mainBeanY + cellSize)
+                }
+            }
+        }
+        if sideCell == upCell {
+            if let leftCell = leftCell {
+                if leftCell.bean == nil {
+                    self.sideBean.shape.position = CGPoint(x: mainBeanX - cellSize, y: mainBeanY)
+                }
+            }
+        }
+        if sideCell == leftCell {
+            if let downCell = downCell {
+                if downCell.bean == nil {
+                    
+                    self.sideBean.shape.position = CGPoint(x: mainBeanX, y: mainBeanY - cellSize)
+                }
+            }
+        }
+        if sideCell == downCell {
+            if let rightCell = rightCell {
+                if rightCell.bean == nil{
+                    self.sideBean.shape.position = CGPoint(x: mainBeanX + cellSize, y: mainBeanY)
+                }
+            }
+        }
+        
+    }
+    
 }
+    

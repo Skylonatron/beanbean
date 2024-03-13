@@ -160,6 +160,8 @@ class GameScene: SKScene {
         self.beanPod = BeanPod(activeBean: mainBean, sideBean: sideBean)
 
     }
+    
+
 }
 
 #if os(iOS) || os(tvOS)
@@ -218,24 +220,36 @@ extension GameScene {
         }
     }
     override func keyDown(with event: NSEvent) {
-//      2 is D
+        //      2 is D
         if event.keyCode == 2 {
             if beanPod.canMoveRight(grid: self.grid) {
                 beanPod.moveRight(grid: grid)
             }
         }
         
-//      0 is A
+        //      0 is A
         if event.keyCode == 0 && beanPod.active {
             if beanPod.canMoveLeft(grid: grid) {
                 beanPod.moveLeft(grid: grid)
             }
             
         }
-//      1 is S
+        //      1 is S
         if event.keyCode == 1 && beanPod.active {
             self.movementSpeed = 10
         }
+        
+        
+        //      126 is up arrow
+        if event.keyCode == 126 {
+            self.beanPod.spinPod(grid: self.grid)
+        }
+        
+//        //      125 is down arrow
+//        if event.keyCode == 126 {
+//            self.beanPod.spinPodCW(grid: self.grid, direction: -1)
+//        }
+        
     }
 
 }
