@@ -12,6 +12,9 @@
 - [ ] add controls for when running on mac
 - [ ] add controls for when on phone
 - [ ] add grid system for beans falling
+- [ ] animate spins/movement
+- [ ] add horz/vert movement of main bean if sidebean is hitting a wall or beans
+- [ ] 
 
 #### Tips
 * If any files are being added that are getting created automatically then add to .gitignore. Only push up code that you have updated.
