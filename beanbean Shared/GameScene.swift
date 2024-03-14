@@ -247,7 +247,7 @@ extension GameScene {
         
         //      126 is up arrow
         if event.keyCode == 126 {
-            self.beanPod.spinPod(grid: self.grid)
+            self.beanPod.spinPod(grid: self.grid, speed: self.movementSpeed, beanPod: beanPod)
         }
         
 //        //      125 is down arrow
