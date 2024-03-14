@@ -104,6 +104,10 @@ class BeanPod {
                     self.sideBean.shape.position = CGPoint(x: mainBeanX - cellSize, y: mainBeanY)
                 }
             }
+            if let leftCell = leftCell, let rightCell = rightCell, leftCell.bean != nil, rightCell.bean == nil{
+                self.mainBean.shape.position = (mainCell?.getRightCell(grid: grid)!.shape.position)!
+                self.sideBean.shape.position = CGPoint(x: mainBeanX - cellSize, y: mainBeanY)
+            }
         }
         if sideCell == leftCell {
             if let downCell = downCell {
