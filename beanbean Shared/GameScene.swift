@@ -116,18 +116,23 @@ class GameScene: SKScene {
             for cell in grid.getCellsWithBeans() {
                 cell.mergeAllGroups(grid: grid)
             }
+            var cellsToExplode: [Cell] = []
             for cell in grid.getCellsWithBeans() {
                 if cell.group.count >= 4 {
-                    Thread.sleep(forTimeInterval: 0.3)
-
                     for cell in cell.group {
-                        cell.bean?.shape.removeFromParent()
-                        cell.bean = nil
                         cell.group = [cell]
+                        cellsToExplode.append(cell)
                     }
-                    allBeansAtRest = false
                 }
                 cell.group = [cell]
+            }
+            if cellsToExplode.count > 0 {
+                Thread.sleep(forTimeInterval: 0.5)
+                allBeansAtRest = false
+            }
+            for cell in cellsToExplode {
+                cell.bean?.shape.removeFromParent()
+                cell.bean = nil
             }
             checkbeansForPop = false
             self.beans = grid.getBeans()
