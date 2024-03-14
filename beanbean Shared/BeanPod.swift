@@ -43,8 +43,7 @@ class BeanPod {
         }
         let leftCellMain =  self.mainBean.getCell(grid: grid).getLeftCell(grid: grid)
         let leftCellSide = self.sideBean.getCell(grid: grid).getLeftCell(grid: grid)
-//        print("main", leftCellMain)
-//        print("side", leftCellSide)
+
         return leftCellMain != nil && leftCellMain!.bean == nil && leftCellSide != nil && leftCellSide!.bean == nil
     }
     
@@ -100,30 +99,25 @@ class BeanPod {
             }
         }
         if sideCell == upCell {
-            if canMoveLeft(grid: grid) {
-                self.sideBean.shape.position = CGPoint(x: mainBeanX - cellSize, y: mainBeanY)
-            }
             if !canMoveLeft(grid: grid) && canMoveRight(grid: grid){
-                print("Main bean X before move: \(self.mainBean.shape.position.x)")
+//                print("Main bean X before move: \(self.mainBean.shape.position.x)")
                 beanPod.moveRight(grid: grid)
-                print("Main bean X after move: \(self.mainBean.shape.position.x)")
+//                print("Main bean X after move: \(self.mainBean.shape.position.x)")
                 self.sideBean.shape.position = CGPoint(x: mainBeanX, y: mainBeanY)
                 self.mainBean.shape.position = CGPoint(x: mainBeanX + cellSize, y: mainBeanY)
             }
-            if let leftCell = leftCell, let rightCell = rightCell, leftCell.bean != nil, rightCell.bean == nil{
-                self.mainBean.shape.position = (mainCell?.getRightCell(grid: grid)!.shape.position)!
+            if canMoveLeft(grid: grid) {
                 self.sideBean.shape.position = CGPoint(x: mainBeanX - cellSize, y: mainBeanY)
             }
-            if let leftCell = leftCell, let rightCell = rightCell, leftCell.bean != nil, rightCell.bean == nil{
-                self.mainBean.shape.position = (mainCell?.getRightCell(grid: grid)!.shape.position)!
-                self.sideBean.shape.position = CGPoint(x: mainBeanX - cellSize, y: mainBeanY)
-            }
-            if let leftCell = leftCell, let rightCell = rightCell, leftCell.bean != nil, rightCell.bean == nil{
-                self.mainBean.shape.position = (mainCell?.getRightCell(grid: grid)!.shape.position)!
-                self.sideBean.shape.position = CGPoint(x: mainBeanX - cellSize, y: mainBeanY)
-            }
+            
+
         }
         if sideCell == leftCell {
+            if downCell == nil || downCell!.bean != nil {
+                self.sideBean.shape.position = CGPoint(x: mainBeanX, y: mainBeanY)
+                self.mainBean.shape.position = CGPoint(x: mainBeanX, y: mainBeanY + cellSize)
+                
+            }
             if let downCell = downCell {
                 if downCell.bean == nil {
                     
@@ -132,16 +126,17 @@ class BeanPod {
             }
         }
         if sideCell == downCell {
+            if !canMoveRight(grid: grid) && canMoveLeft(grid: grid){
+                print("Main bean X before move: \(self.mainBean.shape.position.x)")
+                beanPod.moveLeft(grid: grid)
+                print("Main bean X after move: \(self.mainBean.shape.position.x)")
+                self.sideBean.shape.position = CGPoint(x: mainBeanX, y: mainBeanY)
+                self.mainBean.shape.position = CGPoint(x: mainBeanX - cellSize, y: mainBeanY)
+            }
             if canMoveRight(grid: grid) {
                 self.sideBean.shape.position = CGPoint(x: mainBeanX + cellSize, y: mainBeanY)
             }
-//            if !canMoveRight(grid: grid) && canMoveLeft(grid: grid){
-//                print("Main bean X before move: \(self.mainBean.shape.position.x)")
-//                beanPod.moveLeft(grid: grid)
-//                print("Main bean X after move: \(self.mainBean.shape.position.x)")
-//                self.sideBean.shape.position = CGPoint(x: mainBeanX, y: mainBeanY)
-//                self.mainBean.shape.position = CGPoint(x: mainBeanX - cellSize, y: mainBeanY)
-//            }
+           
             
         }
         
