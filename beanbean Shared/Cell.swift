@@ -16,7 +16,7 @@ class Cell: Equatable{
     var markForDelete: Bool = false
     
     
-    init(cellSize: Int, x: CGFloat, y: CGFloat, column: Int, row: Int, show: Bool) {
+    init(cellSize: Int, x: CGFloat, y: CGFloat, column: Int, row: Int, show: Bool, showRowColumn: Bool) {
         self.shape = SKShapeNode(rectOf: CGSize(
             width: cellSize,
             height: cellSize
@@ -31,6 +31,20 @@ class Cell: Equatable{
         self.row = row
         if show {
             self.shape.strokeColor = SKColor.black
+        }
+        
+        
+        if showRowColumn {
+            let labelNode = SKLabelNode()
+
+            labelNode.text = "\(self.column),\(self.row)"
+            labelNode.position = CGPoint(x: 0, y: 0) // Adjust position relative to shape node
+            labelNode.fontColor = .black
+            labelNode.fontSize = 15
+            labelNode.fontName = "Helvetica-Bold"
+            labelNode.horizontalAlignmentMode = .center // Center horizontally
+            labelNode.verticalAlignmentMode = .center // Center vertically
+            self.shape.addChild(labelNode) // Add label as child of shape node
         }
         
         self.group = []
@@ -55,7 +69,7 @@ class Cell: Equatable{
     
     func mergeGroups(c: Cell?) {
         if c != nil && c!.bean != nil {
-            if c!.bean!.shape.fillColor == self.bean!.shape.fillColor {
+            if c!.bean!.color == self.bean!.color {
                 if !c!.group.contains(self) {
                     var newGroup: [Cell] = c!.group
                     newGroup += self.group

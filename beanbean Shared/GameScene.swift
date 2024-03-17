@@ -9,11 +9,18 @@ import SpriteKit
 
 class GameScene: SKScene {
     
+    // debug settings
+    fileprivate var showNumber: Bool = false
+    fileprivate var showGridCells: Bool = true
+    fileprivate var showGridCellsRowColumn: Bool = false
+
+    
     fileprivate var label : SKLabelNode?
     fileprivate var beans : [Bean] = []
     fileprivate var grid : Grid!
     fileprivate var beanPod: BeanPod!
     fileprivate var movementSpeed : Double = 1
+    fileprivate var horizontalmovementSpeed: Double = 10
     fileprivate var gravity : Double = 10
     fileprivate var newBeansGenerated: Bool = false // check: new beans this cycle?
     fileprivate var validBeanPosition: Bool = true // check: both beans above non nil/bean cells
@@ -40,7 +47,14 @@ class GameScene: SKScene {
         let cellSize = Int(bounds.size.width / 11)
         
         // draw board
-        let grid = Grid(rowCount: 12, columnCount: 6, cellSize: cellSize, bounds: bounds, showCells: true)
+        let grid = Grid(
+            rowCount: 12,
+            columnCount: 6,
+            cellSize: cellSize,
+            bounds: bounds,
+            showCells: showGridCells,
+            showRowColumn: showGridCellsRowColumn
+        )
         self.grid = grid
         
         for (_,cellColumn) in grid.cells {
@@ -49,7 +63,7 @@ class GameScene: SKScene {
             }
         }
         
-        generateNewBeans()
+        generateNewBeans(showNumber: self.showNumber)
     }
     
 
@@ -138,11 +152,11 @@ class GameScene: SKScene {
             self.beans = grid.getBeans()
 
         } else {
-            self.generateNewBeans()
+            self.generateNewBeans(showNumber: self.showNumber)
         }
     }
     
-    func generateNewBeans(){
+    func generateNewBeans(showNumber: Bool){
         // make another bean
         let colors = [SKColor.green, SKColor.yellow, SKColor.red, SKColor.purple]
 
@@ -151,14 +165,16 @@ class GameScene: SKScene {
         let mainBean = Bean(
             color: color,
             cellSize: grid.cellSize,
-            startingPosition: grid.getStartingCell()!.shape.position
+            startingPosition: grid.getStartingCell()!.shape.position,
+            showNumber: showNumber
         )
         self.addChild(mainBean.shape)
         
         let sideBean = Bean(
             color: color2,
             cellSize: grid.cellSize,
-            startingPosition: grid.getStartingCell()!.getRightCell(grid: grid)!.shape.position
+            startingPosition: grid.getStartingCell()!.getRightCell(grid: grid)!.shape.position,
+            showNumber: showNumber
         )
         self.addChild(sideBean.shape)
         
