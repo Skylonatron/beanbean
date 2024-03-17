@@ -17,7 +17,7 @@ class Grid {
     var rowCount: Int
 
     
-    init(rowCount: Int, columnCount: Int, cellSize: Int, bounds: CGRect, showCells: Bool) {
+    init(rowCount: Int, columnCount: Int, cellSize: Int, bounds: CGRect, showCells: Bool, showRowColumn: Bool) {
         self.shape = SKShapeNode(rectOf: CGSize(
             width: bounds.width / 1.5,
             height: bounds.height / 1.5
@@ -42,7 +42,8 @@ class Grid {
                     y: CGFloat(cellSize * row) - self.offsetDown,
                     column: column,
                     row: row,
-                    show: showCells
+                    show: showCells,
+                    showRowColumn: showRowColumn
                 )
                 cells[column]![row] = cell
             }

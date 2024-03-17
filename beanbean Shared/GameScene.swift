@@ -9,11 +9,18 @@ import SpriteKit
 
 class GameScene: SKScene {
     
+    // debug settings
+    fileprivate var showNumber: Bool = false
+    fileprivate var showGridCells: Bool = true
+    fileprivate var showGridCellsRowColumn: Bool = true
+
+    
     fileprivate var label : SKLabelNode?
     fileprivate var beans : [Bean] = []
     fileprivate var grid : Grid!
     fileprivate var beanPod: BeanPod!
     fileprivate var movementSpeed : Double = 1
+    fileprivate var horizontalmovementSpeed: Double = 10
     fileprivate var gravity : Double = 10
     fileprivate var newBeansGenerated: Bool = false // check: new beans this cycle?
     fileprivate var validBeanPosition: Bool = true // check: both beans above non nil/bean cells
@@ -40,7 +47,14 @@ class GameScene: SKScene {
         let cellSize = Int(bounds.size.width / 11)
         
         // draw board
-        let grid = Grid(rowCount: 12, columnCount: 6, cellSize: cellSize, bounds: bounds, showCells: true)
+        let grid = Grid(
+            rowCount: 12,
+            columnCount: 6,
+            cellSize: cellSize,
+            bounds: bounds,
+            showCells: showGridCells,
+            showRowColumn: showGridCellsRowColumn
+        )
         self.grid = grid
         
         for (_,cellColumn) in grid.cells {
@@ -49,7 +63,7 @@ class GameScene: SKScene {
             }
         }
         
-        generateNewBeans()
+        generateNewBeans(showNumber: self.showNumber)
     }
     
 
@@ -64,15 +78,53 @@ class GameScene: SKScene {
         
         if beanPod.active {
             
+            if beanPod.moveLeftBy > 0 {
+                beanPod.movingHorizontally = true
+                if beanPod.canMoveLeft(grid: grid, speed: self.horizontalmovementSpeed) {
+                    var speed = self.horizontalmovementSpeed
+                    if speed > beanPod.moveLeftBy {
+                        speed = beanPod.moveLeftBy
+                    }
+                    beanPod.mainBean.shape.position.x -= speed
+                    beanPod.sideBean.shape.position.x -= speed
+                    beanPod.moveLeftBy -= speed
+                } else {
+                    beanPod.snapToCellX(grid: grid)
+                    beanPod.moveLeftBy = 0
+                }
+            } else {
+                beanPod.movingHorizontally = false
+            }
+            if beanPod.moveRightBy > 0 {
+                beanPod.movingHorizontally = true
+                
+                if beanPod.canMoveRight(grid: grid, speed: -self.horizontalmovementSpeed) {
+                    var speed = self.horizontalmovementSpeed
+                    if speed > beanPod.moveRightBy {
+                        speed = beanPod.moveRightBy
+                    }
+                    beanPod.mainBean.shape.position.x += speed
+                    beanPod.sideBean.shape.position.x += speed
+                    beanPod.moveRightBy -= speed
+                } else {
+                    beanPod.snapToCellX(grid: grid)
+                    beanPod.moveRightBy = 0
+                }
+            } else {
+                beanPod.movingHorizontally = false
+            }
+            
+            
+            
             if beanPod.canMoveDown(grid: self.grid, speed: self.movementSpeed) {
                 beanPod.moveDown(speed: self.movementSpeed)
                 beanPod.elapsedTime = 0
             } else {
                 // bean pod has hit the ground or a bean
-                beanPod.elapsedTime += 1/60 //60 FPS
-                let setCells = beanPod.snapToCell(grid: grid)
+//                beanPod.elapsedTime += 1/60 //60 FPS
+                let setCells = beanPod.snapToCellY(grid: grid)
                     
-                if beanPod.elapsedTime >= 0.3 {
+                if beanPod.movingHorizontally == false {
                     beanPod.active = false
                     setCells.0.bean = beanPod.mainBean
                     setCells.1.bean = beanPod.sideBean
@@ -138,11 +190,11 @@ class GameScene: SKScene {
             self.beans = grid.getBeans()
 
         } else {
-            self.generateNewBeans()
+            self.generateNewBeans(showNumber: self.showNumber)
         }
     }
     
-    func generateNewBeans(){
+    func generateNewBeans(showNumber: Bool){
         // make another bean
         let colors = [SKColor.green, SKColor.yellow, SKColor.red, SKColor.purple]
 
@@ -151,14 +203,16 @@ class GameScene: SKScene {
         let mainBean = Bean(
             color: color,
             cellSize: grid.cellSize,
-            startingPosition: grid.getStartingCell()!.shape.position
+            startingPosition: grid.getStartingCell()!.shape.position,
+            showNumber: showNumber
         )
         self.addChild(mainBean.shape)
         
         let sideBean = Bean(
             color: color2,
             cellSize: grid.cellSize,
-            startingPosition: grid.getStartingCell()!.getRightCell(grid: grid)!.shape.position
+            startingPosition: grid.getStartingCell()!.getRightCell(grid: grid)!.shape.position,
+            showNumber: showNumber
         )
         self.addChild(sideBean.shape)
         
@@ -206,10 +260,13 @@ extension GameScene {
 extension GameScene {
 
     override func mouseDown(with event: NSEvent) {
-        // for debugging you can click on a cell and see if there is a bean there
+//         for debugging you can click on a cell and see if there is a bean there
         let location = event.location(in: self)
         let cell = self.grid.getCell(x: location.x + CGFloat(self.grid.cellSize / 2), y: location.y + CGFloat(self.grid.cellSize / 2))
-        print(cell?.bean)
+        print(cell?.column, cell?.row)
+        
+//        var c = self.beanPod.sideBean.getCellOffsetX(grid: grid, offset: self.horizontalmovementSpeed)
+//        print(c!.column, c!.row)
     }
 
     
@@ -227,14 +284,14 @@ extension GameScene {
     override func keyDown(with event: NSEvent) {
         //      2 is D
         if event.keyCode == 2 {
-            if beanPod.canMoveRight(grid: self.grid) {
+            if beanPod.canMoveRight(grid: self.grid, speed: self.horizontalmovementSpeed) && beanPod.movingHorizontally == false {
                 beanPod.moveRight(grid: grid)
             }
         }
         
         //      0 is A
         if event.keyCode == 0 && beanPod.active {
-            if beanPod.canMoveLeft(grid: grid) {
+            if beanPod.canMoveLeft(grid: grid, speed: self.horizontalmovementSpeed) && beanPod.movingHorizontally == false {
                 beanPod.moveLeft(grid: grid)
             }
             
