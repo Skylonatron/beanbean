@@ -34,7 +34,11 @@ class GameScene: SKScene {
     fileprivate var newBeansGenerated: Bool = false // check: new beans this cycle?
     fileprivate var validBeanPosition: Bool = true // check: both beans above non nil/bean cells
     
+    
+    var explosionPause: TimeInterval = 0
+    
     var gameState: GameState = .active
+    var futureState: GameState?
     
     
     class func newGameScene() -> GameScene {
@@ -102,7 +106,6 @@ class GameScene: SKScene {
                     setCells.1.bean = beanPod.sideBean
                     beanPod.elapsedTime = 0
                     self.beans = self.grid.getBeans()
-                    
                     setGameState(state: .gravity)
                 }
             }
@@ -150,14 +153,20 @@ class GameScene: SKScene {
                 cell.group = [cell]
             }
             if self.cellsToExplode.count > 0 {
+                // find a better way to do this pause
+                explosionPause = 0.5
+                for cell in self.cellsToExplode {
+                    cell.bean?.animationBeforeRemoved()
+                }
                 setGameState(state: .popGroups)
             } else {
                 setGameState(state: .new)
             }
         case .popGroups:
-//            for cell in self.cellsToExplode {
-//                cell.bean?.animationBeforeRemoved()
-//            }
+            if explosionPause > 0 {
+                explosionPause -= 1/60
+                return
+            }
             // add wait here
             for cell in self.cellsToExplode {
                 cell.bean?.shape.removeFromParent()
