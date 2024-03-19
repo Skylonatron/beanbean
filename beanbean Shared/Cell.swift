@@ -97,3 +97,8 @@ class Cell: Equatable{
     }
     
 }
+
+// available 
+func available(cell: Cell?) -> Bool {
+    return cell != nil && cell?.bean == nil
+}

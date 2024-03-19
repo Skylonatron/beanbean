@@ -296,13 +296,13 @@ extension GameScene {
         
         //      126 is up arrow
         if event.keyCode == 126 {
-            self.beanPod.spinPod(grid: self.grid, speed: self.movementSpeed, beanPod: beanPod)
+            self.beanPod.spinPod(grid: self.grid, clockWise: false)
         }
         
-//        //      125 is down arrow
-//        if event.keyCode == 126 {
-//            self.beanPod.spinPodCW(grid: self.grid, direction: -1)
-//        }
+        //      125 is down arrow
+        if event.keyCode == 125 {
+            self.beanPod.spinPod(grid: self.grid, clockWise: true)
+        }
         
     }
 
