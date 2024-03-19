@@ -18,3 +18,6 @@
 
 #### Tips
 * If any files are being added that are getting created automatically then add to .gitignore. Only push up code that you have updated.
+
+#### Bugs
+* When spinning bean sometimes they get split a few cells apart. Not sure why this is occuring. To recreate spin rapidly when between two sets of cells.
