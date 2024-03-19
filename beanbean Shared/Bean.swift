@@ -72,6 +72,23 @@ class Bean {
     func getCellOffsetY(grid: Grid, offset: CGFloat) -> Cell! {
         return grid.getCell(x: self.shape.position.x, y: self.shape.position.y + offset)
     }
+    
+    func animationBeforeRemoved() {
+        var animationActions = [SKAction]()
+        animationActions.append(SKAction.run {
+            self.beanImage.fillColor = SKColor.white
+        })
+        animationActions.append(SKAction.wait(forDuration: 0.05))
+        animationActions.append(SKAction.run {
+            self.beanImage.fillColor = self.color
+        })
+        animationActions.append(SKAction.wait(forDuration: 0.05))
+        
+        var animationSequence = SKAction.sequence(animationActions)
+        let repeatAnimationSequence = SKAction.repeatForever(animationSequence)
+        self.beanImage.run(repeatAnimationSequence)
+        
+    }
 }
 
 

@@ -7,16 +7,25 @@
 
 import SpriteKit
 
+enum GameState {
+    case active
+    case gravity
+    case checkGroups
+    case popGroups
+    case new
+}
+
 class GameScene: SKScene {
     
     // debug settings
     fileprivate var showNumber: Bool = false
-    fileprivate var showGridCells: Bool = true
+    fileprivate var showGridCells: Bool = false
     fileprivate var showGridCellsRowColumn: Bool = false
-
+    fileprivate var printGameState = false
     
     fileprivate var label : SKLabelNode?
     fileprivate var beans : [Bean] = []
+    fileprivate var cellsToExplode: [Cell] = []
     fileprivate var grid : Grid!
     fileprivate var beanPod: BeanPod!
     fileprivate var movementSpeed : Double = 1
@@ -24,8 +33,8 @@ class GameScene: SKScene {
     fileprivate var gravity : Double = 10
     fileprivate var newBeansGenerated: Bool = false // check: new beans this cycle?
     fileprivate var validBeanPosition: Bool = true // check: both beans above non nil/bean cells
-    fileprivate var allBeansAtRest: Bool = true
-    fileprivate var checkbeansForPop: Bool = false
+    
+    var gameState: GameState = .active
     
     
     class func newGameScene() -> GameScene {
@@ -76,8 +85,9 @@ class GameScene: SKScene {
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
         
-        if beanPod.active {
-            
+        
+        switch gameState {
+        case .active:
             if beanPod.canMoveDown(grid: self.grid, speed: self.movementSpeed) {
                 beanPod.moveDown(speed: self.movementSpeed)
                 beanPod.elapsedTime = 0
@@ -85,21 +95,22 @@ class GameScene: SKScene {
                 // bean pod has hit the ground or a bean
                 beanPod.elapsedTime += 1/60 //60 FPS
                 let setCells = beanPod.snapToCell(grid: grid)
-                    
+                
                 if beanPod.elapsedTime >= 0.3 {
                     beanPod.active = false
                     setCells.0.bean = beanPod.mainBean
                     setCells.1.bean = beanPod.sideBean
-                    allBeansAtRest = false
                     beanPod.elapsedTime = 0
                     self.beans = self.grid.getBeans()
+                    
+                    setGameState(state: .gravity)
                 }
             }
-    
-        // lower all beans that are not on the ground
-        } else if allBeansAtRest == false {
+            // lower all beans that are not on the ground
+        case .gravity:
             if self.beans.count == 0 {
-                allBeansAtRest = true
+                setGameState(state: .active)
+                return
                 // todo skip rest of logic in this case
             }
             for bean in self.beans {
@@ -116,44 +127,58 @@ class GameScene: SKScene {
                 }
             }
             // if all beans can't move down anymore is true then we can move on
-            allBeansAtRest = self.beans.allSatisfy { $0.checked }
+            let allBeansAtRest = self.beans.allSatisfy { $0.checked }
             // set checked to false for next time
             for bean in self.beans {
                 bean.checked = false
             }
             if allBeansAtRest {
                 self.beans = grid.getBeans()
-                checkbeansForPop = true
+                setGameState(state: .checkGroups)
             }
-        // pop
-        } else if checkbeansForPop == true {
+        case .checkGroups:
             for cell in grid.getCellsWithBeans() {
                 cell.mergeAllGroups(grid: grid)
             }
-            var cellsToExplode: [Cell] = []
             for cell in grid.getCellsWithBeans() {
                 if cell.group.count >= 4 {
                     for cell in cell.group {
                         cell.group = [cell]
-                        cellsToExplode.append(cell)
+                        self.cellsToExplode.append(cell)
                     }
                 }
                 cell.group = [cell]
             }
-            if cellsToExplode.count > 0 {
-                Thread.sleep(forTimeInterval: 0.5)
-                allBeansAtRest = false
+            if self.cellsToExplode.count > 0 {
+                setGameState(state: .popGroups)
+            } else {
+                setGameState(state: .new)
             }
-            for cell in cellsToExplode {
+        case .popGroups:
+//            for cell in self.cellsToExplode {
+//                cell.bean?.animationBeforeRemoved()
+//            }
+            // add wait here
+            for cell in self.cellsToExplode {
                 cell.bean?.shape.removeFromParent()
                 cell.bean = nil
             }
-            checkbeansForPop = false
+            self.cellsToExplode = []
             self.beans = grid.getBeans()
-
-        } else {
-            self.generateNewBeans(showNumber: self.showNumber)
+            setGameState(state: .gravity)
+        case .new:
+            generateNewBeans(showNumber: self.showNumber)
+            setGameState(state: .active)
         }
+
+    }
+    
+    func setGameState(state: GameState) {
+        if printGameState {
+            print("Setting state to \(state)")
+        }
+        gameState = state
+        
     }
     
     func generateNewBeans(showNumber: Bool){
@@ -181,7 +206,6 @@ class GameScene: SKScene {
         self.beanPod = BeanPod(activeBean: mainBean, sideBean: sideBean)
 
     }
-    
 
 }
 
