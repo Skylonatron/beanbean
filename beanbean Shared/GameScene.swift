@@ -100,6 +100,10 @@ class GameScene: SKScene {
                 beanPod.elapsedTime += 1/60 //60 FPS
                 let setCells = beanPod.snapToCell(grid: grid)
                 
+                if self.movementSpeed == 10{
+                    beanPod.elapsedTime = 0.3
+                }
+                
                 if beanPod.elapsedTime >= 0.3 {
                     beanPod.active = false
                     setCells.0.bean = beanPod.mainBean
@@ -295,12 +299,12 @@ extension GameScene {
         
         
         //      126 is up arrow
-        if event.keyCode == 126 {
+        if event.keyCode == 126 && beanPod.active {
             self.beanPod.spinPod(grid: self.grid, clockWise: false)
         }
         
         //      125 is down arrow
-        if event.keyCode == 125 {
+        if event.keyCode == 125 && beanPod.active {
             self.beanPod.spinPod(grid: self.grid, clockWise: true)
         }
         

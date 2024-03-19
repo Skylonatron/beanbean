@@ -136,8 +136,8 @@ class BeanPod {
             if available(cell: downCell) {
                 self.sideBean.shape.position = CGPoint(x: mainBeanX, y: mainBeanY - cellSize)
             } else {
-                self.sideBean.shape.position = CGPoint(x: mainBeanX, y: mainBeanY)
-                self.mainBean.shape.position = CGPoint(x: mainBeanX, y: mainBeanY + cellSize)
+                self.sideBean.shape.position = CGPoint(x: mainBeanX, y:  mainBean.getCell(grid: grid).shape.position.y)
+                self.mainBean.shape.position = CGPoint(x: mainBeanX, y:  mainBean.getCell(grid: grid).shape.position.y + cellSize)
             }
             self.sideBeanPosition = indexIfSpins
         }
