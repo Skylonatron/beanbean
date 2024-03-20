@@ -33,6 +33,9 @@ class GameScene: SKScene {
     fileprivate var gravity : Double = 10
     fileprivate var newBeansGenerated: Bool = false // check: new beans this cycle?
     fileprivate var validBeanPosition: Bool = true // check: both beans above non nil/bean cells
+//    fileprivate var allowance1: Double = 0.8
+//    fileprivate var allowance2: Double = 0.6
+//    fileprivate var allowance3: Double = 0.8
     
     
     var explosionPause: TimeInterval = 0
@@ -92,23 +95,45 @@ class GameScene: SKScene {
         
         switch gameState {
         case .active:
+            
+//            print("current nil", beanPod.currentTimeOverNil)
+            print("total nil:", beanPod.totalTimeNil)
+//            print("since nil:", beanPod.timeSinceNil)
+            print("allowance:", beanPod.nilAllowance)
+            
+            
             if beanPod.canMoveDown(grid: self.grid, speed: self.movementSpeed) {
                 beanPod.moveDown(speed: self.movementSpeed)
-                beanPod.elapsedTime = 0
+                beanPod.currentTimeOverNil = 0
+                beanPod.timeSinceNil += 1/60
+                
+                if beanPod.nilAllowance < 1.0 {
+                    beanPod.nilAllowance += beanPod.timeSinceNil / 8000
+                    if beanPod.nilAllowance > 1.0 {
+                        beanPod.nilAllowance = 1.0
+                    }
+                }
+                
+                
             } else {
                 // bean pod has hit the ground or a bean
-                beanPod.elapsedTime += 1/60 //60 FPS
+                beanPod.currentTimeOverNil += 1/60 //60 FPS
+                beanPod.totalTimeNil += 1/60
+                beanPod.timeSinceNil = 0
+                beanPod.nilAllowance -= 1/60
                 let setCells = beanPod.snapToCell(grid: grid)
                 
                 if self.movementSpeed == 10{
-                    beanPod.elapsedTime = 0.3
+                    beanPod.currentTimeOverNil += 2/60
+                    beanPod.totalTimeNil += 1/60
+                    beanPod.timeSinceNil += 1/60
                 }
                 
-                if beanPod.elapsedTime >= 0.3 {
+                if beanPod.currentTimeOverNil >= 0.3 || beanPod.totalTimeNil >= beanPod.nilAllowance {
                     beanPod.active = false
                     setCells.0.bean = beanPod.mainBean
                     setCells.1.bean = beanPod.sideBean
-                    beanPod.elapsedTime = 0
+                    beanPod.currentTimeOverNil = 0
                     self.beans = self.grid.getBeans()
                     setGameState(state: .gravity)
                 }
