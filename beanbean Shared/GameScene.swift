@@ -43,12 +43,41 @@ class GameScene: SKScene {
     fileprivate var newBeansGenerated: Bool = false // check: new beans this cycle?
     fileprivate var validBeanPosition: Bool = true // check: both beans above non nil/bean cells
 
-    
+    fileprivate var scores: [Int] = [] // Array for scores
+    var beansPopped: Int = 0
+    var colorBonus: Int = 0
+    var groupCount: Int = 0
+    var groupBonus: Int = 0
+    var colorBonusArray: [SKColor] = []
+    var groupBonusArray: [Int] = []
+    var colorBonusMap: [Int: Int] = [
+        1:0,
+        2:3,
+        3:6,
+        4:12
+    ]
+    var groupBonusMap: [Int: Int] = [
+        4:0,
+        5:2,
+        6:3,
+        7:4,
+        8:5,
+        9:6,
+        10:7,
+        11:10
+    ]
     
     var explosionPause: TimeInterval = 0
     
     var gameState: GameState = .active
     var futureState: GameState?
+    
+    var scoreLabel: SKLabelNode!
+    var score: Int = 0 {
+        didSet {
+            scoreLabel.text = "Score: \(score)"
+        }
+    }
     
     
     class func newGameScene() -> GameScene {
@@ -91,6 +120,14 @@ class GameScene: SKScene {
                 self.addChild(cell.shape)
             }
         }
+        
+        // Initialize the score label
+        scoreLabel = SKLabelNode(text: "Score: 0")
+        scoreLabel.position = CGPoint(x: bounds.size.width / 2, y: bounds.size.height / 2)
+        scoreLabel.fontName = "Arial"
+        scoreLabel.fontSize = 42
+        scoreLabel.fontColor = .green
+        addChild(scoreLabel)
         
         generateNewBeans(showNumber: self.showNumber)
     }
@@ -206,15 +243,41 @@ class GameScene: SKScene {
                 explosionPause -= 1/60
                 return
             }
+            
+            
+            groupCount = 0
+            
+//            Score = (10 * BP) * (CB + GB)
+            
+            // calculate BP (Beans Popped)
+            beansPopped += self.cellsToExplode.count
+            groupCount = self.cellsToExplode.count
+
+            //calculate CB (Color Bonus)
             // add wait here
             for cell in self.cellsToExplode {
+                colorBonusArray.append(cell.bean!.color)
                 cell.bean?.shape.removeFromParent()
                 cell.bean = nil
             }
+            
+            //calculate GB (Group Bonus)
+            
+            groupBonusArray.append(groupCount)
+            
+            
+            //finish popping
+            
             self.cellsToExplode = []
             self.beans = grid.getBeans()
             setGameState(state: .gravity)
         case .new:
+            let comboColors = Set(colorBonusArray)
+            colorBonus = colorBonusMap[comboColors.count, default: 0]
+            print(groupBonusArray)
+            beansPopped = 0
+            colorBonusArray = []
+            groupBonusArray = []
             generateNewBeans(showNumber: self.showNumber)
             setGameState(state: .active)
         }
