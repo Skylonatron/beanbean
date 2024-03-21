@@ -22,7 +22,7 @@ class BeanPod {
     var currentTimeOverNil: TimeInterval = 0 // handle delay over nil/bean
     var totalTimeNil: TimeInterval = 0// total time bean is over nil/bean
     var timeSinceNil: TimeInterval = 0 // time bean is alive since nil/bean
-    var nilAllowance: TimeInterval = 1.0 // allowance of bean over nil/bean
+    var nilAllowance: TimeInterval = 0.7 // allowance of bean over nil/bean
     var sideBeanPosition: Int = 1
 
     
