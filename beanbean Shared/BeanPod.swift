@@ -42,11 +42,13 @@ class BeanPod {
     }
     
     func moveRight(grid: Grid) {
-        let rightCellMain =  self.mainBean.getCell(grid: grid).getRightCell(grid: grid)
-        let rightCellSide = self.sideBean.getCell(grid: grid).getRightCell(grid: grid)
-        
-        self.mainBean.shape.position.x = rightCellMain!.shape.position.x
-        self.sideBean.shape.position.x = rightCellSide!.shape.position.x
+        if canMoveRight(grid: grid) {
+            let rightCellMain =  self.mainBean.getCell(grid: grid).getRightCell(grid: grid)
+            let rightCellSide = self.sideBean.getCell(grid: grid).getRightCell(grid: grid)
+            
+            self.mainBean.shape.position.x = rightCellMain!.shape.position.x
+            self.sideBean.shape.position.x = rightCellSide!.shape.position.x
+        }
     }
     
     func canMoveLeft(grid: Grid) -> Bool {
@@ -60,11 +62,13 @@ class BeanPod {
     }
     
     func moveLeft(grid: Grid) {
-        let leftCellMain =  self.mainBean.getCell(grid: grid).getLeftCell(grid: grid)
-        let leftCellSide = self.sideBean.getCell(grid: grid).getLeftCell(grid: grid)
-        
-        self.mainBean.shape.position.x = leftCellMain!.shape.position.x
-        self.sideBean.shape.position.x = leftCellSide!.shape.position.x
+        if canMoveLeft(grid: grid) {
+            let leftCellMain =  self.mainBean.getCell(grid: grid).getLeftCell(grid: grid)
+            let leftCellSide = self.sideBean.getCell(grid: grid).getLeftCell(grid: grid)
+            
+            self.mainBean.shape.position.x = leftCellMain!.shape.position.x
+            self.sideBean.shape.position.x = leftCellSide!.shape.position.x
+        }
     }
     
     func canMoveDown(grid: Grid, speed: Double) -> Bool {
@@ -93,6 +97,9 @@ class BeanPod {
     }
     
     func spinPod(grid: Grid, clockWise: Bool){
+        if !self.active {
+            return
+        }
         
         let directions = [Position.up, Position.right, Position.down, Position.left]
         var indexIfSpins: Int

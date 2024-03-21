@@ -23,14 +23,23 @@ class GameScene: SKScene {
     fileprivate var showGridCellsRowColumn: Bool = false
     fileprivate var printGameState = false
     
+    // ios movement
+    var initialTouch: CGPoint = CGPoint.zero
+    var moveAmtX: CGFloat = 0
+    var moveAmtY: CGFloat = 0
+    
+    // movement speeds
+    var verticalMovementSpeed : Double = 2
+    var fastVerticalMovementSpeed: Double = 10
+    var gravitySpeed: Double = 10
+    var movementSpeed: Double!
+    
+    
     fileprivate var label : SKLabelNode?
     fileprivate var beans : [Bean] = []
     fileprivate var cellsToExplode: [Cell] = []
     fileprivate var grid : Grid!
     fileprivate var beanPod: BeanPod!
-    fileprivate var movementSpeed : Double = 1
-    fileprivate var horizontalmovementSpeed: Double = 10
-    fileprivate var gravity : Double = 10
     fileprivate var newBeansGenerated: Bool = false // check: new beans this cycle?
     fileprivate var validBeanPosition: Bool = true // check: both beans above non nil/bean cells
 //    fileprivate var allowance1: Double = 0.8
@@ -59,8 +68,14 @@ class GameScene: SKScene {
     
     func setUpScene() {
         
+        movementSpeed = verticalMovementSpeed
+        
         let bounds = self.view!.bounds
-        let cellSize = Int(bounds.size.width / 11)
+        var cellSize = Int(bounds.size.width / 11)
+
+        #if os(iOS)
+            cellSize = Int(bounds.size.width / 7)
+        #endif
         
         // draw board
         let grid = Grid(
@@ -97,9 +112,9 @@ class GameScene: SKScene {
         case .active:
             
 //            print("current nil", beanPod.currentTimeOverNil)
-            print("total nil:", beanPod.totalTimeNil)
+//            print("total nil:", beanPod.totalTimeNil)
 //            print("since nil:", beanPod.timeSinceNil)
-            print("allowance:", beanPod.nilAllowance)
+//            print("allowance:", beanPod.nilAllowance)
             
             
             if beanPod.canMoveDown(grid: self.grid, speed: self.movementSpeed) {
@@ -148,10 +163,10 @@ class GameScene: SKScene {
             for bean in self.beans {
                 let currentCell = grid.getCell(x: bean.shape.position.x, y: bean.shape.position.y)
                 
-                if bean.canMoveDown(grid: self.grid, speed: self.gravity) {
+                if bean.canMoveDown(grid: self.grid, speed: self.gravitySpeed) {
                     // release the bean from the cell so others above can move down
                     currentCell?.bean = nil
-                    bean.shape.position.y -= self.gravity
+                    bean.shape.position.y -= self.gravitySpeed
                 } else {
                     bean.shape.position = currentCell!.shape.position
                     currentCell!.bean = bean
@@ -252,21 +267,46 @@ class GameScene: SKScene {
 extension GameScene {
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-//        if let label = self.label {
-//            label.run(SKAction.init(named: "Pulse")!, withKey: "fadeInOut")
-//        }
-        
-        for t in touches {
+        if let touch = touches.first as UITouch? {
+            initialTouch = touch.location(in: self.scene?.view)
+            moveAmtX = 0
+            moveAmtY = 0
         }
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         for t in touches {
+            let movingPoint: CGPoint = t.location(in: self.scene?.view)
+            
+            moveAmtX = movingPoint.x - initialTouch.x
+            moveAmtY = movingPoint.y - initialTouch.y
+            
+            print(moveAmtY)
+            
+            if moveAmtX > 25 {
+                initialTouch = movingPoint
+                self.beanPod.moveRight(grid: grid)
+            }
+            if moveAmtX < -25 {
+                initialTouch = movingPoint
+                self.beanPod.moveLeft(grid: grid)
+            }
+            if moveAmtY > 35 {
+                self.movementSpeed = self.fastVerticalMovementSpeed
+            } else {
+                self.movementSpeed = self.verticalMovementSpeed
+            }
+            
+            
         }
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for t in touches {
+        if let touch = touches.first as UITouch? {
+            self.movementSpeed = self.verticalMovementSpeed
+            if moveAmtX == 0 {
+                self.beanPod.spinPod(grid: self.grid, clockWise: true)
+            }
         }
     }
     
@@ -299,37 +339,32 @@ extension GameScene {
     override func keyUp(with event: NSEvent) {
 //      1 is S
         if event.keyCode == 1 {
-            self.movementSpeed = 1
+            self.movementSpeed = self.verticalMovementSpeed
         }
     }
     override func keyDown(with event: NSEvent) {
         //      2 is D
         if event.keyCode == 2 {
-            if beanPod.canMoveRight(grid: self.grid) {
-                beanPod.moveRight(grid: grid)
-            }
+            beanPod.moveRight(grid: grid)
         }
         
         //      0 is A
-        if event.keyCode == 0 && beanPod.active {
-            if beanPod.canMoveLeft(grid: grid) {
-                beanPod.moveLeft(grid: grid)
-            }
-            
+        if event.keyCode == 0 {
+            beanPod.moveLeft(grid: grid)
         }
         //      1 is S
         if event.keyCode == 1 && beanPod.active {
-            self.movementSpeed = 10
+            self.movementSpeed = self.fastVerticalMovementSpeed
         }
         
         
         //      126 is up arrow
-        if event.keyCode == 126 && beanPod.active {
+        if event.keyCode == 126 {
             self.beanPod.spinPod(grid: self.grid, clockWise: false)
         }
         
         //      125 is down arrow
-        if event.keyCode == 125 && beanPod.active {
+        if event.keyCode == 125 {
             self.beanPod.spinPod(grid: self.grid, clockWise: true)
         }
         
