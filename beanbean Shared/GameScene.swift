@@ -50,6 +50,7 @@ class GameScene: SKScene {
     var futureState: GameState?
     
     var scoreLabel: SKLabelNode!
+    var nuisanceLabel: SKLabelNode!
 
     
     
@@ -103,6 +104,16 @@ class GameScene: SKScene {
         scoreLabel.fontSize = 42
         scoreLabel.fontColor = .green
         addChild(scoreLabel)
+        
+        
+        // Initialize the nuisance label
+        nuisanceLabel = SKLabelNode(text: "Beans Sent: 0")
+        nuisanceLabel.position = CGPoint(x: bounds.size.width / 2, y: bounds.size.height / 2 - 50)
+        nuisanceLabel.fontName = "Arial"
+        nuisanceLabel.fontSize = 42
+        nuisanceLabel.fontColor = .green
+        addChild(nuisanceLabel)
+        
         
         generateNewBeans(showNumber: self.showNumber)
     }
@@ -228,7 +239,8 @@ class GameScene: SKScene {
             setGameState(state: .gravity)
         case .new:
             self.score.calculateScore()
-            scoreLabel.text = String(score.totalPoints)
+            scoreLabel.text = "Score: \(score.totalPoints)"
+            nuisanceLabel.text = "Beans Sent: \(score.numNuisanceBeans)"
             self.score.reset()
             generateNewBeans(showNumber: self.showNumber)
             setGameState(state: .active)
@@ -363,6 +375,8 @@ extension GameScene {
         //      1 is S
         if event.keyCode == 1 && beanPod.active {
             self.movementSpeed = self.fastVerticalMovementSpeed
+            score.totalPoints += 1
+            
         }
         
         

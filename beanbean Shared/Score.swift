@@ -46,6 +46,7 @@ class Score {
         10: 999
     ]
     var totalPoints = 0
+    var numNuisanceBeans = 0
 //    var scoreBoard: Int = 0 {
 //        didSet {
 //            scoreLabel.text = "Score: \(totalPoints)"
@@ -85,6 +86,7 @@ class Score {
         }
                 
         self.totalPoints += (x1 * x2)
+        self.numNuisanceBeans = (x1 * x2) / 70
     }
     
     func reset() {
@@ -94,6 +96,16 @@ class Score {
         self.beansPoppedInChain = 0
         colorBonusArray = []
     }
+    
+    //NP = nuisance points
+    //SC = current chain score
+    //TP = Target points, or score per nuisance puyo. Default is 70.
+//    NL = Leftover nuisance points, a decimal between 0 and 1.
+//    NC = Number of nuisance puyo to send, rounded down.
+    //formula:
+//    NP = SC / TP + NL
+//    NC = ⌊ NP ⌋
+//    NL = NP - NC
     
     
 }
