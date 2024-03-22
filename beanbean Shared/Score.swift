@@ -84,7 +84,7 @@ class Score {
             x2 = 1
         }
                 
-        self.totalPoints = (x1 * x2) / 70
+        self.totalPoints += (x1 * x2)
     }
     
     func reset() {

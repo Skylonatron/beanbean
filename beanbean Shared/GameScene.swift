@@ -246,7 +246,7 @@ class GameScene: SKScene {
     
     func generateNewBeans(showNumber: Bool){
         // make another bean
-        let colors = [SKColor.purple]
+        let colors = [SKColor.purple, SKColor.green, SKColor.red, SKColor.yellow]
 
         let color = colors.randomElement()!
         let color2 = colors.randomElement()!
