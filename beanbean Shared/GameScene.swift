@@ -121,10 +121,6 @@ class GameScene: SKScene {
         switch gameState {
         case .active:
             
-//            print("total nil:", beanPod.totalTimeNil)
-//            print("since nil:", beanPod.timeSinceNil)
-            
-            
             if beanPod.canMoveDown(grid: self.grid, speed: self.movementSpeed) {
                 beanPod.moveDown(speed: self.movementSpeed)
                 beanPod.currentTimeOverNil = 0
@@ -164,8 +160,6 @@ class GameScene: SKScene {
         case .gravity:
             if self.beans.count == 0 {
                 setGameState(state: .active)
-                return
-                // todo skip rest of logic in this case
             }
             for bean in self.beans {
                 let currentCell = grid.getCell(x: bean.shape.position.x, y: bean.shape.position.y)
@@ -252,7 +246,7 @@ class GameScene: SKScene {
     
     func generateNewBeans(showNumber: Bool){
         // make another bean
-        let colors = [SKColor.green, SKColor.yellow, SKColor.red, SKColor.purple]
+        let colors = [SKColor.purple]
 
         let color = colors.randomElement()!
         let color2 = colors.randomElement()!

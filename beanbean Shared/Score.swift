@@ -71,6 +71,7 @@ class Score {
     }
     
     func calculateScore()  {
+        // remove duplicates
         let colorBonusSet = Set(colorBonusArray)
 
     //  Score = (10 * BP) * (CP + CB + GB)
