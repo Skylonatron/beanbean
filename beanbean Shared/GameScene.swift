@@ -42,42 +42,15 @@ class GameScene: SKScene {
     fileprivate var beanPod: BeanPod!
     fileprivate var newBeansGenerated: Bool = false // check: new beans this cycle?
     fileprivate var validBeanPosition: Bool = true // check: both beans above non nil/bean cells
+    var score: Score = Score()
 
-    fileprivate var scores: [Int] = [] // Array for scores
-    var beansPopped: Int = 0
-    var colorBonus: Int = 0
-    var groupCount: Int = 0
-    var groupBonus: Int = 0
-    var colorBonusArray: [SKColor] = []
-    var groupBonusArray: [Int] = []
-    var colorBonusMap: [Int: Int] = [
-        1:0,
-        2:3,
-        3:6,
-        4:12
-    ]
-    var groupBonusMap: [Int: Int] = [
-        4:0,
-        5:2,
-        6:3,
-        7:4,
-        8:5,
-        9:6,
-        10:7,
-        11:10
-    ]
-    
     var explosionPause: TimeInterval = 0
     
     var gameState: GameState = .active
     var futureState: GameState?
     
     var scoreLabel: SKLabelNode!
-    var score: Int = 0 {
-        didSet {
-            scoreLabel.text = "Score: \(score)"
-        }
-    }
+
     
     
     class func newGameScene() -> GameScene {
@@ -103,6 +76,8 @@ class GameScene: SKScene {
         #if os(iOS)
             cellSize = Int(bounds.size.width / 7)
         #endif
+        
+        score = Score()
         
         // draw board
         let grid = Grid(
@@ -244,27 +219,13 @@ class GameScene: SKScene {
                 return
             }
             
-            
-            groupCount = 0
-            
-//            Score = (10 * BP) * (CB + GB)
-            
-            // calculate BP (Beans Popped)
-            beansPopped += self.cellsToExplode.count
-            groupCount = self.cellsToExplode.count
-
-            //calculate CB (Color Bonus)
+            self.score.aggregate(cellsToExplode: self.cellsToExplode)
+                        
             // add wait here
             for cell in self.cellsToExplode {
-                colorBonusArray.append(cell.bean!.color)
                 cell.bean?.shape.removeFromParent()
                 cell.bean = nil
             }
-            
-            //calculate GB (Group Bonus)
-            
-            groupBonusArray.append(groupCount)
-            
             
             //finish popping
             
@@ -272,12 +233,9 @@ class GameScene: SKScene {
             self.beans = grid.getBeans()
             setGameState(state: .gravity)
         case .new:
-            let comboColors = Set(colorBonusArray)
-            colorBonus = colorBonusMap[comboColors.count, default: 0]
-            print(groupBonusArray)
-            beansPopped = 0
-            colorBonusArray = []
-            groupBonusArray = []
+            self.score.calculateScore()
+            scoreLabel.text = String(score.totalPoints)
+            self.score.reset()
             generateNewBeans(showNumber: self.showNumber)
             setGameState(state: .active)
         }
@@ -338,9 +296,7 @@ extension GameScene {
             
             moveAmtX = movingPoint.x - initialTouch.x
             moveAmtY = movingPoint.y - initialTouch.y
-            
-            print(moveAmtY)
-            
+                        
             if moveAmtX > 25 {
                 initialTouch = movingPoint
                 self.beanPod.moveRight(grid: grid)
