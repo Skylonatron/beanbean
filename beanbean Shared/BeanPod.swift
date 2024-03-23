@@ -24,7 +24,6 @@ class BeanPod {
     var timeSinceNil: TimeInterval = 0 // time bean is alive since nil/bean
     var nilAllowance: TimeInterval = 0.7 // allowance of bean over nil/bean
     var sideBeanPosition: Int = 1
-    var fastMovement: Bool = false
 
     
     init(activeBean: Bean, sideBean: Bean){

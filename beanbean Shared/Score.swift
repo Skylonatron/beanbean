@@ -12,7 +12,6 @@ class Score {
     var bonusPoints: Int = 0
     var chainCount: Int = 0
     var fullComboPoints: Int = 0
-    var colorBonusArray: [SKColor] = []
     var colorBonusMap: [Int: Int] = [
         0:0,
         1:0,
@@ -68,16 +67,16 @@ class Score {
         
         
         //calculate CB (Color Bonus)
+        var colorBonusSet = Set<SKColor>()
+//        var colorBonusArray: [SKColor] = []
         for cell in cellsToExplode {
-            colorBonusArray.append(cell.bean!.color)
+            colorBonusSet.insert(cell.bean!.color)
         }
-        let colorBonusSet = Set(colorBonusArray)
         let colorBonus = self.colorBonusMap[colorBonusSet.count]
         
         
         //calculate GB (Group Bonus)
-        let groupBonus = groupBonusMap[cellsToExplode.count]!
-        
+        let groupBonus = getGroupBonus(count: beansPopped)
         
         //calculate Chain Power
         let chainPower = self.chainPowerMap[self.chainCount]
@@ -117,7 +116,14 @@ class Score {
     func reset() {
         self.chainCount = 0
         self.fullComboPoints = 0
-        colorBonusArray = []
+    }
+    
+    func getGroupBonus(count: Int) -> Int {
+        if count > 11 {
+            return 10
+        }
+        
+        return groupBonusMap[count]!
     }
     
     //NP = nuisance points

@@ -33,6 +33,7 @@ class GameScene: SKScene {
     var fastVerticalMovementSpeed: Double = 10
     var gravitySpeed: Double = 10
     var movementSpeed: Double!
+    var fastMovement: Bool = false
     
     
     fileprivate var label : SKLabelNode?
@@ -83,7 +84,7 @@ class GameScene: SKScene {
         // draw board
         let grid = Grid(
             rowCount: 12,
-            columnCount: 6,
+            columnCount: 5,
             cellSize: cellSize,
             bounds: bounds,
             showCells: showGridCells,
@@ -131,14 +132,14 @@ class GameScene: SKScene {
         
         switch gameState {
         case .active:
-            if self.beanPod.fastMovement {
+            if self.fastMovement {
                 self.movementSpeed = self.fastVerticalMovementSpeed
             } else {
                 self.movementSpeed = self.verticalMovementSpeed
             }
             
             if beanPod.canMoveDown(grid: self.grid, speed: self.movementSpeed) {
-                if self.beanPod.fastMovement{
+                if self.fastMovement{
                     score.movementPoints += 12/83
                     if score.movementPoints > 1{
                         score.totalPoints += 1
@@ -325,9 +326,9 @@ extension GameScene {
                 self.beanPod.moveLeft(grid: grid)
             }
             if moveAmtY > 35 {
-                self.movementSpeed = self.fastVerticalMovementSpeed
+                self.fastMovement = true
             } else {
-                self.movementSpeed = self.verticalMovementSpeed
+                self.fastMovement = false
             }
             
             
@@ -336,7 +337,7 @@ extension GameScene {
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         if let touch = touches.first as UITouch? {
-            self.movementSpeed = self.verticalMovementSpeed
+            self.fastMovement = false
             if moveAmtX == 0 {
                 self.beanPod.spinPod(grid: self.grid, clockWise: true)
             }
@@ -372,7 +373,7 @@ extension GameScene {
     override func keyUp(with event: NSEvent) {
 //      1 is S
         if event.keyCode == 1 {
-            beanPod.fastMovement = false
+            self.fastMovement = false
         }
     }
     override func keyDown(with event: NSEvent) {
@@ -387,7 +388,7 @@ extension GameScene {
         }
         //      1 is S
         if event.keyCode == 1 && beanPod.active {
-            beanPod.fastMovement = true
+            self.fastMovement = true
         }
         
         
