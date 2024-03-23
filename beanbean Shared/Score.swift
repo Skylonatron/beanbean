@@ -50,7 +50,12 @@ class Score {
         }
     }
     var movementPoints = 0.0
-    var numNuisanceBeans = 0
+    var numNuisanceBeans = 0 {
+        didSet {
+            nuisanceLabel.text = "Beans Sent: : \(numNuisanceBeans)"
+        }
+    }
+    
     var scoreLabel: SKLabelNode!
     var nuisanceLabel: SKLabelNode!
     

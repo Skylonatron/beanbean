@@ -178,8 +178,6 @@ class Game {
             setGameState(state: .gravity)
         case .new:
             self.score.sumFullChain()
-//            scoreLabel.text = "Score: \(score.totalPoints)"
-//            nuisanceLabel.text = "Beans Sent: \(score.numNuisanceBeans)"
             self.score.reset()
             generateNewBeans(showNumber: settings.debug.showGroupNumber)
             setGameState(state: .active)
