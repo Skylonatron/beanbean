@@ -44,16 +44,30 @@ class Score {
         8: 512,
         9: 999,
     ]
-    var totalPoints = 0
+    var totalPoints = 0 {
+        didSet {
+            scoreLabel.text = "Score: \(totalPoints)"
+        }
+    }
     var movementPoints = 0.0
     var numNuisanceBeans = 0
-//    var scoreBoard: Int = 0 {
-//        didSet {
-//            scoreLabel.text = "Score: \(totalPoints)"
-//        }
-//    }
+    var scoreLabel: SKLabelNode!
+    var nuisanceLabel: SKLabelNode!
     
-    init(){
+    init(bounds: CGRect){
+        // Initialize the score label
+        scoreLabel = SKLabelNode(text: "Score: 0")
+        scoreLabel.position = CGPoint(x: bounds.size.width / 2, y: bounds.size.height / 2)
+        scoreLabel.fontName = "Arial"
+        scoreLabel.fontSize = 42
+        scoreLabel.fontColor = .green
+        
+        // Initialize the nuisance label
+        nuisanceLabel = SKLabelNode(text: "Beans Sent: 0")
+        nuisanceLabel.position = CGPoint(x: bounds.size.width / 2, y: bounds.size.height / 2 - 50)
+        nuisanceLabel.fontName = "Arial"
+        nuisanceLabel.fontSize = 42
+        nuisanceLabel.fontColor = .green
         
     }
     

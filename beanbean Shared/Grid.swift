@@ -14,7 +14,6 @@ class Grid {
     var cellSize: Int
     var columnCount: Int
     var rowCount: Int
-
     
     init(rowCount: Int, columnCount: Int, cellSize: Int, showCells: Bool, showRowColumn: Bool) {
         
