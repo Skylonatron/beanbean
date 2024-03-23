@@ -46,6 +46,7 @@ class Score {
         10: 999
     ]
     var totalPoints = 0
+    var movementPoints = 0.0
     var numNuisanceBeans = 0
 //    var scoreBoard: Int = 0 {
 //        didSet {
@@ -79,14 +80,14 @@ class Score {
         let chainPower = self.chainPowerMap[self.chainCount]
         let colorBonus = self.colorBonusMap[colorBonusSet.count]
         
-        let x1 = 10 * self.beansPopped
-        var x2 = chainPower! + colorBonus! + self.groupBonus
-        if x2 <= 0 {
-            x2 = 1
+        let beanPoints = 10 * self.beansPopped
+        var bonusPoints = chainPower! + colorBonus! + self.groupBonus
+        if bonusPoints <= 0 {
+            bonusPoints = 1
         }
                 
-        self.totalPoints += (x1 * x2)
-        self.numNuisanceBeans = (x1 * x2) / 70
+        self.totalPoints += (beanPoints * bonusPoints)
+        self.numNuisanceBeans = (beanPoints * bonusPoints) / 70
     }
     
     func reset() {

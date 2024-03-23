@@ -133,7 +133,19 @@ class GameScene: SKScene {
         case .active:
             
             if beanPod.canMoveDown(grid: self.grid, speed: self.movementSpeed) {
-                beanPod.moveDown(speed: self.movementSpeed)
+                if self.movementSpeed == fastVerticalMovementSpeed{
+                    beanPod.moveDown(speed: self.fastVerticalMovementSpeed)
+                    score.movementPoints += 12/83
+                    if score.movementPoints > 1{
+                        score.totalPoints += 1
+                        score.movementPoints -= 1
+                        scoreLabel.text = "Score: \(score.totalPoints)"
+                    }
+                }
+                else{
+                    beanPod.moveDown(speed: self.verticalMovementSpeed)
+                }
+//                beanPod.moveDown(speed: self.movementSpeed)
                 beanPod.currentTimeOverNil = 0
                 beanPod.timeSinceNil += 1/60
                 
@@ -360,6 +372,7 @@ extension GameScene {
 //      1 is S
         if event.keyCode == 1 {
             self.movementSpeed = self.verticalMovementSpeed
+            beanPod.fastMovement = false
         }
     }
     override func keyDown(with event: NSEvent) {
@@ -375,8 +388,7 @@ extension GameScene {
         //      1 is S
         if event.keyCode == 1 && beanPod.active {
             self.movementSpeed = self.fastVerticalMovementSpeed
-            score.totalPoints += 1
-            
+            beanPod.fastMovement = true
         }
         
         
