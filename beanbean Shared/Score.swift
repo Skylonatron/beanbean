@@ -17,7 +17,8 @@ class Score {
         1:0,
         2:3,
         3:6,
-        4:12
+        4:12,
+        5:24
     ]
     var groupBonusMap: [Int: Int] = [
         0:0,
@@ -42,7 +43,6 @@ class Score {
         7: 256,
         8: 512,
         9: 999,
-        10: 999
     ]
     var totalPoints = 0
     var movementPoints = 0.0
@@ -79,11 +79,10 @@ class Score {
         let groupBonus = getGroupBonus(count: beansPopped)
         
         //calculate Chain Power
-        let chainPower = self.chainPowerMap[self.chainCount]
-        
+        let chainPower = getChainPowerBonus(count: self.chainCount)
         
         //calculate bonus points
-        var bonusPoints = chainPower! + colorBonus! + groupBonus
+        var bonusPoints = chainPower + colorBonus! + groupBonus
         if bonusPoints <= 0 {
             bonusPoints = 1
         }
@@ -124,6 +123,14 @@ class Score {
         }
         
         return groupBonusMap[count]!
+    }
+    
+    func getChainPowerBonus(count: Int) -> Int {
+        if count > 9 {
+            return 999
+        }
+        
+        return colorBonusMap[count]!
     }
     
     //NP = nuisance points
