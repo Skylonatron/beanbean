@@ -237,7 +237,7 @@ class GameScene: SKScene {
                 return
             }
             
-            self.score.aggregate(cellsToExplode: self.cellsToExplode)
+            self.score.calculateChainStep(cellsToExplode: self.cellsToExplode)
                         
             // add wait here
             for cell in self.cellsToExplode {
@@ -251,7 +251,7 @@ class GameScene: SKScene {
             self.beans = grid.getBeans()
             setGameState(state: .gravity)
         case .new:
-            self.score.calculateScore()
+            self.score.sumFullChain()
             scoreLabel.text = "Score: \(score.totalPoints)"
             nuisanceLabel.text = "Beans Sent: \(score.numNuisanceBeans)"
             self.score.reset()

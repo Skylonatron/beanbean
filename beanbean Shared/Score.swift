@@ -8,10 +8,10 @@
 import SpriteKit
 
 class Score {
-    var beansPopped: Int = 0
-    var beansPoppedInChain: Int = 0
-    var groupBonus: Int = 0
+    var beanPoints: Int = 0
+    var bonusPoints: Int = 0
     var chainCount: Int = 0
+    var fullComboPoints: Int = 0
     var colorBonusArray: [SKColor] = []
     var colorBonusMap: [Int: Int] = [
         0:0,
@@ -58,43 +58,65 @@ class Score {
         
     }
     
-    func aggregate(cellsToExplode: [Cell]) {
-        self.beansPoppedInChain = cellsToExplode.count
+    func calculateChainStep(cellsToExplode: [Cell]) {
+        
+        //chain starts at 1
+        self.chainCount += 1
+        
         // calculate BP (Beans Popped)
-        self.beansPopped += cellsToExplode.count
+        let beansPopped = cellsToExplode.count
+        
         
         //calculate CB (Color Bonus)
         for cell in cellsToExplode {
             colorBonusArray.append(cell.bean!.color)
         }
-        //calculate GB (Group Bonus)
-        self.groupBonus += groupBonusMap[cellsToExplode.count]!
-        self.chainCount += 1
-    }
-    
-    func calculateScore()  {
-        // remove duplicates
         let colorBonusSet = Set(colorBonusArray)
-
-    //  Score = (10 * BP) * (CP + CB + GB)
-        let chainPower = self.chainPowerMap[self.chainCount]
         let colorBonus = self.colorBonusMap[colorBonusSet.count]
         
-        let beanPoints = 10 * self.beansPopped
-        var bonusPoints = chainPower! + colorBonus! + self.groupBonus
+        
+        //calculate GB (Group Bonus)
+        let groupBonus = groupBonusMap[cellsToExplode.count]!
+        
+        
+        //calculate Chain Power
+        let chainPower = self.chainPowerMap[self.chainCount]
+        
+        
+        //calculate bonus points
+        var bonusPoints = chainPower! + colorBonus! + groupBonus
         if bonusPoints <= 0 {
             bonusPoints = 1
         }
-                
+        
+        //calculate bean points
+        beanPoints = 10 * beansPopped
+        
+        //add chain step to total
         self.totalPoints += (beanPoints * bonusPoints)
-        self.numNuisanceBeans = (beanPoints * bonusPoints) / 70
+        self.fullComboPoints += (beanPoints * bonusPoints)
+        
+//        print("color count", colorBonusSet.count)
+//        print("color bonus", colorBonus)
+//        print("group bonus", groupBonus)
+//        print("chain power", chainPower)
+//        print("chain count", chainCount)
+        
+        
+    }
+    
+    func sumFullChain()  {
+        
+
+    //  Score = (10 * BP) * (CP + CB + GB)
+        
+        
+        self.numNuisanceBeans = fullComboPoints / 70
     }
     
     func reset() {
         self.chainCount = 0
-        self.groupBonus = 0
-        beansPopped = 0
-        self.beansPoppedInChain = 0
+        self.fullComboPoints = 0
         colorBonusArray = []
     }
     
