@@ -140,7 +140,7 @@ class GameScene: SKScene {
                 let setCells = beanPod.snapToCell(grid: grid)
                 
                 
-                if self.movementSpeed == 10{
+                if self.movementSpeed == settings.movement.fastVerticalSpeed {
                     beanPod.currentTimeOverNil += 2/60
                     beanPod.totalTimeNil += 1/60
                     beanPod.timeSinceNil += 1/60
@@ -197,8 +197,6 @@ class GameScene: SKScene {
                 cell.group = [cell]
             }
             if self.cellsToExplode.count > 0 {
-                // find a better way to do this pause
-                explosionPause = 0.5
                 for cell in self.cellsToExplode {
                     cell.bean?.animationBeforeRemoved()
                 }
@@ -207,14 +205,14 @@ class GameScene: SKScene {
                 setGameState(state: .new)
             }
         case .popGroups:
-            if explosionPause > 0 {
-                explosionPause -= 1/60
+            if explosionPause < 0.5 {
+                explosionPause += 1/60
                 return
             }
+            explosionPause = 0
             
             self.score.calculateChainStep(cellsToExplode: self.cellsToExplode)
                         
-            // add wait here
             for cell in self.cellsToExplode {
                 cell.bean?.shape.removeFromParent()
                 cell.bean = nil

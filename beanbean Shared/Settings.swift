@@ -23,20 +23,16 @@ struct Settings {
     let debug: DebugSettings
 }
 
-fileprivate let movementSettings = MovementSettings(
-    defaultVerticalSpeed: 2,
-    fastVerticalSpeed: 10,
-    gravitySpeed: 10
-)
-
-fileprivate let debugSettings = DebugSettings(
-    showCells: false,
-    showRowColumnNumbers: false,
-    showGroupNumber: false,
-    printGameState: false
-)
-
 let settings = Settings(
-    movement: movementSettings,
-    debug: debugSettings
+    movement: MovementSettings (
+        defaultVerticalSpeed: 2,
+        fastVerticalSpeed: 10,
+        gravitySpeed: 10
+    ),
+    debug: DebugSettings (
+        showCells: false,
+        showRowColumnNumbers: false,
+        showGroupNumber: false,
+        printGameState: false
+    )
 )
