@@ -7,48 +7,26 @@
 
 import SpriteKit
 
-enum GameState {
-    case active
-    case gravity
-    case checkGroups
-    case popGroups
-    case new
-}
-
 class GameScene: SKScene {
-    
-    // debug settings
-    fileprivate var showNumber: Bool = false
-    fileprivate var showGridCells: Bool = false
-    fileprivate var showGridCellsRowColumn: Bool = false
-    fileprivate var printGameState = false
-    
+        
     // ios movement
     var initialTouch: CGPoint = CGPoint.zero
     var moveAmtX: CGFloat = 0
     var moveAmtY: CGFloat = 0
     
     // movement speeds
-    var verticalMovementSpeed : Double = 2
-    var fastVerticalMovementSpeed: Double = 10
-    var gravitySpeed: Double = 10
-    var movementSpeed: Double!
+    var movementSpeed: Double = 0
     var fastMovement: Bool = false
     
-    
-    fileprivate var label : SKLabelNode?
     fileprivate var beans : [Bean] = []
     fileprivate var cellsToExplode: [Cell] = []
     fileprivate var grid : Grid!
     fileprivate var beanPod: BeanPod!
-    fileprivate var newBeansGenerated: Bool = false // check: new beans this cycle?
-    fileprivate var validBeanPosition: Bool = true // check: both beans above non nil/bean cells
-    var score: Score = Score()
+    var score: Score!
 
     var explosionPause: TimeInterval = 0
     
     var gameState: GameState = .active
-    var futureState: GameState?
     
     var scoreLabel: SKLabelNode!
     var nuisanceLabel: SKLabelNode!
@@ -69,9 +47,7 @@ class GameScene: SKScene {
     }
     
     func setUpScene() {
-        
-        movementSpeed = verticalMovementSpeed
-        
+                
         let bounds = self.view!.bounds
         var cellSize = Int(bounds.size.width / 11)
 
@@ -86,9 +62,8 @@ class GameScene: SKScene {
             rowCount: 12,
             columnCount: 5,
             cellSize: cellSize,
-            bounds: bounds,
-            showCells: showGridCells,
-            showRowColumn: showGridCellsRowColumn
+            showCells: settings.debug.showCells,
+            showRowColumn: settings.debug.showRowColumnNumbers
         )
         self.grid = grid
         
@@ -106,7 +81,6 @@ class GameScene: SKScene {
         scoreLabel.fontColor = .green
         addChild(scoreLabel)
         
-        
         // Initialize the nuisance label
         nuisanceLabel = SKLabelNode(text: "Beans Sent: 0")
         nuisanceLabel.position = CGPoint(x: bounds.size.width / 2, y: bounds.size.height / 2 - 50)
@@ -116,7 +90,7 @@ class GameScene: SKScene {
         addChild(nuisanceLabel)
         
         
-        generateNewBeans(showNumber: self.showNumber)
+        generateNewBeans(showNumber: settings.debug.showGroupNumber)
     }
     
 
@@ -133,9 +107,9 @@ class GameScene: SKScene {
         switch gameState {
         case .active:
             if self.fastMovement {
-                self.movementSpeed = self.fastVerticalMovementSpeed
+                self.movementSpeed = settings.movement.fastVerticalSpeed
             } else {
-                self.movementSpeed = self.verticalMovementSpeed
+                self.movementSpeed = settings.movement.defaultVerticalSpeed
             }
             
             if beanPod.canMoveDown(grid: self.grid, speed: self.movementSpeed) {
@@ -189,10 +163,10 @@ class GameScene: SKScene {
             for bean in self.beans {
                 let currentCell = grid.getCell(x: bean.shape.position.x, y: bean.shape.position.y)
                 
-                if bean.canMoveDown(grid: self.grid, speed: self.gravitySpeed) {
+                if bean.canMoveDown(grid: self.grid, speed: settings.movement.gravitySpeed) {
                     // release the bean from the cell so others above can move down
                     currentCell?.bean = nil
-                    bean.shape.position.y -= self.gravitySpeed
+                    bean.shape.position.y -= settings.movement.gravitySpeed
                 } else {
                     bean.shape.position = currentCell!.shape.position
                     currentCell!.bean = bean
@@ -256,14 +230,14 @@ class GameScene: SKScene {
             scoreLabel.text = "Score: \(score.totalPoints)"
             nuisanceLabel.text = "Beans Sent: \(score.numNuisanceBeans)"
             self.score.reset()
-            generateNewBeans(showNumber: self.showNumber)
+            generateNewBeans(showNumber: settings.debug.showGroupNumber)
             setGameState(state: .active)
         }
 
     }
     
     func setGameState(state: GameState) {
-        if printGameState {
+        if settings.debug.printGameState {
             print("Setting state to \(state)")
         }
         gameState = state

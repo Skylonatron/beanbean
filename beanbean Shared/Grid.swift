@@ -8,7 +8,6 @@
 import SpriteKit
 
 class Grid {
-    var shape: SKShapeNode
     var cells: [Int: [Int: Cell]] = [:]
     var offsetLeft: CGFloat
     var offsetDown: CGFloat
@@ -17,15 +16,7 @@ class Grid {
     var rowCount: Int
 
     
-    init(rowCount: Int, columnCount: Int, cellSize: Int, bounds: CGRect, showCells: Bool, showRowColumn: Bool) {
-        self.shape = SKShapeNode(rectOf: CGSize(
-            width: bounds.width / 1.5,
-            height: bounds.height / 1.5
-        ))
-        
-//        self.shape.position = CGPoint(x: bounds.width / x, y: bounds.width / y)
-//        self.shape.fillColor = SKColor.black
-//        self.shape.strokeColor = SKColor.white
+    init(rowCount: Int, columnCount: Int, cellSize: Int, showCells: Bool, showRowColumn: Bool) {
         
         self.offsetLeft = CGFloat((columnCount / 2) * cellSize)
         self.offsetDown = CGFloat((rowCount / 2) * cellSize)
