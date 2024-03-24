@@ -96,10 +96,6 @@ class BeanPod {
         
     }
     
-//    func checkFastMovement() -> Bool{
-//        return fastMovement
-//    }
-    
     func spinPod(grid: Grid, clockWise: Bool){
         if !self.active {
             return
