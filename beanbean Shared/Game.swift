@@ -68,6 +68,7 @@ class Game {
             
             if beanPod.canMoveDown(grid: self.grid, speed: self.movementSpeed) {
                 if self.fastMovement{
+//                    self.score.calculateMovementPoints()
                     score.movementPoints += 1/7
                     let movementRemainder = abs(score.movementPoints.truncatingRemainder(dividingBy: 1))
                     if 1 - movementRemainder < 0.000001 || 1 - movementRemainder > 0.999999{

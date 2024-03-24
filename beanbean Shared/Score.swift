@@ -51,6 +51,7 @@ class Score {
         }
     }
     var movementPoints = 0.0
+    var movementPointsLeftovers = 0.0
     var numNuisanceBeans = 0 {
         didSet {
             nuisanceLabel.text = "Beans Sent: : \(numNuisanceBeans)"
@@ -127,9 +128,17 @@ class Score {
         
 
     //  Score = (10 * BP) * (CP + CB + GB)
+        self.movementPointsLeftovers += self.movementPoints.truncatingRemainder(dividingBy: 1)
         
-        
-        self.numNuisanceBeans = fullComboPoints / 70
+        var movementPointsInt = Int(floor(self.movementPoints))
+        if self.movementPointsLeftovers > 1 {
+            self.movementPointsLeftovers -= 1
+            movementPointsInt += 1
+        }
+        print("leftovers", movementPointsLeftovers)
+        print("int", movementPointsInt)
+        self.fullComboPoints += movementPointsInt
+        self.numNuisanceBeans = self.fullComboPoints / 70
     }
     
     func reset() {
@@ -137,6 +146,7 @@ class Score {
         self.fullComboPoints = 0
         self.movementPoints = 0.0
     }
+    
     
 //    func calculateMovementPoints() {
 //        self.movementPoints += 1/7
