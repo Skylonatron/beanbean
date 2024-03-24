@@ -12,6 +12,7 @@ class Score {
     var bonusPoints: Int = 0
     var chainCount: Int = 0
     var fullComboPoints: Int = 0
+    var oldScore: Int = 0
     var colorBonusMap: [Int: Int] = [
         0:0,
         1:0,
@@ -134,7 +135,16 @@ class Score {
     func reset() {
         self.chainCount = 0
         self.fullComboPoints = 0
+        self.movementPoints = 0.0
     }
+    
+//    func calculateMovementPoints() {
+//        self.movementPoints += 1/7
+//        let movementRemainder = abs(self.movementPoints.truncatingRemainder(dividingBy: 1))
+//        if 1 - movementRemainder < 0.000001 || 1 - movementRemainder > 0.999999{
+//            self.totalPoints += 1
+//        }
+//    }
     
     func getGroupBonus(count: Int) -> Int {
         if count > 11 {
