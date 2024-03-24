@@ -93,7 +93,7 @@ class Game {
                 let setCells = beanPod.snapToCell(grid: grid)
                 
                 
-                if self.movementSpeed == settings.movement.fastVerticalSpeed {
+                if self.fastMovement{
                     beanPod.currentTimeOverNil += 2/60
                     beanPod.totalTimeNil += 1/60
                     beanPod.timeSinceNil += 1/60
