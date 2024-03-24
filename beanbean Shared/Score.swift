@@ -130,22 +130,13 @@ class Score {
 
     //  Score = (10 * BP) * (CP + CB + GB)
         
-        var movementPointsInt = Int(self.movementPoints)
+        let movementPointsInt = Int(self.movementPoints)
         self.fullComboPoints += movementPointsInt
         self.numNuisanceBeans = Double(self.fullComboPoints) / 70
         
-        self.nuisanceBeansLeftovers += self.numNuisanceBeans.truncatingRemainder(dividingBy: 1)
-        
-//        print(self.nuisanceBeansLeftovers)
-        if self.nuisanceBeansLeftovers > 1 {
-            self.nuisanceBeansLeftovers -= 1
-            self.numNuisanceBeans += 1
-        }
+        self.calculateLeftovers()
         self.nuisanceBeansInt = Int(numNuisanceBeans)
             
-//        print("leftovers", self.nuisanceBeansLeftovers)
-//        print("double", self.numNuisanceBeans)
-//        print("int", self.nuisanceBeansInt)
         
     }
     
@@ -153,6 +144,19 @@ class Score {
         self.chainCount = 0
         self.fullComboPoints = 0
         self.movementPoints = 0.0
+    }
+    
+    func calculateLeftovers() {
+        self.nuisanceBeansLeftovers += self.numNuisanceBeans.truncatingRemainder(dividingBy: 1)
+        
+//        print(self.nuisanceBeansLeftovers)
+        if self.nuisanceBeansLeftovers > 1 {
+            self.nuisanceBeansLeftovers -= 1
+            self.numNuisanceBeans += 1
+        }
+        //        print("leftovers", self.nuisanceBeansLeftovers)
+        //        print("double", self.numNuisanceBeans)
+        //        print("int", self.nuisanceBeansInt)
     }
     
     
