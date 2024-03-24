@@ -50,11 +50,12 @@ class Score {
             scoreLabel.text = "Score: \(totalPoints)"
         }
     }
-    var movementPoints = 0.0
-    var movementPointsLeftovers = 0.0
-    var numNuisanceBeans = 0 {
+    var movementPoints: Double = 0.0
+    var numNuisanceBeans: Double = 0.0
+    var nuisanceBeansLeftovers:Double = 0.0
+    var nuisanceBeansInt:Int = 0{
         didSet {
-            nuisanceLabel.text = "Beans Sent: : \(numNuisanceBeans)"
+            nuisanceLabel.text = "Beans Sent: : \(self.nuisanceBeansInt)"
         }
     }
     
@@ -128,17 +129,24 @@ class Score {
         
 
     //  Score = (10 * BP) * (CP + CB + GB)
-        self.movementPointsLeftovers += self.movementPoints.truncatingRemainder(dividingBy: 1)
         
-        var movementPointsInt = Int(floor(self.movementPoints))
-        if self.movementPointsLeftovers > 1 {
-            self.movementPointsLeftovers -= 1
-            movementPointsInt += 1
-        }
-        print("leftovers", movementPointsLeftovers)
-        print("int", movementPointsInt)
+        var movementPointsInt = Int(self.movementPoints)
         self.fullComboPoints += movementPointsInt
-        self.numNuisanceBeans = self.fullComboPoints / 70
+        self.numNuisanceBeans = Double(self.fullComboPoints) / 70
+        
+        self.nuisanceBeansLeftovers += self.numNuisanceBeans.truncatingRemainder(dividingBy: 1)
+        
+//        print(self.nuisanceBeansLeftovers)
+        if self.nuisanceBeansLeftovers > 1 {
+            self.nuisanceBeansLeftovers -= 1
+            self.numNuisanceBeans += 1
+        }
+        self.nuisanceBeansInt = Int(numNuisanceBeans)
+            
+//        print("leftovers", self.nuisanceBeansLeftovers)
+//        print("double", self.numNuisanceBeans)
+//        print("int", self.nuisanceBeansInt)
+        
     }
     
     func reset() {
