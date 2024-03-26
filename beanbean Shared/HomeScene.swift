@@ -91,7 +91,6 @@ extension HomeScene {
         // for debugging you can click on a cell and see if there is a bean there
         let location = event.location(in: self)
         let node = self.atPoint(location)
-        print(node.name)
         if node.name == "Start" {
             let gameScene = GameScene.newGameScene()
             self.view?.presentScene(gameScene, transition: SKTransition.fade(withDuration: 1.0))
