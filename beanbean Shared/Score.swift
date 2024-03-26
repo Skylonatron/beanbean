@@ -45,9 +45,9 @@ class Score {
         8: 512,
         9: 999,
     ]
-    var totalPoints = 0 {
+    var totalPoints: Double = 0 {
         didSet {
-            scoreLabel.text = "Score: \(totalPoints)"
+            scoreLabel.text = "Score: \(Int(totalPoints))"
         }
     }
     var movementPoints: Double = 0.0
@@ -113,7 +113,7 @@ class Score {
         beanPoints = 10 * beansPopped
         
         //add chain step to total
-        self.totalPoints += (beanPoints * bonusPoints)
+        self.totalPoints += Double(beanPoints * bonusPoints)
         self.fullComboPoints += (beanPoints * bonusPoints)
         
 //        print("color count", colorBonusSet.count)
@@ -127,11 +127,11 @@ class Score {
     
     func sumFullChain()  {
         
-
     //  Score = (10 * BP) * (CP + CB + GB)
-        
-        let movementPointsInt = Int(self.movementPoints)
-        self.fullComboPoints += movementPointsInt
+        if self.fullComboPoints > 0 {
+            self.fullComboPoints += Int(self.movementPoints)
+            self.movementPoints = 0
+        }
         self.numNuisanceBeans = Double(self.fullComboPoints) / 70
         
         self.calculateLeftovers()
@@ -143,7 +143,7 @@ class Score {
     func reset() {
         self.chainCount = 0
         self.fullComboPoints = 0
-        self.movementPoints = 0.0
+//        self.movementPoints = 0.0
     }
     
     func calculateLeftovers() {
