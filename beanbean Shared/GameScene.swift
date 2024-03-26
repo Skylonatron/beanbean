@@ -31,7 +31,7 @@ class GameScene: SKScene {
     
     func setUpScene() {
         let bounds = self.view!.bounds
-        let cellSize = Int(bounds.size.width / 11)
+        var cellSize = Int(bounds.size.width / 11)
         #if os(iOS)
             cellSize = Int(bounds.size.width / 7)
         #endif
@@ -67,51 +67,16 @@ class GameScene: SKScene {
 extension GameScene {
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        if let touch = touches.first as UITouch? {
-            initialTouch = touch.location(in: self.scene?.view)
-            moveAmtX = 0
-            moveAmtY = 0
-        }
+        game.touchesBegan(touches, with: event)
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for t in touches {
-            let movingPoint: CGPoint = t.location(in: self.scene?.view)
-            
-            moveAmtX = movingPoint.x - initialTouch.x
-            moveAmtY = movingPoint.y - initialTouch.y
-                        
-            if moveAmtX > 25 {
-                initialTouch = movingPoint
-                self.game.beanPod.moveRight(grid: grid)
-            }
-            if moveAmtX < -25 {
-                initialTouch = movingPoint
-                self.game.beanPod.moveLeft(grid: grid)
-            }
-            if moveAmtY > 35 {
-                self.fastMovement = true
-            } else {
-                self.fastMovement = false
-            }
-        }
+        game.touchesMoved(touches, with: event)
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        if let touch = touches.first as UITouch? {
-            self.fastMovement = false
-            if moveAmtX == 0 {
-                self.game.beanPod.spinPod(grid: self.grid, clockWise: true)
-            }
-        }
+        game.touchesEnded(touches, with: event)
     }
-    
-    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for t in touches {
-        }
-    }
-    
-   
 }
 #endif
 

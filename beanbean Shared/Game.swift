@@ -20,7 +20,7 @@ struct GameParams {
     let cellSize: Int
     let rowCount: Int
     let columnCount: Int
-    let bounds: NSRect
+    let bounds: CGRect
 }
 
 class Game {
@@ -35,6 +35,10 @@ class Game {
     var movementSpeed: Double = 0
     var fastMovement: Bool = false
     var scene: SKScene
+    // ios movement
+    var initialTouch: CGPoint = CGPoint.zero
+    var moveAmtX: CGFloat = 0
+    var moveAmtY: CGFloat = 0
         
     init(params: GameParams){
         self.scene = params.scene
@@ -220,6 +224,49 @@ class Game {
 
     }
     
+#if os(iOS) || os(tvOS)
+    func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if let touch = touches.first as UITouch? {
+            initialTouch = touch.location(in: self.scene.view)
+            moveAmtX = 0
+            moveAmtY = 0
+        }
+    }
+    func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        for t in touches {
+            let movingPoint: CGPoint = t.location(in: self.scene.view)
+            
+            moveAmtX = movingPoint.x - initialTouch.x
+            moveAmtY = movingPoint.y - initialTouch.y
+                        
+            if moveAmtX > 25 {
+                initialTouch = movingPoint
+                self.beanPod.moveRight(grid: grid)
+            }
+            if moveAmtX < -25 {
+                initialTouch = movingPoint
+                self.beanPod.moveLeft(grid: grid)
+            }
+            if moveAmtY > 35 {
+                self.fastMovement = true
+            } else {
+                self.fastMovement = false
+            }
+        }
+    }
+    func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if let touch = touches.first as UITouch? {
+            self.fastMovement = false
+            if moveAmtX == 0 {
+                self.beanPod.spinPod(grid: self.grid, clockWise: true)
+            }
+        }
+    }
+    
+    
+#endif
+    
+#if os(OSX)
     func keyUp(event: NSEvent) {
         //      1 is S
         if event.keyCode == 1 {
@@ -253,4 +300,5 @@ class Game {
             self.beanPod.spinPod(grid: self.grid, clockWise: true)
         }
     }
+#endif
 }

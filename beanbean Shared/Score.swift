@@ -77,6 +77,8 @@ class Score {
         nuisanceLabel.fontSize = 42
         nuisanceLabel.fontColor = .green
         
+        
+        
     }
     
     func calculateChainStep(cellsToExplode: [Cell]) {
@@ -181,7 +183,7 @@ class Score {
             return 999
         }
         
-        return colorBonusMap[count]!
+        return chainPowerMap[count]!
     }
     
     //NP = nuisance points
