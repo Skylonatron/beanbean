@@ -191,8 +191,10 @@ class Game {
                 setGameState(state: .endScreen)
                 return
             }
+//            //uncomment below and comment above for quick testing of end screen
 //            setGameState(state: .endScreen)
 //            return
+            
             self.score.sumFullChain()
             self.score.reset()
             generateNewBeans(showNumber: settings.debug.showGroupNumber)
@@ -209,11 +211,33 @@ class Game {
             // Add the rectangle node to the scene
             self.scene.addChild(emptyRectangle)
             
+            //add top text
+            let topLabelNode = SKLabelNode(text: "You Suck!! Try again?")
+            topLabelNode.position = CGPoint(x: 0, y: 5 * endMenuHeight / 12)
+            topLabelNode.fontColor = .black
+            topLabelNode.fontSize = 30
+            topLabelNode.fontName = "ChalkboardSE-Bold"
+            topLabelNode.horizontalAlignmentMode = .center
+            topLabelNode.verticalAlignmentMode = .center
+            emptyRectangle.addChild(topLabelNode)
+            
+            //add image
+            let texture = SKTexture(imageNamed: "sadBean")
+            // Create an SKSpriteNode using the texture
+            let sprite = SKSpriteNode(texture: texture)
+            sprite.setScale(0.5)
+            // Set position, scale, etc. for the sprite node
+            sprite.position = CGPoint(x: 0, y: 0)
+            
+            // Add the sprite node to the scene
+            emptyRectangle.addChild(sprite)
+            
+            
             let button = SKShapeNode(rectOf: CGSize(
                 width: 150,
                 height: 50
             ))
-            button.position = CGPoint(x: 0, y: 0)
+            button.position = CGPoint(x: 0, y: -5 * endMenuHeight / 12)
             button.fillColor = SKColor.white
             button.strokeColor = SKColor.green
             button.lineWidth = 4

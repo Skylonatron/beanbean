@@ -88,14 +88,9 @@ extension GameScene {
 extension GameScene {
 
     override func mouseDown(with event: NSEvent) {
-        // for debugging you can click on a cell and see if there is a bean there
-        //        let location = event.location(in: self)
-        //        let cell = self.grid.getCell(x: location.x + CGFloat(self.grid.cellSize / 2), y: location.y + CGFloat(self.grid.cellSize / 2))
-        //        print(cell?.bean)
-        
         let location = event.location(in: self)
         let node = self.atPoint(location)
-        print(node.name)
+//        print(node.name)
         if node.name == "New Game" {
             let gameScene = GameScene.newGameScene()
             self.view?.presentScene(gameScene, transition: SKTransition.fade(withDuration: 1.0))
