@@ -92,6 +92,7 @@ extension GameScene {
         let node = self.atPoint(location)
 //        print(node.name)
         if node.name == "New Game" {
+            self.scene?.removeAllChildren()
             let gameScene = GameScene.newGameScene()
             self.view?.presentScene(gameScene, transition: SKTransition.fade(withDuration: 1.0))
         }

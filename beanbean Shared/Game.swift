@@ -205,7 +205,15 @@ class Game {
             //add menu rectangle
             let endMenuWidth = self.grid.cellSize * 5
             let endMenuHeight = self.grid.cellSize * 6
-            let emptyRectangle = SKSpriteNode(color: .systemPink, size: CGSize(width: endMenuWidth, height: endMenuHeight))
+            let emptyRectangle = SKShapeNode(rectOf: CGSize(
+                width: endMenuWidth,
+                height: endMenuHeight
+            ))
+            emptyRectangle.fillColor = SKColor.systemPink
+            emptyRectangle.strokeColor = SKColor.black
+            emptyRectangle.lineWidth = 4
+            emptyRectangle.name = "end menu"
+            
             // Set its position to the starting cell's position
             emptyRectangle.position = CGPoint(x: 0, y: 0)
             // Add the rectangle node to the scene
@@ -239,7 +247,7 @@ class Game {
             ))
             button.position = CGPoint(x: 0, y: -5 * endMenuHeight / 12)
             button.fillColor = SKColor.white
-            button.strokeColor = SKColor.green
+            button.strokeColor = SKColor.black
             button.lineWidth = 4
             button.name = "New Game"
             
@@ -253,7 +261,7 @@ class Game {
             labelNode.horizontalAlignmentMode = .center // Center horizontally
             labelNode.verticalAlignmentMode = .center // Center vertically
             button.addChild(labelNode) // Add label as child of shape node
-            self.scene.addChild(button)
+            emptyRectangle.addChild(button)
             
             
             
