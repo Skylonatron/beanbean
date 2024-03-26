@@ -9,6 +9,8 @@ import SpriteKit
 //import UIKit
 
 class HomeScene: SKScene {
+    
+    var game: Game!
         
     class func newHomeScene() -> HomeScene {
         // Load 'GameScene.sks' as an SKScene.
@@ -25,27 +27,40 @@ class HomeScene: SKScene {
         print(bounds.width)
         print(self.size.width)
       
-        let button = SKShapeNode(rectOf: CGSize(
-            width: 100,
-            height: 50
-        ))
-        button.position = CGPoint(x: self.size.width / 2, y: self.size.width / 2)
-        button.fillColor = SKColor.white
-        button.strokeColor = SKColor.green
-        button.lineWidth = 4
-        button.name = "Start"
+//        let button = SKShapeNode(rectOf: CGSize(
+//            width: 100,
+//            height: 50
+//        ))
+//        button.position = CGPoint(x: self.size.width / 2, y: self.size.width / 2)
+//        button.fillColor = SKColor.white
+//        button.strokeColor = SKColor.green
+//        button.lineWidth = 4
+//        button.name = "Start"
+//        
+//        let labelNode = SKLabelNode()
+//        labelNode.text = "Start"
+//        labelNode.name = "Start"
+//        labelNode.position = CGPoint(x: 0, y: 0) // Adjust position relative to shape node
+//        labelNode.fontColor = .black
+//        labelNode.fontSize = 25
+//        labelNode.fontName = "ChalkboardSE-Bold"
+//        labelNode.horizontalAlignmentMode = .center // Center horizontally
+//        labelNode.verticalAlignmentMode = .center // Center vertically
+//        button.addChild(labelNode) // Add label as child of shape node
+//        self.addChild(button)
+//        
+        let columnCount = 5
+        let rowCount = 12
+        var cellSize = Int(bounds.size.width / 11)
         
-        let labelNode = SKLabelNode()
-        labelNode.text = "Start"
-        labelNode.name = "Start"
-        labelNode.position = CGPoint(x: 0, y: 0) // Adjust position relative to shape node
-        labelNode.fontColor = .black
-        labelNode.fontSize = 25
-        labelNode.fontName = "ChalkboardSE-Bold"
-        labelNode.horizontalAlignmentMode = .center // Center horizontally
-        labelNode.verticalAlignmentMode = .center // Center vertically
-        button.addChild(labelNode) // Add label as child of shape node
-        self.addChild(button)
+        let gameParams = GameParams(
+            scene: self,
+            cellSize: cellSize,
+            rowCount: rowCount,
+            columnCount: columnCount,
+            bounds: bounds
+        )
+        self.game = Game(params: gameParams)
     
     }
     
@@ -55,12 +70,15 @@ class HomeScene: SKScene {
     
     
     override func didMove(to view: SKView) {
-        self.size = view.bounds.size
+//        self.size = view.bounds.size
+        self.size = CGSize(width: 1366.0, height: 1024.0)
+        self.anchorPoint = CGPoint(x: 0.5, y: 0.5)
         self.setUpScene()
     }
     
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
+        
     }
 
 }

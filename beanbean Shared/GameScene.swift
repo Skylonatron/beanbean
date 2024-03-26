@@ -18,6 +18,7 @@ class GameScene: SKScene {
     
     class func newGameScene() -> GameScene {
         // Load 'GameScene.sks' as an SKScene.
+//        let scene = GameScene()
         guard let scene = SKScene(fileNamed: "GameScene") as? GameScene else {
             print("Failed to load GameScene.sks")
             abort()
@@ -30,6 +31,8 @@ class GameScene: SKScene {
     }
     
     func setUpScene() {
+        print(self.anchorPoint)
+        
         let bounds = self.view!.bounds
         var cellSize = Int(bounds.size.width / 11)
         #if os(iOS)

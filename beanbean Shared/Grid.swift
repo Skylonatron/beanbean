@@ -17,8 +17,8 @@ class Grid {
     
     init(rowCount: Int, columnCount: Int, cellSize: Int, showCells: Bool, showRowColumn: Bool) {
         
-        self.offsetLeft = CGFloat((columnCount / 2) * cellSize)
-        self.offsetDown = CGFloat((rowCount / 2) * cellSize)
+        self.offsetLeft = CGFloat((columnCount + 1) / 2) * CGFloat(cellSize) - CGFloat(cellSize) / 2
+        self.offsetDown = CGFloat((rowCount + 1) / 2) * CGFloat(cellSize)
         self.cellSize = cellSize
         self.columnCount = columnCount
         self.rowCount = rowCount

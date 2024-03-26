@@ -30,7 +30,7 @@ let settings = Settings(
         gravitySpeed: 10
     ),
     debug: DebugSettings (
-        showCells: false,
+        showCells: true,
         showRowColumnNumbers: false,
         showGroupNumber: false,
         printGameState: false
