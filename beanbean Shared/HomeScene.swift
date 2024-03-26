@@ -27,28 +27,28 @@ class HomeScene: SKScene {
         print(bounds.width)
         print(self.size.width)
       
-//        let button = SKShapeNode(rectOf: CGSize(
-//            width: 100,
-//            height: 50
-//        ))
-//        button.position = CGPoint(x: self.size.width / 2, y: self.size.width / 2)
-//        button.fillColor = SKColor.white
-//        button.strokeColor = SKColor.green
-//        button.lineWidth = 4
-//        button.name = "Start"
-//        
-//        let labelNode = SKLabelNode()
-//        labelNode.text = "Start"
-//        labelNode.name = "Start"
-//        labelNode.position = CGPoint(x: 0, y: 0) // Adjust position relative to shape node
-//        labelNode.fontColor = .black
-//        labelNode.fontSize = 25
-//        labelNode.fontName = "ChalkboardSE-Bold"
-//        labelNode.horizontalAlignmentMode = .center // Center horizontally
-//        labelNode.verticalAlignmentMode = .center // Center vertically
-//        button.addChild(labelNode) // Add label as child of shape node
-//        self.addChild(button)
-//        
+        let button = SKShapeNode(rectOf: CGSize(
+            width: 100,
+            height: 50
+        ))
+        button.position = CGPoint(x: self.size.width / 2, y: self.size.width / 2)
+        button.fillColor = SKColor.white
+        button.strokeColor = SKColor.green
+        button.lineWidth = 4
+        button.name = "Start"
+        
+        let labelNode = SKLabelNode()
+        labelNode.text = "Start"
+        labelNode.name = "Start"
+        labelNode.position = CGPoint(x: 0, y: 0) // Adjust position relative to shape node
+        labelNode.fontColor = .black
+        labelNode.fontSize = 25
+        labelNode.fontName = "ChalkboardSE-Bold"
+        labelNode.horizontalAlignmentMode = .center // Center horizontally
+        labelNode.verticalAlignmentMode = .center // Center vertically
+        button.addChild(labelNode) // Add label as child of shape node
+        self.addChild(button)
+        
         let columnCount = 5
         let rowCount = 12
         var cellSize = Int(bounds.size.width / 11)

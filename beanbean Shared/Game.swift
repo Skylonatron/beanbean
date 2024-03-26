@@ -210,7 +210,7 @@ class Game {
             self.scene.addChild(emptyRectangle)
             
             let button = SKShapeNode(rectOf: CGSize(
-                width: 100,
+                width: 150,
                 height: 50
             ))
             button.position = CGPoint(x: 0, y: 0)
@@ -346,5 +346,7 @@ class Game {
             self.beanPod.spinPod(grid: self.grid, clockWise: true)
         }
     }
+    
+    
 #endif
 }
