@@ -53,6 +53,8 @@ class Game {
         self.scene.addChild(score.nuisanceLabel)
         
         self.scoreLabel = SKLabelNode(text: "temp")
+        scoreLabel.numberOfLines = 2 // Set the number of lines to 2
+        scoreLabel.lineBreakMode = .byWordWrapping // Allow word wrapping
         scoreLabel.position = CGPoint(x: -params.bounds.size.width / 2, y: params.bounds.size.height / 4)
         scoreLabel.fontName = "Arial"
         scoreLabel.fontSize = 42
@@ -290,9 +292,11 @@ class Game {
         
         var allPlayers = try! await leaderboards.first?.loadEntries(for: .global, timeScope: .allTime, range: NSRange(1...5))
         
+        var text: String = ""
         for x in allPlayers!.1 {
-            self.scoreLabel.text = "\(x.player.alias): \(x.score)"
+            text += "\(x.player.alias): \(x.score)\n"
         }
+        self.scoreLabel.text = text
         
 
 
