@@ -10,7 +10,6 @@ import SpriteKit
 class Bean {
     var shape: SKShapeNode
     var labelNode: SKLabelNode
-    var beanImage: SKShapeNode
     var checked: Bool
     var markForDelete: Bool = false
     var group: [Bean]
@@ -18,11 +17,12 @@ class Bean {
 
     
     init(color: SKColor, cellSize: Int, startingPosition: CGPoint, showNumber: Bool) {
+        let beanSize = CGSize(
+            width: cellSize,
+            height: cellSize
+        )
         self.shape = SKShapeNode(
-            rectOf: CGSize(
-                width: cellSize,
-                height: cellSize
-            )
+            rectOf: beanSize
         )
         
         // Set the position of the rectangle
@@ -31,17 +31,32 @@ class Bean {
         self.shape.fillColor = SKColor.clear
         // Set the stroke color of the rectangle
         self.shape.strokeColor = SKColor.clear
+        self.shape.zPosition = 0
         self.labelNode = SKLabelNode()
         self.checked = false
-        
         self.color = color
+        
+        var beanImage: SKSpriteNode!
+        switch self.color {
+        case .green:
+            beanImage = createBean(beanSize: beanSize, bodyImage: "green_body_circle", faceImage: "face_a")
+        case .purple:
+            beanImage = createBean(beanSize: beanSize, bodyImage: "purple_body_circle", faceImage: "face_b")
+        case .red:
+            beanImage = createBean(beanSize: beanSize, bodyImage: "red_body_circle", faceImage: "face_c")
+        case .yellow:
+            beanImage = createBean(beanSize: beanSize, bodyImage: "yellow_body_circle", faceImage: "face_d")
+        default:
+            print("Unknown color")
+        }
+        self.shape.addChild(beanImage) // Add the image node to the scene
 
-        self.beanImage = SKShapeNode(circleOfRadius: Double(cellSize) / 2)
-        self.beanImage.position = CGPoint(x:0, y:0)
-        self.beanImage.strokeColor = SKColor.black
-        self.beanImage.lineWidth = 3
-        self.beanImage.fillColor = color
-        self.shape.addChild(self.beanImage)
+//        self.beanImage = SKShapeNode(circleOfRadius: Double(cellSize) / 2)
+//        self.beanImage.position = CGPoint(x:0, y:0)
+//        self.beanImage.strokeColor = SKColor.black
+//        self.beanImage.lineWidth = 3
+//        self.beanImage.fillColor = color
+//        self.shape.addChild(self.beanImage)
         
 
         if showNumber {
@@ -74,21 +89,33 @@ class Bean {
     }
     
     func animationBeforeRemoved() {
-        var animationActions = [SKAction]()
-        animationActions.append(SKAction.run {
-            self.beanImage.fillColor = SKColor.white
-        })
-        animationActions.append(SKAction.wait(forDuration: 0.05))
-        animationActions.append(SKAction.run {
-            self.beanImage.fillColor = self.color
-        })
-        animationActions.append(SKAction.wait(forDuration: 0.05))
         
-        var animationSequence = SKAction.sequence(animationActions)
+        let shakeLeft = SKAction.move(by: CGVector(dx: 6, dy: 6), duration: 0.05)
+        let shakeRight = SKAction.move(by: CGVector(dx: -6, dy: -6), duration: 0.05)
+        
+        var animationActions = [shakeLeft, shakeRight]
+        let animationSequence = SKAction.sequence(animationActions)
         let repeatAnimationSequence = SKAction.repeatForever(animationSequence)
-        self.beanImage.run(repeatAnimationSequence)
-        
+        self.shape.run(repeatAnimationSequence)
     }
+}
+func createBean(beanSize: CGSize, bodyImage: String, faceImage: String) -> SKSpriteNode {
+    let body = SKSpriteNode(imageNamed: bodyImage)
+    body.position = CGPoint(x: 0, y: 0)
+    body.size = beanSize
+    body.zPosition = 1
+    
+    let face = SKSpriteNode(imageNamed: faceImage)
+    face.position = CGPoint(x: 0, y: 0)
+    face.size = beanSize
+    face.size = CGSize(
+        width: beanSize.width / 1.7,
+        height: beanSize.width / 1.7
+    )
+    face.zPosition = 2
+    body.addChild(face)
+    
+    return body
 }
 
 
