@@ -93,6 +93,7 @@ extension GameScene {
 //        print(node.name)
         if node.name == "New Game" && game.gameState == .endScreen {
             self.scene?.removeAllChildren()
+            game.gameOver = false
             let gameScene = GameScene.newGameScene()
             self.view?.presentScene(gameScene, transition: SKTransition.fade(withDuration: 1.0))
         }
