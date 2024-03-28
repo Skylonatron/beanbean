@@ -271,8 +271,6 @@ class Game {
             }
             
             self.gameOver = true
-            
-            
         }
         
     }
