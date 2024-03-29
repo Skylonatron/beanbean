@@ -25,24 +25,36 @@ class cpuController {
                         let cellBeanColor = cell.bean?.color
                         let cellXPosition = cell.shape.position.x
                         let upCell = cell.getUpCell(grid: grid)
+                        let rightCell = cell.getRightCell(grid: grid)
+                        let leftCell = cell.getLeftCell(grid: grid)
                         let mainBeanCell = beanPod.mainBean.getCell(grid: grid)
                         let mainBeanXPosition = beanPod.mainBean.shape.position.x
                         let sideBeanXPosition = beanPod.sideBean.shape.position.x
                         if cellBeanColor == mainBeanColor{
                             if upCell?.bean == nil{
-//                                moveLeft = cellXPosition < beanPod.mainBean.shape.position.x
-//                                moveRight = cellXPosition > beanPod.mainBean.shape.position.x
-//                                break
                                 let moveDistance = Int(cellXPosition - mainBeanXPosition) / grid.cellSize
+                                return moveDistance
+                            }
+                            if rightCell?.bean == nil{
+                                let moveDistance = Int(cellXPosition - mainBeanXPosition) / grid.cellSize + 1
+                                return moveDistance
+                            }
+                            if leftCell?.bean == nil{
+                                let moveDistance = Int(cellXPosition - mainBeanXPosition) / grid.cellSize - 1
                                 return moveDistance
                             }
                         }
                         if cellBeanColor == sideBeanColor{
                             if upCell?.bean == nil{
-//                                moveLeft = cellXPosition < beanPod.sideBean.shape.position.x
-//                                moveRight = cellXPosition > beanPod.sideBean.shape.position.x
-//                                break
                                 let moveDistance = Int(cellXPosition - sideBeanXPosition) / grid.cellSize
+                                return moveDistance
+                            }
+                            if rightCell?.bean == nil{
+                                let moveDistance = Int(cellXPosition - sideBeanXPosition) / grid.cellSize + 1
+                                return moveDistance
+                            }
+                            if leftCell?.bean == nil{
+                                let moveDistance = Int(cellXPosition - sideBeanXPosition) / grid.cellSize - 1
                                 return moveDistance
                             }
                         }
