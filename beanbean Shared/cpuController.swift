@@ -21,15 +21,16 @@ class cpuController {
             for row in (0..<grid.rowCount).reversed(){
                 for column in 0..<grid.columnCount{
                     if let cell = grid.cells[column]?[row]{
-                        print(cell.shape.position)
+//                        print(cell.shape.position)
                         if cell.bean != nil{
                             let cellBeanColor = cell.bean?.color
                             let cellXPosition = cell.shape.position.x
-                            if cellBeanColor == mainBeanColor{
+                            let upCell = beanPod.mainBean.getCell(grid: grid).getUpCell(grid: grid)
+                            if cellBeanColor == mainBeanColor && upCell?.bean != nil{
                                 moveLeft = cellXPosition < beanPod.mainBean.shape.position.x
                                 break
                             }
-                            if cellBeanColor == mainBeanColor{
+                            if cellBeanColor == mainBeanColor && upCell?.bean != nil{
                                 moveRight = cellXPosition > beanPod.mainBean.shape.position.x
                                 break
                             }
