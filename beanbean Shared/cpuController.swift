@@ -24,11 +24,11 @@ class cpuController {
             beanPod.moveRight(grid: grid)
         }
         
-//                if clockwiseRotation {
-//                    beanPod.spinPod(grid: grid, clockWise: true)
-//                }
-//                else{
-//                    beanPod.spinPod(grid: grid, clockWise: false)
-//                }
+        if clockwiseRotation {
+            beanPod.spinPod(grid: grid, clockWise: true)
+        }
+        else{
+            beanPod.spinPod(grid: grid, clockWise: false)
+        }
     }
 }
