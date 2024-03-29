@@ -74,7 +74,7 @@ class Game {
         case .active:
             //handle cpu controls
             if useCPUControls {
-                cpuController.applyMove(grid: grid, beanPod: beanPod)
+                cpuController.applyMove(grid: grid, beanPod: beanPod, game: self)
             }
             if self.fastMovement {
                 self.movementSpeed = settings.movement.fastVerticalSpeed
