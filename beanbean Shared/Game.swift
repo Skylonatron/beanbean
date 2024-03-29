@@ -39,7 +39,7 @@ class Game {
     var bounds: CGRect
     var gameOver = false
     var cpuController: cpuController
-    var useCPUControls: Bool = true
+    var useCPUControls: Bool = false
     
     // ios movement
     var initialTouch: CGPoint = CGPoint.zero
@@ -72,6 +72,23 @@ class Game {
     func update() {
         switch gameState {
         case .active:
+            //handle cpu controls
+            if useCPUControls {
+                let (moveLeft, clockwiseRotation) = cpuController.getNextMove(grid: grid, beanPod: beanPod)
+                if moveLeft {
+                    beanPod.moveLeft(grid: grid)
+                } else {
+                    beanPod.moveRight(grid: grid)
+                }
+                
+//                if clockwiseRotation {
+//                    beanPod.spinPod(grid: grid, clockWise: true)
+//                }
+//                else{
+//                    beanPod.spinPod(grid: grid, clockWise: false)
+//                }
+                
+            }
             if self.fastMovement {
                 self.movementSpeed = settings.movement.fastVerticalSpeed
             } else {
@@ -98,23 +115,7 @@ class Game {
                     beanPod.totalTimeNil = 0
                 }
             }
-            //handle cpu controls
-            if useCPUControls {
-                let (moveLeft, clockwiseRotation) = cpuController.getNextMove(grid: grid, beanPod: beanPod)
-                if moveLeft {
-                    beanPod.moveLeft(grid: grid)
-                } else {
-                    beanPod.moveRight(grid: grid)
-                }
-                
-                if clockwiseRotation {
-                    beanPod.spinPod(grid: grid, clockWise: true)
-                }
-                else{
-                    beanPod.spinPod(grid: grid, clockWise: false)
-                }
-                
-            }
+
 
             
             else {
