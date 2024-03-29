@@ -219,6 +219,7 @@ class Game {
                 
                 // Set its position to the starting cell's position
                 emptyRectangle.position = CGPoint(x: 0, y: 0)
+                emptyRectangle.zPosition = 4
                 // Add the rectangle node to the scene
                 self.scene.addChild(emptyRectangle)
                 
@@ -230,6 +231,7 @@ class Game {
                 topLabelNode.fontName = "ChalkboardSE-Bold"
                 topLabelNode.horizontalAlignmentMode = .center
                 topLabelNode.verticalAlignmentMode = .center
+                topLabelNode.zPosition = 5
                 emptyRectangle.addChild(topLabelNode)
                 
                 //add image
@@ -239,7 +241,7 @@ class Game {
                 sprite.setScale(0.5)
                 // Set position, scale, etc. for the sprite node
                 sprite.position = CGPoint(x: 0, y: 0)
-                sprite.zPosition = 4
+                sprite.zPosition = 5
                 
                 // Add the sprite node to the scene
                 emptyRectangle.addChild(sprite)
@@ -259,7 +261,7 @@ class Game {
                 labelNode.text = "New Game"
                 labelNode.name = "New Game"
                 labelNode.position = CGPoint(x: 0, y: 0) // Adjust position relative to shape node
-                labelNode.zPosition = 5
+                labelNode.zPosition = 6
                 button.zPosition = 5
                 labelNode.fontColor = .black
                 labelNode.fontSize = 25
