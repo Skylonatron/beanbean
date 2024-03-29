@@ -38,13 +38,15 @@ class Game {
     var scene: SKScene
     var bounds: CGRect
     var gameOver = false
+    var cpuController: cpuController
+    var useCPUControls: Bool = true
     
     // ios movement
     var initialTouch: CGPoint = CGPoint.zero
     var moveAmtX: CGFloat = 0
     var moveAmtY: CGFloat = 0
         
-    init(params: GameParams){
+    init(params: GameParams, cpuController: cpuController){
         self.scene = params.scene
         self.bounds = params.bounds
         
@@ -64,6 +66,7 @@ class Game {
                 params.scene.addChild(cell.shape)
             }
         }
+        self.cpuController = cpuController
     }
     
     func update() {
@@ -94,6 +97,23 @@ class Game {
                     beanPod.timeSinceNil = 0
                     beanPod.totalTimeNil = 0
                 }
+            }
+            //handle cpu controls
+            if useCPUControls {
+                let (moveLeft, clockwiseRotation) = cpuController.getNextMove(grid: grid, beanPod: beanPod)
+                if moveLeft {
+                    beanPod.moveLeft(grid: grid)
+                } else {
+                    beanPod.moveRight(grid: grid)
+                }
+                
+                if clockwiseRotation {
+                    beanPod.spinPod(grid: grid, clockWise: true)
+                }
+                else{
+                    beanPod.spinPod(grid: grid, clockWise: false)
+                }
+                
             }
 
             

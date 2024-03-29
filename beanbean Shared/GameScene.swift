@@ -48,7 +48,8 @@ class GameScene: SKScene {
             columnCount: columnCount,
             bounds: bounds
         )
-        self.game = Game(params: gameParams)
+        let cpuController = cpuController()
+        self.game = Game(params: gameParams, cpuController: cpuController)
     }
     
 
