@@ -74,20 +74,7 @@ class Game {
         case .active:
             //handle cpu controls
             if useCPUControls {
-                let (moveLeft, clockwiseRotation) = cpuController.getNextMove(grid: grid, beanPod: beanPod)
-                if moveLeft {
-                    beanPod.moveLeft(grid: grid)
-                } else {
-                    beanPod.moveRight(grid: grid)
-                }
-                
-//                if clockwiseRotation {
-//                    beanPod.spinPod(grid: grid, clockWise: true)
-//                }
-//                else{
-//                    beanPod.spinPod(grid: grid, clockWise: false)
-//                }
-                
+                cpuController.applyMove(grid: grid, beanPod: beanPod)
             }
             if self.fastMovement {
                 self.movementSpeed = settings.movement.fastVerticalSpeed
