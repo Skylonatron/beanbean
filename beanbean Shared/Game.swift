@@ -39,7 +39,7 @@ class Game {
     var bounds: CGRect
     var gameOver = false
     var cpuController: cpuController
-    var useCPUControls: Bool = false
+    var useCPUControls: Bool = true
     
     // ios movement
     var initialTouch: CGPoint = CGPoint.zero
@@ -383,27 +383,27 @@ class Game {
     
     func keyDown(event: NSEvent) {
         //      2 is D
-        if event.keyCode == 2 {
+        if event.keyCode == 2 && !useCPUControls {
             beanPod.moveRight(grid: grid)
         }
         
         //      0 is A
-        if event.keyCode == 0 {
+        if event.keyCode == 0 && !useCPUControls  {
             beanPod.moveLeft(grid: grid)
         }
         //      1 is S
-        if event.keyCode == 1 && beanPod.active {
+        if event.keyCode == 1 && beanPod.active && !useCPUControls  {
             self.fastMovement = true
         }
         
         
         //      126 is up arrow
-        if event.keyCode == 126 {
+        if event.keyCode == 126 && !useCPUControls  {
             self.beanPod.spinPod(grid: self.grid, clockWise: false)
         }
         
         //      125 is down arrow
-        if event.keyCode == 125 {
+        if event.keyCode == 125 && !useCPUControls  {
             self.beanPod.spinPod(grid: self.grid, clockWise: true)
         }
     }
