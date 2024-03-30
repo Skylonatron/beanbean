@@ -6,7 +6,6 @@
 //sss
 
 import SpriteKit
-//import UIKit
 
 class HomeScene: SKScene {
     
@@ -95,3 +94,23 @@ extension HomeScene {
 }
 #endif
 
+#if os(iOS) || os(tvOS)
+
+extension HomeScene {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard let touch = touches.first else { return }
+        
+        let touchLocation = touch.location(in: self)
+        let node = self.atPoint(touchLocation)
+        
+        // Check if touch intersects with the node's frame
+        if node.name == "Solo" {
+            let gameScene = GameScene.newGameScene(mode: .single)
+            self.view?.presentScene(gameScene, transition: SKTransition.doorsOpenHorizontal(withDuration: 1.0))
+        }
+    }
+}
+
+
+
+#endif

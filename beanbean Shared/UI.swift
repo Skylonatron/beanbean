@@ -13,7 +13,7 @@ func outline(width: CGFloat, height: CGFloat, lineWidth: CGFloat) -> SKShapeNode
         height: height
     ))
     outline.fillColor = .white
-    outline.strokeColor = NSColor.darkGray
+    outline.strokeColor = .darkGray
     outline.lineWidth = lineWidth
     
     return outline
