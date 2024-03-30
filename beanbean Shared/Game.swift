@@ -6,6 +6,7 @@
 //
 
 import SpriteKit
+import GameKit
 
 enum GameState {
     case active
@@ -25,7 +26,7 @@ struct GameParams {
 }
 
 class Game {
-    
+    var num: Int!
     var gameState: GameState = .new
     var beans : [Bean] = []
     var cellsToExplode: [Cell] = []
@@ -43,6 +44,7 @@ class Game {
     var initialTouch: CGPoint = CGPoint.zero
     var moveAmtX: CGFloat = 0
     var moveAmtY: CGFloat = 0
+    var scoreLabel: SKLabelNode!
         
     init(params: GameParams){
         self.scene = params.scene
@@ -50,6 +52,18 @@ class Game {
         
         self.score = Score(bounds: params.bounds)
         self.scene.addChild(score.scoreOutline)
+        
+        self.scoreLabel = SKLabelNode(text: "temp")
+        scoreLabel.position = CGPoint(x: -params.bounds.size.width / 2, y: params.bounds.size.height / 4)
+        scoreLabel.fontName = "Arial"
+        scoreLabel.fontSize = 42
+        scoreLabel.fontColor = .systemPink
+        self.scene.addChild(scoreLabel)
+        
+        Task {
+            await loadLeaderboard()
+        }
+        
         
         self.grid = Grid(
             rowCount: params.rowCount,
@@ -198,6 +212,7 @@ class Game {
 //            return
             
             self.score.sumFullChain()
+            self.submitScoreToLeaderboard(score: Int(self.score.numNuisanceBeans))
             self.score.reset()
             generateNewBeans(showNumber: settings.debug.showGroupNumber)
             setGameState(state: .active)
@@ -308,6 +323,31 @@ class Game {
         
         self.beanPod = BeanPod(activeBean: mainBean, sideBean: sideBean)
 
+    }
+    
+    func loadLeaderboard() async {
+        let leaderboards = try! await GKLeaderboard.loadLeaderboards(IDs: ["BestCombo"])
+        
+        var allPlayers = try! await leaderboards.first?.loadEntries(for: .global, timeScope: .allTime, range: NSRange(1...5))
+        
+        for x in allPlayers!.1 {
+            self.scoreLabel.text = "\(x.player.alias): \(x.score)"
+        }
+        
+
+
+    }
+    
+    func submitScoreToLeaderboard(score: Int) {
+        if GKLocalPlayer.local.isAuthenticated {
+            
+            GKLeaderboard.loadLeaderboards(IDs:["BestCombo"]) { (fetchedLBs, error) in
+                guard let lb = fetchedLBs?.first else { return }
+                guard let endDate = lb.startDate?.addingTimeInterval(lb.duration), endDate > Date() else { return }
+                lb.submitScore(score, context: 0, player: GKLocalPlayer.local) { error in
+                }
+            }
+        }
     }
     
 #if os(iOS) || os(tvOS)

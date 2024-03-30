@@ -81,7 +81,7 @@ class HomeScene: SKScene {
 #if os(OSX)
 // Mouse-based event handling
 extension HomeScene {
-
+    
     override func mouseDown(with event: NSEvent) {
         // for debugging you can click on a cell and see if there is a bean there
         let location = event.location(in: self)
@@ -89,12 +89,8 @@ extension HomeScene {
         if node.name == "Solo" {
             let gameScene = GameScene.newGameScene(mode: .single)
             self.view?.presentScene(gameScene, transition: SKTransition.doorsOpenVertical(withDuration: 1.0))
-//            SKTransition.doorsCloseVertical(withDuration: 1.0)
-
-//            GameViewController.viewDidLoad(GameViewController)
+            
         }
-//        let cell = self.grid.getCell(x: location.x + CGFloat(self.grid.cellSize / 2), y: location.y + CGFloat(self.grid.cellSize / 2))
-//        print(cell?.bean)
     }
 }
 #endif

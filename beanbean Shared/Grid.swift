@@ -27,15 +27,7 @@ class Grid {
         self.outline.lineWidth = 8
         
         
-        
-//        self.outline.
-//        self.outline.color = [SKColor blackColor]
-//        self.outline.alpha = .25;  // make shadow partly transparent
-                
-        
-        
-        
-        self.offsetLeft = CGFloat((columnCount + 1) / 2) * CGFloat(cellSize) - CGFloat(cellSize) / 2
+        self.offsetLeft = CGFloat((columnCount + 1) / 2) * CGFloat(cellSize) - (CGFloat(cellSize) / 2)
         self.offsetDown = CGFloat((rowCount + 1) / 2) * CGFloat(cellSize)
         self.cellSize = cellSize
         self.columnCount = columnCount
