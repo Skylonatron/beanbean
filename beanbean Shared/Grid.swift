@@ -26,7 +26,6 @@ class Grid {
         self.outline.strokeColor = .darkGray
         self.outline.lineWidth = 8
         
-        
         self.offsetLeft = CGFloat((columnCount + 1) / 2) * CGFloat(cellSize) - (CGFloat(cellSize) / 2)
         self.offsetDown = CGFloat((rowCount + 1) / 2) * CGFloat(cellSize)
         self.cellSize = cellSize

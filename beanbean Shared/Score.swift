@@ -62,6 +62,8 @@ class Score {
     var scoreLabel: SKLabelNode!
     var nuisanceLabel: SKLabelNode!
     var scoreOutline: SKShapeNode!
+    var highScoreOutline: SKShapeNode!
+    var highScores: SKLabelNode!
     
     init(bounds: CGRect){
         // Initialize the score label
@@ -88,6 +90,26 @@ class Score {
         scoreLabel.verticalAlignmentMode = .bottom
         scoreOutline.addChild(nuisanceLabel)
         
+        highScoreOutline = outline(width: bounds.size.width / 2, height: bounds.size.height, lineWidth: 8)
+        highScoreOutline.position.x = bounds.size.width / 1.75
+        highScoreOutline.position.y = -bounds.size.height / 8
+        
+        let highScoreText = SKLabelNode(text: "High Scores")
+        highScoreText.fontName = "Arial"
+        highScoreText.fontSize = 42
+        highScoreText.fontColor = .black
+        highScoreText.position = CGPoint(x: 0, y: highScoreOutline.frame.height / 2.5)
+        highScoreText.horizontalAlignmentMode = .center
+        highScoreOutline.addChild(highScoreText)
+
+        self.highScores = SKLabelNode(text: "Loading...")
+        self.highScores .numberOfLines = 5
+        self.highScores .lineBreakMode = .byWordWrapping
+        self.highScores.fontName = "Arial"
+        self.highScores.fontSize = 26
+        self.highScores.fontColor = .black
+        highScoreOutline.addChild(self.highScores)
+
     }
     
     func calculateChainStep(cellsToExplode: [Cell]) {

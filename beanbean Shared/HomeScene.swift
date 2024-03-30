@@ -88,7 +88,7 @@ extension HomeScene {
         let node = self.atPoint(location)
         if node.name == "Solo" {
             let gameScene = GameScene.newGameScene(mode: .single)
-            self.view?.presentScene(gameScene, transition: SKTransition.doorsOpenVertical(withDuration: 1.0))
+            self.view?.presentScene(gameScene, transition: SKTransition.doorsOpenHorizontal(withDuration: 1.0))
             
         }
     }

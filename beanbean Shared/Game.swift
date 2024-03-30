@@ -44,7 +44,6 @@ class Game {
     var initialTouch: CGPoint = CGPoint.zero
     var moveAmtX: CGFloat = 0
     var moveAmtY: CGFloat = 0
-    var scoreLabel: SKLabelNode!
         
     init(params: GameParams){
         self.scene = params.scene
@@ -52,13 +51,7 @@ class Game {
         
         self.score = Score(bounds: params.bounds)
         self.scene.addChild(score.scoreOutline)
-        
-        self.scoreLabel = SKLabelNode(text: "temp")
-        scoreLabel.position = CGPoint(x: -params.bounds.size.width / 2, y: params.bounds.size.height / 4)
-        scoreLabel.fontName = "Arial"
-        scoreLabel.fontSize = 42
-        scoreLabel.fontColor = .systemPink
-        self.scene.addChild(scoreLabel)
+        self.scene.addChild(score.highScoreOutline)
         
         Task {
             await loadLeaderboard()
@@ -328,11 +321,13 @@ class Game {
     func loadLeaderboard() async {
         let leaderboards = try! await GKLeaderboard.loadLeaderboards(IDs: ["BestCombo"])
         
-        var allPlayers = try! await leaderboards.first?.loadEntries(for: .global, timeScope: .allTime, range: NSRange(1...5))
+        let allPlayers = try! await leaderboards.first?.loadEntries(for: .global, timeScope: .allTime, range: NSRange(1...5))
         
-        for x in allPlayers!.1 {
-            self.scoreLabel.text = "\(x.player.alias): \(x.score)"
-        }
+        var text: String = ""
+                for x in allPlayers!.1 {
+                    text += "\(x.player.alias): \(x.score)\n"
+                }
+        self.score.highScores.text = text
         
 
 
