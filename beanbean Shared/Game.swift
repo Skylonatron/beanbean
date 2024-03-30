@@ -23,6 +23,7 @@ struct GameParams {
     let rowCount: Int
     let columnCount: Int
     let bounds: CGRect
+    let controller: Controller
 }
 
 class Game {
@@ -38,6 +39,7 @@ class Game {
     var fastMovement: Bool = false
     var scene: SKScene
     var bounds: CGRect
+    let controller: Controller
     var gameOver = false
     
     // ios movement
@@ -52,6 +54,7 @@ class Game {
         self.score = Score(bounds: params.bounds)
         self.scene.addChild(score.scoreOutline)
         self.scene.addChild(score.highScoreOutline)
+        self.controller = params.controller
         
         Task {
             await loadLeaderboard()
@@ -328,9 +331,6 @@ class Game {
                     text += "\(x.player.alias): \(x.score)\n"
                 }
         self.score.highScores.text = text
-        
-
-
     }
     
     func submitScoreToLeaderboard(score: Int) {
@@ -390,38 +390,28 @@ class Game {
 #if os(OSX)
     func keyUp(event: NSEvent) {
         //      1 is S
-        if event.keyCode == 1 {
+        if event.keyCode == self.controller.down {
             self.fastMovement = false
         }
     }
     
     func keyDown(event: NSEvent) {
-        //      2 is D
-        if event.keyCode == 2 {
+        switch event.keyCode {
+        case self.controller.right:
             beanPod.moveRight(grid: grid)
-        }
-        
-        //      0 is A
-        if event.keyCode == 0 {
+        case self.controller.left:
             beanPod.moveLeft(grid: grid)
-        }
-        //      1 is S
-        if event.keyCode == 1 && beanPod.active {
-            self.fastMovement = true
-        }
-        
-        
-        //      126 is up arrow
-        if event.keyCode == 126 {
-            self.beanPod.spinPod(grid: self.grid, clockWise: false)
-        }
-        
-        //      125 is down arrow
-        if event.keyCode == 125 {
+        case self.controller.down:
+            if beanPod.active {
+                self.fastMovement = true
+            }
+        case self.controller.spinClockwise:
             self.beanPod.spinPod(grid: self.grid, clockWise: true)
+        case self.controller.spinCounter:
+            self.beanPod.spinPod(grid: self.grid, clockWise: false)
+        default:
+            break
         }
     }
-    
-    
 #endif
 }

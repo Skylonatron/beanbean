@@ -44,13 +44,22 @@ class GameScene: SKScene {
         #endif
         let columnCount = 5
         let rowCount = 12
+        let controller = Controller(
+            up: Keycode.w,
+            down: Keycode.s,
+            right: Keycode.d,
+            left: Keycode.a,
+            spinClockwise: Keycode.upArrow,
+            spinCounter: Keycode.downArrow
+        )
         
         let gameParams = GameParams(
             scene: self,
             cellSize: cellSize,
             rowCount: rowCount,
             columnCount: columnCount,
-            bounds: bounds
+            bounds: bounds,
+            controller: controller
         )
         self.game = Game(params: gameParams)
     }
