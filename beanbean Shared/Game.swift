@@ -49,8 +49,7 @@ class Game {
         self.bounds = params.bounds
         
         self.score = Score(bounds: params.bounds)
-        self.scene.addChild(score.scoreLabel)
-        self.scene.addChild(score.nuisanceLabel)
+        self.scene.addChild(score.scoreOutline)
         
         self.grid = Grid(
             rowCount: params.rowCount,
@@ -64,6 +63,7 @@ class Game {
                 params.scene.addChild(cell.shape)
             }
         }
+        params.scene.addChild(self.grid.outline)
     }
     
     func update() {

@@ -23,49 +23,44 @@ class HomeScene: SKScene {
     }
     
     func setUpScene() {
-        let bounds = self.view!.bounds
-        print(bounds.width)
-        print(self.size.width)
-      
+        let outline = outline(
+            width: self.size.width / 2,
+            height: self.size.height / 2,
+            lineWidth: 8
+        )
+        self.addChild(outline)
+
+        let soloButton = addButton(outlineFrame: outline.frame, name: "Solo")
+        soloButton.position = CGPoint(x: 0, y: frame.width / 20)
+        outline.addChild(soloButton)
+        
+        let multiButton = addButton(outlineFrame: outline.frame, name: "Multi")
+        multiButton.position = CGPoint(x: 0, y: -frame.width / 20)
+        outline.addChild(multiButton)
+    }
+    
+    func addButton(outlineFrame: CGRect, name: String) -> SKShapeNode {
         let button = SKShapeNode(rectOf: CGSize(
-            width: 100,
-            height: 50
+            width: frame.width / 10,
+            height: frame.height / 10
         ))
-        button.position = CGPoint(x: self.size.width / 2, y: self.size.width / 2)
+        button.position = CGPoint(x: 0, y: 0)
         button.fillColor = SKColor.white
-        button.strokeColor = SKColor.green
-        button.lineWidth = 4
-        button.name = "Start"
+        button.strokeColor = SKColor.black
+        button.lineWidth = 8
+        button.name = name
         
         let labelNode = SKLabelNode()
-        labelNode.text = "Start"
-        labelNode.name = "Start"
+        labelNode.text = name
+        labelNode.name = name
         labelNode.position = CGPoint(x: 0, y: 0) // Adjust position relative to shape node
         labelNode.fontColor = .black
-        labelNode.fontSize = 25
+        labelNode.fontSize = 40
         labelNode.fontName = "ChalkboardSE-Bold"
         labelNode.horizontalAlignmentMode = .center // Center horizontally
         labelNode.verticalAlignmentMode = .center // Center vertically
         button.addChild(labelNode) // Add label as child of shape node
-        self.addChild(button)
-        
-        let columnCount = 5
-        let rowCount = 12
-        var cellSize = Int(bounds.size.width / 11)
-        
-        let gameParams = GameParams(
-            scene: self,
-            cellSize: cellSize,
-            rowCount: rowCount,
-            columnCount: columnCount,
-            bounds: bounds
-        )
-        self.game = Game(params: gameParams)
-    
-    }
-    
-    func addButton() {
-       
+        return button
     }
     
     
@@ -91,10 +86,10 @@ extension HomeScene {
         // for debugging you can click on a cell and see if there is a bean there
         let location = event.location(in: self)
         let node = self.atPoint(location)
-        print(node.name)
-        if node.name == "Start" {
-            let gameScene = GameScene.newGameScene()
-            self.view?.presentScene(gameScene, transition: SKTransition.fade(withDuration: 1.0))
+        if node.name == "Solo" {
+            let gameScene = GameScene.newGameScene(mode: .single)
+            self.view?.presentScene(gameScene, transition: SKTransition.doorsOpenVertical(withDuration: 1.0))
+//            SKTransition.doorsCloseVertical(withDuration: 1.0)
 
 //            GameViewController.viewDidLoad(GameViewController)
         }

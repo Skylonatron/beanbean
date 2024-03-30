@@ -61,23 +61,32 @@ class Score {
     
     var scoreLabel: SKLabelNode!
     var nuisanceLabel: SKLabelNode!
+    var scoreOutline: SKShapeNode!
     
     init(bounds: CGRect){
         // Initialize the score label
+        scoreOutline = outline(width: bounds.size.width / 2, height: bounds.size.height / 5, lineWidth: 8)
+        scoreOutline.position.x = bounds.size.width / 1.75
+        scoreOutline.position.y = bounds.size.height / 1.7
+        
         scoreLabel = SKLabelNode(text: "Score: 0")
-        scoreLabel.position = CGPoint(x: bounds.size.width / 2, y: bounds.size.height / 2)
+        scoreLabel.position = CGPoint(x: -scoreOutline.frame.width / 2.2, y: scoreOutline.frame.height / 12)
         scoreLabel.fontName = "Arial"
         scoreLabel.fontSize = 42
-        scoreLabel.fontColor = .green
+        scoreLabel.fontColor = .black
+        scoreLabel.horizontalAlignmentMode = .left
+        scoreLabel.verticalAlignmentMode = .bottom
+        scoreOutline.addChild(scoreLabel)
         
         // Initialize the nuisance label
         nuisanceLabel = SKLabelNode(text: "Beans Sent: 0")
-        nuisanceLabel.position = CGPoint(x: bounds.size.width / 2, y: bounds.size.height / 2 - 50)
+        nuisanceLabel.position = CGPoint(x: -scoreOutline.frame.width / 2.2, y: -scoreOutline.frame.height / 4)
         nuisanceLabel.fontName = "Arial"
         nuisanceLabel.fontSize = 42
-        nuisanceLabel.fontColor = .green
-        
-        
+        nuisanceLabel.fontColor = .black
+        nuisanceLabel.horizontalAlignmentMode = .left
+        scoreLabel.verticalAlignmentMode = .bottom
+        scoreOutline.addChild(nuisanceLabel)
         
     }
     

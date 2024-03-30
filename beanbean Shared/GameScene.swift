@@ -5,7 +5,13 @@
 //  Created by Skyler Jomes and Salmon Willemsum on 3/7/24.
 //sss
 
+
 import SpriteKit
+
+enum GameMode {
+    case single
+    case localMultiplayer
+}
 
 class GameScene: SKScene {
         
@@ -16,7 +22,7 @@ class GameScene: SKScene {
     
     var game: Game!
     
-    class func newGameScene() -> GameScene {
+    class func newGameScene(mode: GameMode) -> GameScene {
         // Load 'GameScene.sks' as an SKScene.
 //        let scene = GameScene()
         guard let scene = SKScene(fileNamed: "GameScene") as? GameScene else {
@@ -31,8 +37,6 @@ class GameScene: SKScene {
     }
     
     func setUpScene() {
-        print(self.anchorPoint)
-        
         let bounds = self.view!.bounds
         var cellSize = Int(bounds.size.width / 11)
         #if os(iOS)
@@ -94,7 +98,7 @@ extension GameScene {
         if node.name == "New Game" && game.gameState == .endScreen {
             self.scene?.removeAllChildren()
             game.gameOver = false
-            let gameScene = GameScene.newGameScene()
+            let gameScene = GameScene.newGameScene(mode: .single)
             self.view?.presentScene(gameScene, transition: SKTransition.fade(withDuration: 1.0))
         }
     }

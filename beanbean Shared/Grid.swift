@@ -9,19 +9,40 @@ import SpriteKit
 
 class Grid {
     var cells: [Int: [Int: Cell]] = [:]
+    
     var offsetLeft: CGFloat
     var offsetDown: CGFloat
     var cellSize: Int
     var columnCount: Int
     var rowCount: Int
+    var outline: SKShapeNode
     
     init(rowCount: Int, columnCount: Int, cellSize: Int, showCells: Bool, showRowColumn: Bool) {
+        
+        self.outline = SKShapeNode(rectOf: CGSize(
+            width: cellSize * (columnCount + 1) + 8,
+            height: cellSize * (rowCount + 1) + 4
+        ))
+        self.outline.strokeColor = .darkGray
+        self.outline.lineWidth = 8
+        
+        
+        
+//        self.outline.
+//        self.outline.color = [SKColor blackColor]
+//        self.outline.alpha = .25;  // make shadow partly transparent
+                
+        
+        
         
         self.offsetLeft = CGFloat((columnCount + 1) / 2) * CGFloat(cellSize) - CGFloat(cellSize) / 2
         self.offsetDown = CGFloat((rowCount + 1) / 2) * CGFloat(cellSize)
         self.cellSize = cellSize
         self.columnCount = columnCount
         self.rowCount = rowCount
+        
+//        self.outline.position.x = -self.offsetLeft
+//        self.outline.position.y = -self.offsetDown
                 
         for column in 0...columnCount {
             cells[column] = [Int: Cell]()
