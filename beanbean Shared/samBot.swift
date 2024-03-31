@@ -1,5 +1,5 @@
 //
-//  cpuController.swift
+//  samBot.swift
 //  beanbean
 //
 //  Created by Sam Willenson on 3/28/24.
@@ -7,18 +7,28 @@
 
 import SpriteKit
 
-class cpuController {
+class samBot {
     var moveLeft = false
     var moveRight = false
     var rotateClockwise = true
-//    var grid: Grid!
-    func samBot(grid: Grid, beanPod: BeanPod) -> (Int) {
+//    var grid: Grid
+    
+//    init(grid: Grid) {
+//        self.grid = grid
+//    }
+    
+    func decideMove(grid: Grid, beanPod: BeanPod) -> (Int) {
         // Implement logic to determine the next move for the AI
         if beanPod.active{
             let mainBeanColor = beanPod.mainBean.color
             let sideBeanColor = beanPod.sideBean.color
+            
+            let foundGroupsLessThanThree = findGroupsLessThanThree(grid: grid, beanPod: beanPod)
+            
             moveLeft = false
             moveRight = false
+            
+
             for row in (0..<grid.rowCount).reversed(){
                 for column in 0..<grid.columnCount{
                     if let cell = grid.cells[column]?[row]{
@@ -104,7 +114,7 @@ class cpuController {
     }
     
     func applyMove(grid: Grid, beanPod: BeanPod, game: Game){
-        let moveDistance = self.samBot(grid: grid, beanPod: beanPod)
+        let moveDistance = self.decideMove(grid: grid, beanPod: beanPod)
         if moveDistance != 0{
 //            print(moveDistance)
             if moveDistance > 0{
@@ -126,6 +136,18 @@ class cpuController {
 //        if moveRight{
 //            beanPod.moveRight(grid: grid)
         }
+    
+    func findGroupsLessThanThree(grid: Grid, beanPod: BeanPod) -> Bool {
+        var foundGroups = false
+        
+        for cell in grid.getCellsWithBeans(){
+            if cell.group.count < 3 && cell.bean?.color == beanPod.mainBean.color{
+                foundGroups = true
+                break
+            }
+        }
+        return foundGroups
+    }
         
         
 //        if clockwiseRotation {

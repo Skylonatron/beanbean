@@ -38,7 +38,7 @@ class Game {
     var scene: SKScene
     var bounds: CGRect
     var gameOver = false
-    var cpuController: cpuController
+    var samBot: samBot
     var useCPUControls: Bool = true
     
     // ios movement
@@ -46,7 +46,7 @@ class Game {
     var moveAmtX: CGFloat = 0
     var moveAmtY: CGFloat = 0
         
-    init(params: GameParams, cpuController: cpuController){
+    init(params: GameParams, samBot: samBot){
         self.scene = params.scene
         self.bounds = params.bounds
         
@@ -66,7 +66,7 @@ class Game {
                 params.scene.addChild(cell.shape)
             }
         }
-        self.cpuController = cpuController
+        self.samBot = samBot
     }
     
     func update() {
@@ -74,7 +74,7 @@ class Game {
         case .active:
             //handle cpu controls
             if useCPUControls {
-                cpuController.applyMove(grid: grid, beanPod: beanPod, game: self)
+                samBot.applyMove(grid: grid, beanPod: beanPod, game: self)
             }
             if self.fastMovement {
                 self.movementSpeed = settings.movement.fastVerticalSpeed

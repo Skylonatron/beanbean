@@ -48,8 +48,8 @@ class GameScene: SKScene {
             columnCount: columnCount,
             bounds: bounds
         )
-        let cpuController = cpuController()
-        self.game = Game(params: gameParams, cpuController: cpuController)
+        let samBot = samBot()
+        self.game = Game(params: gameParams, samBot: samBot)
     }
     
 
