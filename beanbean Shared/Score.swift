@@ -10,7 +10,6 @@ import SpriteKit
 class Score {
     var beanPoints: Int = 0
     var bonusPoints: Int = 0
-    var chainCount: Int = 0
     var fullComboPoints: Int = 0
     var oldScore: Int = 0
     var colorBonusMap: [Int: Int] = [
@@ -58,6 +57,14 @@ class Score {
             nuisanceLabel.text = "Beans Sent: : \(self.nuisanceBeansInt)"
         }
     }
+    var chainCountLabel: SKLabelNode!
+    var chainCountLabelOutline: SKLabelNode!
+    var scene: SKScene?
+    var chainCount: Int = 0 {
+        didSet {
+            updateChainCountLabel()
+        }
+    }
     
     var scoreLabel: SKLabelNode!
     var nuisanceLabel: SKLabelNode!
@@ -65,7 +72,10 @@ class Score {
     var highScoreOutline: SKShapeNode!
     var highScores: SKLabelNode!
     
-    init(bounds: CGRect){
+    
+    init(bounds: CGRect, scene: SKScene){
+        self.scene = scene
+        
         // Initialize the score label
         scoreOutline = outline(width: bounds.size.width / 2, height: bounds.size.height / 5, lineWidth: 8)
         scoreOutline.position.x = bounds.size.width / 1.75
@@ -90,6 +100,7 @@ class Score {
         scoreLabel.verticalAlignmentMode = .bottom
         scoreOutline.addChild(nuisanceLabel)
         
+        
         highScoreOutline = outline(width: bounds.size.width / 2, height: bounds.size.height, lineWidth: 8)
         highScoreOutline.position.x = bounds.size.width / 1.75
         highScoreOutline.position.y = -bounds.size.height / 8
@@ -109,6 +120,12 @@ class Score {
         self.highScores.fontSize = 26
         self.highScores.fontColor = .black
         highScoreOutline.addChild(self.highScores)
+        
+
+        
+        highScoreOutline = outline(width: bounds.size.width / 2, height: bounds.size.height, lineWidth: 8)
+        highScoreOutline.position.x = bounds.size.width / 1.75
+        highScoreOutline.position.y = -bounds.size.height / 8
 
     }
     
@@ -215,6 +232,66 @@ class Score {
         }
         
         return chainPowerMap[count]!
+    }
+    func updateChainCountLabel() {
+        if self.chainCount > 1{
+            // Initialize the chain count label if it's nil
+            if chainCountLabel == nil {
+                chainCountLabel = SKLabelNode(text: "\(self.chainCount) chain!")
+                chainCountLabel?.position = CGPoint(x: 0, y: 0) // Adjust position if necessary
+                chainCountLabel?.fontName = "chalkduster"
+                chainCountLabel?.fontSize = 60
+                chainCountLabel?.fontColor = .black
+                chainCountLabel?.horizontalAlignmentMode = .center
+                chainCountLabel?.verticalAlignmentMode = .center
+                chainCountLabel?.zPosition = 10
+                
+//                chainCountLabelOutline = SKLabelNode(text: "\(self.chainCount) chain!")
+//                chainCountLabelOutline?.position = CGPoint(x: 1, y: 1)
+////                chainCountLabelOutline?.horizontalAlignmentMode = .center
+////                chainCountLabelOutline?.verticalAlignmentMode = .center
+//                chainCountLabelOutline?.fontName = chainCountLabel.fontName
+//                chainCountLabelOutline?.fontSize = chainCountLabel.fontSize + 1
+//                chainCountLabelOutline?.fontColor = .black // Outline color
+//                chainCountLabelOutline?.zPosition = chainCountLabel.zPosition - 1
+
+                
+                scene?.addChild(chainCountLabel)
+//                scene?.addChild(chainCountLabelOutline)
+            } else {
+                // Update the text if the label already exists
+                chainCountLabel?.text = "\(self.chainCount) chain!"
+//                chainCountLabelOutline?.text = "\(self.chainCount) chain!"
+            }
+
+            // Cancel any existing fade-out action
+            chainCountLabel?.removeAllActions()
+//            chainCountLabelOutline?.removeAllActions()
+            
+            // Create a new fade-out action
+            let fadeIn = SKAction.fadeIn(withDuration: 0.1)
+            let wait = SKAction.wait(forDuration: 0.3) // Adjusted wait duration
+            let fadeOut = SKAction.fadeOut(withDuration: 0.3)
+            let remove = SKAction.removeFromParent()
+            let sequence = SKAction.sequence([fadeIn, wait, fadeOut, remove])
+            
+            // Run the actions sequence
+            chainCountLabel?.run(sequence) {
+                // remove the label from the scene after fading out
+                self.chainCountLabel?.removeFromParent()
+                self.chainCountLabel = nil
+            }
+//            chainCountLabelOutline?.run(sequence) {
+//                // remove the label from the scene after fading out
+//                self.chainCountLabelOutline?.removeFromParent()
+//                self.chainCountLabelOutline = nil
+//            }
+        }
+        else{
+            return
+        }
+        
+        
     }
     
     //NP = nuisance points

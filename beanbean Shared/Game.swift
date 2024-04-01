@@ -51,7 +51,7 @@ class Game {
         self.scene = params.scene
         self.bounds = params.bounds
         
-        self.score = Score(bounds: params.bounds)
+        self.score = Score(bounds: params.bounds, scene: params.scene)
         self.scene.addChild(score.scoreOutline)
         self.scene.addChild(score.highScoreOutline)
         self.controller = params.controller
