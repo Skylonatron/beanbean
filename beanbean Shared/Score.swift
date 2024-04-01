@@ -120,12 +120,6 @@ class Score {
         self.highScores.fontSize = 26
         self.highScores.fontColor = .black
         highScoreOutline.addChild(self.highScores)
-        
-
-        
-        highScoreOutline = outline(width: bounds.size.width / 2, height: bounds.size.height, lineWidth: 8)
-        highScoreOutline.position.x = bounds.size.width / 1.75
-        highScoreOutline.position.y = -bounds.size.height / 8
 
     }
     
