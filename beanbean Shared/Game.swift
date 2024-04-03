@@ -24,6 +24,7 @@ struct GameParams {
     let columnCount: Int
     let bounds: CGRect
     let controller: Controller
+    let player: Int?
 }
 
 class Game {
@@ -60,13 +61,19 @@ class Game {
             await loadLeaderboard()
         }
         
+        var offsetLeft = 0
+        if params.player == 1 {
+            offsetLeft = params.cellSize * (params.columnCount + 1)
+        }
+        
         self.grid = Grid(
             rowCount: params.rowCount,
             columnCount: params.columnCount,
             extraTopRows: 2,
             cellSize: params.cellSize,
             showCells: settings.debug.showCells,
-            showRowColumn: settings.debug.showRowColumnNumbers
+            showRowColumn: settings.debug.showRowColumnNumbers,
+            offsetLeft: offsetLeft
         )
         for (_,cellColumn) in grid.cells {
             for (_, cell) in cellColumn {

@@ -19,8 +19,9 @@ class GameScene: SKScene {
     var initialTouch: CGPoint = CGPoint.zero
     var moveAmtX: CGFloat = 0
     var moveAmtY: CGFloat = 0
+    var gameMode: GameMode = .single
     
-    var game: Game!
+    var games: [Game] = []
     
     class func newGameScene(mode: GameMode) -> GameScene {
         // Load 'GameScene.sks' as an SKScene.
@@ -30,6 +31,7 @@ class GameScene: SKScene {
             abort()
         }
         
+        scene.gameMode = mode
         // Set the scale mode to scale to fit the window
         scene.scaleMode = .aspectFill
         
@@ -44,7 +46,7 @@ class GameScene: SKScene {
         #endif
         let columnCount = 5
         let rowCount = 12
-        let controller = Controller(
+        let controller1 = Controller(
             up: Keycode.w,
             down: Keycode.s,
             right: Keycode.d,
@@ -53,15 +55,44 @@ class GameScene: SKScene {
             spinCounter: Keycode.downArrow
         )
         
+        var player: Int?
+        if gameMode == .localMultiplayer {
+            player = 1
+            let controller2 = Controller(
+                up: Keycode.i,
+                down: Keycode.k,
+                right: Keycode.l,
+                left: Keycode.j,
+                spinClockwise: Keycode.semicolon,
+                spinCounter: Keycode.apostrophe
+            )
+            let gameParams = GameParams(
+                scene: self,
+                cellSize: cellSize,
+                rowCount: rowCount,
+                columnCount: columnCount,
+                bounds: bounds,
+                controller: controller2,
+                player: 2
+            )
+            
+            self.games.append(Game(params: gameParams))
+            
+        }
         let gameParams = GameParams(
             scene: self,
             cellSize: cellSize,
             rowCount: rowCount,
             columnCount: columnCount,
             bounds: bounds,
-            controller: controller
+            controller: controller1,
+            player: player
         )
-        self.game = Game(params: gameParams)
+        
+        self.games.append(Game(params: gameParams))
+        
+        
+        
     }
     
 
@@ -73,7 +104,9 @@ class GameScene: SKScene {
     
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
-        game.update()
+        for game in games {
+            game.update()
+        }
     }
 
 }
@@ -83,15 +116,21 @@ class GameScene: SKScene {
 extension GameScene {
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        game.touchesBegan(touches, with: event)
+        for game in games {
+            game.touchesBegan(touches, with: event)
+        }
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        game.touchesMoved(touches, with: event)
+        for game in games {
+            game.touchesMoved(touches, with: event)
+        }
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        game.touchesEnded(touches, with: event)
+        for game in games {
+            game.touchesEnded(touches, with: event)
+        }
     }
 }
 #endif
@@ -101,15 +140,15 @@ extension GameScene {
 extension GameScene {
 
     override func mouseDown(with event: NSEvent) {
-        let location = event.location(in: self)
-        let node = self.atPoint(location)
+//        let location = event.location(in: self)
+//        let node = self.atPoint(location)
 //        print(node.name)
-        if node.name == "New Game" && game.gameState == .endScreen {
-            self.scene?.removeAllChildren()
-            game.gameOver = false
-            let gameScene = GameScene.newGameScene(mode: .single)
-            self.view?.presentScene(gameScene, transition: SKTransition.fade(withDuration: 1.0))
-        }
+//        if node.name == "New Game" && game.gameState == .endScreen {
+//            self.scene?.removeAllChildren()
+//            game.gameOver = false
+//            let gameScene = GameScene.newGameScene(mode: .single)
+//            self.view?.presentScene(gameScene, transition: SKTransition.fade(withDuration: 1.0))
+//        }
     }
     override func mouseDragged(with event: NSEvent) {
     }
@@ -117,10 +156,14 @@ extension GameScene {
     override func mouseUp(with event: NSEvent) {
     }
     override func keyUp(with event: NSEvent) {
-        game.keyUp(event: event)
+        for game in games {
+            game.keyUp(event: event)
+        }
     }
     override func keyDown(with event: NSEvent) {
-        game.keyDown(event: event)
+        for game in games {
+            game.keyDown(event: event)
+        }
     }
 }
 #endif

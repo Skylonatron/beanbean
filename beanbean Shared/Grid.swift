@@ -18,7 +18,7 @@ class Grid {
     var extraTopRows: Int
     var outline: SKShapeNode
     
-    init(rowCount: Int, columnCount: Int, extraTopRows: Int, cellSize: Int, showCells: Bool, showRowColumn: Bool) {
+    init(rowCount: Int, columnCount: Int, extraTopRows: Int, cellSize: Int, showCells: Bool, showRowColumn: Bool, offsetLeft: Int) {
         
         self.outline = SKShapeNode(rectOf: CGSize(
             width: cellSize * (columnCount + 1) + 8,
@@ -26,8 +26,9 @@ class Grid {
         ))
         self.outline.strokeColor = .darkGray
         self.outline.lineWidth = 8
+        self.outline.position.x = CGFloat(-offsetLeft)
         
-        self.offsetLeft = CGFloat((columnCount + 1) / 2) * CGFloat(cellSize) - (CGFloat(cellSize) / 2)
+        self.offsetLeft = CGFloat((columnCount + 1) / 2) * CGFloat(cellSize) - (CGFloat(cellSize) / 2) + CGFloat(offsetLeft)
         self.offsetDown = CGFloat((rowCount + 1) / 2) * CGFloat(cellSize)
         self.cellSize = cellSize
         self.columnCount = columnCount

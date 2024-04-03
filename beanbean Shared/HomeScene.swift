@@ -90,6 +90,11 @@ extension HomeScene {
             self.view?.presentScene(gameScene, transition: SKTransition.doorsOpenHorizontal(withDuration: 1.0))
             
         }
+        if node.name == "Multi" {
+            let gameScene = GameScene.newGameScene(mode: .localMultiplayer)
+            self.view?.presentScene(gameScene, transition: SKTransition.doorsOpenHorizontal(withDuration: 1.0))
+            
+        }
     }
 }
 #endif
