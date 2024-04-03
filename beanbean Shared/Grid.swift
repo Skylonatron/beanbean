@@ -98,7 +98,7 @@ class Grid {
     }
     
     func getStartingCell() -> Cell? {
-        return cells[Int(self.columnCount / 2)]![self.rowCount + self.extraTopRows-1]
+        return cells[Int(self.columnCount / 2)]![self.rowCount + 1]
     }
     
 }

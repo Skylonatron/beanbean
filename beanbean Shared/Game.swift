@@ -199,7 +199,7 @@ class Game {
             self.beans = grid.getBeans()
             setGameState(state: .gravity)
         case .new:
-            if self.grid.getStartingCell()!.bean != nil {
+            if self.grid.getEndGameCell()!.bean != nil {
                 setGameState(state: .endScreen)
                 return
             }
