@@ -7,7 +7,7 @@
 
 import SpriteKit
 
-class Cell: Equatable{
+class Cell: Hashable{
     var shape: SKShapeNode
     var bean: Bean?
     var column: Int
@@ -15,6 +15,11 @@ class Cell: Equatable{
     var group: [Cell]
     var markForDelete: Bool = false
     
+    // Hashable implementation
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(self.column)
+        hasher.combine(self.row)
+    }
     
     init(cellSize: Int, x: CGFloat, y: CGFloat, column: Int, row: Int, show: Bool, showRowColumn: Bool) {
         self.shape = SKShapeNode(rectOf: CGSize(

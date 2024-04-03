@@ -37,6 +37,10 @@ class Bean {
         self.color = color
         
         var beanImage: SKSpriteNode!
+        
+        if color == .gray{
+            beanImage = createBean(beanSize: beanSize, bodyImage: "tile_grey", faceImage: "face_j")
+        }
         switch self.color {
         case .green:
             beanImage = createBean(beanSize: beanSize, bodyImage: "green_body_circle", faceImage: "face_a")
@@ -46,6 +50,7 @@ class Bean {
             beanImage = createBean(beanSize: beanSize, bodyImage: "red_body_circle", faceImage: "face_c")
         case .yellow:
             beanImage = createBean(beanSize: beanSize, bodyImage: "yellow_body_circle", faceImage: "face_d")
+            
         default:
             print("Unknown color")
         }
@@ -117,5 +122,7 @@ func createBean(beanSize: CGSize, bodyImage: String, faceImage: String) -> SKSpr
     
     return body
 }
+
+
 
 

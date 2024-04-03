@@ -15,6 +15,7 @@ enum GameState {
     case popGroups
     case new
     case endScreen
+    case dropNuisanceBeans
 }
 
 struct GameParams {
@@ -32,6 +33,7 @@ class Game {
     var gameState: GameState = .new
     var beans : [Bean] = []
     var cellsToExplode: [Cell] = []
+    var cellsToExplodeWithNuisance: [Cell] = []
     var grid : Grid!
     var beanPod: BeanPod!
     var score: Score!
@@ -166,25 +168,44 @@ class Game {
                 setGameState(state: .checkGroups)
             }
         case .checkGroups:
+            var nuisanceBeansToExplode: Set<Cell> = []
             for cell in grid.getCellsWithBeans() {
                 cell.mergeAllGroups(grid: grid)
             }
             for cell in grid.getCellsWithBeans() {
-                if cell.group.count >= 4 {
+                if cell.group.count >= 4 && cell.bean?.color != .gray{
                     for cell in cell.group {
                         cell.group = [cell]
                         self.cellsToExplode.append(cell)
+                        
+                        let adjacentCells = [
+                            cell.getLeftCell(grid: grid),
+                            cell.getUpCell(grid: grid),
+                            cell.getRightCell(grid: grid),
+                            cell.getDownCell(grid: grid)
+                        ]
+                        for adjacentCell in adjacentCells {
+                            let bean = adjacentCell?.bean
+                            if bean?.color == .gray {
+                                nuisanceBeansToExplode.insert(adjacentCell!)
+                            }
+                        }
                     }
                 }
                 cell.group = [cell]
             }
+            //merge nuisanceBeansToExplode set into cellsToExplode
+            self.cellsToExplodeWithNuisance = cellsToExplode + nuisanceBeansToExplode
+            
             if self.cellsToExplode.count > 0 {
                 for cell in self.cellsToExplode {
                     cell.bean?.animationBeforeRemoved()
                 }
                 setGameState(state: .popGroups)
             } else {
+
                 setGameState(state: .new)
+                
             }
         case .popGroups:
             if explosionPause < 0.5 {
@@ -195,7 +216,7 @@ class Game {
             
             self.score.calculateChainStep(cellsToExplode: self.cellsToExplode)
                         
-            for cell in self.cellsToExplode {
+            for cell in self.cellsToExplodeWithNuisance {
                 cell.bean?.shape.removeFromParent()
                 cell.bean = nil
             }
@@ -203,22 +224,31 @@ class Game {
             //finish popping
             
             self.cellsToExplode = []
+            self.cellsToExplodeWithNuisance = []
             self.beans = grid.getBeans()
             setGameState(state: .gravity)
         case .new:
-            if self.grid.getEndGameCell()!.bean != nil {
-                setGameState(state: .endScreen)
-                return
-            }
-//            //uncomment below and comment above for quick testing of end screen
-//            setGameState(state: .endScreen)
-//            return
-            
             self.score.sumFullChain()
             self.submitScoreToLeaderboard(score: Int(self.score.numNuisanceBeans))
+            
+            if score.nuisanceBeansInt > 0 {
+                setGameState(state: .dropNuisanceBeans)
+                return
+            }
+            else{
+                self.score.reset()
+                if self.grid.getStartingCell()!.bean != nil {
+                    setGameState(state: .endScreen)
+                    return
+                }
+                generateNewBeans(showNumber: settings.debug.showGroupNumber)
+                setGameState(state: .active)
+            }
+
+        case .dropNuisanceBeans:
             self.score.reset()
-            generateNewBeans(showNumber: settings.debug.showGroupNumber)
-            setGameState(state: .active)
+            generateNuisanceBeans(showNumber: settings.debug.showGroupNumber)
+            setGameState(state: .gravity)
             
         case .endScreen:
             
@@ -328,6 +358,37 @@ class Game {
 
     }
     
+//    func s
+    func generateNuisanceBeans(showNumber: Bool) {
+        let numRocks = score.nuisanceBeansInt
+        
+//        let numChunks = numRocks / grid.columnCount + (numRocks % grid.columnCount > 0 ? 1 : 0)
+        var isNextChunkReady = false
+        if numRocks > 0 {
+            var chosenColumns: Set<Int> = []
+            while chosenColumns.count < numRocks{
+                let randomColumn = Int.random(in: 0..<grid.columnCount)
+                chosenColumns.insert(randomColumn)
+            }
+            for column in chosenColumns{
+                let chosenCell = grid.cells[column]![grid.rowCount]
+                let rock = Bean(
+                    color: .gray,
+                    cellSize: grid.cellSize,
+                    startingPosition: chosenCell!.shape.position,
+                    showNumber: showNumber
+                )
+                // Add the nuisance bean to the grid
+                chosenCell!.bean = rock
+                self.scene.addChild(rock.shape)
+                
+//                self.beans.append(rock)
+            }
+            self.beans = self.grid.getBeans()
+
+        }
+    }
+    
     func loadLeaderboard() async {
         let leaderboards = try! await GKLeaderboard.loadLeaderboards(IDs: ["BestCombo"])
         
@@ -351,6 +412,8 @@ class Game {
             }
         }
     }
+    
+
     
 #if os(iOS) || os(tvOS)
     func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
