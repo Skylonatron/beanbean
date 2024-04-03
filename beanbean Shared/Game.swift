@@ -235,7 +235,7 @@ class Game {
             self.score.sumFullChain()
             self.submitScoreToLeaderboard(score: Int(self.score.numNuisanceBeans))
             
-            if score.nuisanceBeansInt > 0 {
+            if score.nuisanceBeansInt > 0 && self.otherPlayerGame != nil{
                 setGameState(state: .dropNuisanceBeans)
                 return
             }
