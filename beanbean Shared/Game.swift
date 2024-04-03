@@ -22,6 +22,7 @@ struct GameParams {
     let rowCount: Int
     let columnCount: Int
     let bounds: CGRect
+    let samBot: samBot
 }
 
 class Game {
@@ -46,7 +47,7 @@ class Game {
     var moveAmtX: CGFloat = 0
     var moveAmtY: CGFloat = 0
         
-    init(params: GameParams, samBot: samBot){
+    init(params: GameParams){
         self.scene = params.scene
         self.bounds = params.bounds
         
@@ -66,7 +67,7 @@ class Game {
                 params.scene.addChild(cell.shape)
             }
         }
-        self.samBot = samBot
+        self.samBot = params.samBot
     }
     
     func update() {

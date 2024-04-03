@@ -46,10 +46,10 @@ class GameScene: SKScene {
             cellSize: cellSize,
             rowCount: rowCount,
             columnCount: columnCount,
-            bounds: bounds
+            bounds: bounds,
+            samBot: samBot()
         )
-        let samBot = samBot()
-        self.game = Game(params: gameParams, samBot: samBot)
+        self.game = Game(params: gameParams)
     }
     
 

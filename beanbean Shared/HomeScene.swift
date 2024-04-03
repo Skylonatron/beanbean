@@ -53,15 +53,7 @@ class HomeScene: SKScene {
         let rowCount = 12
         var cellSize = Int(bounds.size.width / 11)
         
-        let gameParams = GameParams(
-            scene: self,
-            cellSize: cellSize,
-            rowCount: rowCount,
-            columnCount: columnCount,
-            bounds: bounds
-        )
-        let samBot = samBot()
-        self.game = Game(params: gameParams, samBot: samBot)
+
     
     }
     
