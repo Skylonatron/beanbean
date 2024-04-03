@@ -197,8 +197,8 @@ class Game {
             //merge nuisanceBeansToExplode set into cellsToExplode
             self.cellsToExplodeWithNuisance = cellsToExplode + nuisanceBeansToExplode
             
-            if self.cellsToExplode.count > 0 {
-                for cell in self.cellsToExplode {
+            if self.cellsToExplodeWithNuisance.count > 0 {
+                for cell in self.cellsToExplodeWithNuisance {
                     cell.bean?.animationBeforeRemoved()
                 }
                 setGameState(state: .popGroups)
