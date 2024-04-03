@@ -60,10 +60,10 @@ class Game {
             await loadLeaderboard()
         }
         
-        
         self.grid = Grid(
             rowCount: params.rowCount,
             columnCount: params.columnCount,
+            extraTopRows: 2,
             cellSize: params.cellSize,
             showCells: settings.debug.showCells,
             showRowColumn: settings.debug.showRowColumnNumbers
@@ -312,7 +312,7 @@ class Game {
         let sideBean = Bean(
             color: color2,
             cellSize: grid.cellSize,
-            startingPosition: grid.getStartingCell()!.getRightCell(grid: grid)!.shape.position,
+            startingPosition: grid.getStartingCell()!.getUpCell(grid: grid)!.shape.position,
             showNumber: showNumber
         )
         self.scene.addChild(sideBean.shape)

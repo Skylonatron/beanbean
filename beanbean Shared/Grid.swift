@@ -15,9 +15,10 @@ class Grid {
     var cellSize: Int
     var columnCount: Int
     var rowCount: Int
+    var extraTopRows: Int
     var outline: SKShapeNode
     
-    init(rowCount: Int, columnCount: Int, cellSize: Int, showCells: Bool, showRowColumn: Bool) {
+    init(rowCount: Int, columnCount: Int, extraTopRows: Int, cellSize: Int, showCells: Bool, showRowColumn: Bool) {
         
         self.outline = SKShapeNode(rectOf: CGSize(
             width: cellSize * (columnCount + 1) + 8,
@@ -31,13 +32,14 @@ class Grid {
         self.cellSize = cellSize
         self.columnCount = columnCount
         self.rowCount = rowCount
+        self.extraTopRows = extraTopRows
         
 //        self.outline.position.x = -self.offsetLeft
 //        self.outline.position.y = -self.offsetDown
                 
         for column in 0...columnCount {
             cells[column] = [Int: Cell]()
-            for row in 0...rowCount {
+            for row in 0...rowCount + extraTopRows {
                 let cell = Cell(
                     cellSize: cellSize,
                     x: CGFloat(cellSize * column) - self.offsetLeft,
@@ -91,8 +93,12 @@ class Grid {
         return cells[cellCords.0]?[cellCords.1]
     }
     
-    func getStartingCell() -> Cell? {
+    func getEndGameCell() -> Cell? {
         return cells[Int(self.columnCount / 2)]![self.rowCount]
+    }
+    
+    func getStartingCell() -> Cell? {
+        return cells[Int(self.columnCount / 2)]![self.rowCount + self.extraTopRows-1]
     }
     
 }
