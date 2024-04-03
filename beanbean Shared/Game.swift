@@ -364,11 +364,14 @@ class Game {
     
 //    func s
     func generateNuisanceBeans(showNumber: Bool) {
-        let numRocks = score.nuisanceBeansInt
+        var numRocks = score.nuisanceBeansInt
         
 //        let numChunks = numRocks / grid.columnCount + (numRocks % grid.columnCount > 0 ? 1 : 0)
 //        var isNextChunkReady = false
         if numRocks > 0 {
+            if numRocks > grid.columnCount{
+                numRocks = grid.columnCount
+            }
             var chosenColumns: Set<Int> = []
             while chosenColumns.count < numRocks{
                 let randomColumn = Int.random(in: 0..<grid.columnCount)
