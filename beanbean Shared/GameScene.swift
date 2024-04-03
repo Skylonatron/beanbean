@@ -66,32 +66,52 @@ class GameScene: SKScene {
                 spinClockwise: Keycode.semicolon,
                 spinCounter: Keycode.apostrophe
             )
-            let gameParams = GameParams(
+            let gameParamsPlayer2 = GameParams(
                 scene: self,
                 cellSize: cellSize,
                 rowCount: rowCount,
                 columnCount: columnCount,
                 bounds: bounds,
                 controller: controller2,
-                player: 2
+                player: 2,
+                otherPlayerGame: nil
+            )
+
+            let gameParamsPlayer1 = GameParams(
+                scene: self,
+                cellSize: cellSize,
+                rowCount: rowCount,
+                columnCount: columnCount,
+                bounds: bounds,
+                controller: controller1,
+                player: player,
+                otherPlayerGame: nil
             )
             
-            self.games.append(Game(params: gameParams))
+            //add games to array and set otherPlayerGame
+            let gamePlayer1 = Game(params: gameParamsPlayer1)
+            let gamePlayer2 = Game(params: gameParamsPlayer2)
+            self.games.append(gamePlayer1)
+            self.games.append(gamePlayer2)
+            gamePlayer1.otherPlayerGame = gamePlayer2
+            gamePlayer2.otherPlayerGame = gamePlayer1
+            
             
         }
-        let gameParams = GameParams(
-            scene: self,
-            cellSize: cellSize,
-            rowCount: rowCount,
-            columnCount: columnCount,
-            bounds: bounds,
-            controller: controller1,
-            player: player
-        )
-        
-        self.games.append(Game(params: gameParams))
-        
-        
+        else{
+            let gameParamsPlayer1 = GameParams(
+                scene: self,
+                cellSize: cellSize,
+                rowCount: rowCount,
+                columnCount: columnCount,
+                bounds: bounds,
+                controller: controller1,
+                player: player,
+                otherPlayerGame: nil
+            )
+            let gamePlayer1 = Game(params: gameParamsPlayer1)
+            self.games.append(gamePlayer1)
+        }
         
     }
     

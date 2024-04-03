@@ -26,6 +26,7 @@ struct GameParams {
     let bounds: CGRect
     let controller: Controller
     let player: Int?
+    let otherPlayerGame: Game?
 }
 
 class Game {
@@ -44,6 +45,7 @@ class Game {
     var bounds: CGRect
     let controller: Controller
     var gameOver = false
+    var otherPlayerGame: Game?
     
     // ios movement
     var initialTouch: CGPoint = CGPoint.zero
@@ -83,6 +85,8 @@ class Game {
             }
         }
         params.scene.addChild(self.grid.outline)
+        
+        self.otherPlayerGame = params.otherPlayerGame
     }
     
     func update() {
@@ -363,31 +367,32 @@ class Game {
         let numRocks = score.nuisanceBeansInt
         
 //        let numChunks = numRocks / grid.columnCount + (numRocks % grid.columnCount > 0 ? 1 : 0)
-        var isNextChunkReady = false
+//        var isNextChunkReady = false
         if numRocks > 0 {
             var chosenColumns: Set<Int> = []
             while chosenColumns.count < numRocks{
                 let randomColumn = Int.random(in: 0..<grid.columnCount)
                 chosenColumns.insert(randomColumn)
             }
-            for column in chosenColumns{
-                let chosenCell = grid.cells[column]![grid.rowCount]
-                let rock = Bean(
-                    color: .gray,
-                    cellSize: grid.cellSize,
-                    startingPosition: chosenCell!.shape.position,
-                    showNumber: showNumber
-                )
-                // Add the nuisance bean to the grid
-                chosenCell!.bean = rock
-                self.scene.addChild(rock.shape)
-                
+            if let otherPlayerGame = self.otherPlayerGame{
+                for column in chosenColumns{
+                    let chosenCell = otherPlayerGame.grid.cells[column]![otherPlayerGame.grid.rowCount]
+                    let rock = Bean(
+                        color: .gray,
+                        cellSize: otherPlayerGame.grid.cellSize,
+                        startingPosition: chosenCell!.shape.position,
+                        showNumber: showNumber
+                    )
+                    chosenCell!.bean = rock
+                    otherPlayerGame.scene.addChild(rock.shape)
+                    
+                }
+            }
+            otherPlayerGame?.beans = self.grid.getBeans()
+        
 //                self.beans.append(rock)
             }
-            self.beans = self.grid.getBeans()
-
         }
-    }
     
     func loadLeaderboard() async {
         let leaderboards = try! await GKLeaderboard.loadLeaderboards(IDs: ["BestCombo"])
