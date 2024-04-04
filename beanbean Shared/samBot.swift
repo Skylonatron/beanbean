@@ -11,6 +11,7 @@ class samBot {
     var moveLeft = false
     var moveRight = false
     var rotateClockwise = true
+    var hasPerformedRotation = false
 //    var grid: Grid
     
 //    init(grid: Grid) {
@@ -114,6 +115,11 @@ class samBot {
     }
     
     func applyMove(grid: Grid, beanPod: BeanPod, game: Game){
+        if !hasPerformedRotation {
+            beanPod.spinPod(grid: grid, clockWise: true)
+            hasPerformedRotation = true
+            return
+        }
         let moveDistance = self.decideMove(grid: grid, beanPod: beanPod)
         if moveDistance != 0{
 //            print(moveDistance)

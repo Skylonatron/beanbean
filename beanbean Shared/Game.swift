@@ -348,6 +348,9 @@ class Game {
     }
     
     func generateNewBeans(showNumber: Bool){
+        //reset flag for samBot rotation
+        self.samBot.hasPerformedRotation = false
+        
         // make another bean
         let colors = [SKColor.purple, SKColor.green, SKColor.red, SKColor.yellow]
 
