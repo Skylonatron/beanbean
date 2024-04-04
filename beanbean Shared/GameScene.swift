@@ -74,7 +74,8 @@ class GameScene: SKScene {
                 bounds: bounds,
                 controller: controller2,
                 player: 2,
-                otherPlayerGame: nil
+                otherPlayerGame: nil,
+                samBot: samBot()
             )
 
             let gameParamsPlayer1 = GameParams(
@@ -85,12 +86,14 @@ class GameScene: SKScene {
                 bounds: bounds,
                 controller: controller1,
                 player: player,
-                otherPlayerGame: nil
+                otherPlayerGame: nil,
+                samBot: samBot()
             )
             
             //add games to array and set otherPlayerGame
             let gamePlayer1 = Game(params: gameParamsPlayer1)
             let gamePlayer2 = Game(params: gameParamsPlayer2)
+            gamePlayer1.useCPUControls = false
             self.games.append(gamePlayer1)
             self.games.append(gamePlayer2)
             gamePlayer1.otherPlayerGame = gamePlayer2
@@ -107,7 +110,8 @@ class GameScene: SKScene {
                 bounds: bounds,
                 controller: controller1,
                 player: player,
-                otherPlayerGame: nil
+                otherPlayerGame: nil,
+                samBot: samBot()
             )
             let gamePlayer1 = Game(params: gameParamsPlayer1)
             self.games.append(gamePlayer1)

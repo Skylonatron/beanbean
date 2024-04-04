@@ -27,6 +27,7 @@ struct GameParams {
     let controller: Controller
     let player: Int?
     let otherPlayerGame: Game?
+    let samBot: samBot
 }
 
 class Game {
@@ -46,6 +47,8 @@ class Game {
     let controller: Controller
     var gameOver = false
     var otherPlayerGame: Game?
+    var samBot: samBot
+    var useCPUControls: Bool = true
     
     // ios movement
     var initialTouch: CGPoint = CGPoint.zero
@@ -60,6 +63,9 @@ class Game {
         self.scene.addChild(score.scoreOutline)
         self.scene.addChild(score.highScoreOutline)
         self.controller = params.controller
+        
+        self.otherPlayerGame = params.otherPlayerGame
+        self.samBot = params.samBot
         
         Task {
             await loadLeaderboard()
@@ -86,12 +92,16 @@ class Game {
         }
         params.scene.addChild(self.grid.outline)
         
-        self.otherPlayerGame = params.otherPlayerGame
+
     }
     
     func update() {
         switch gameState {
         case .active:
+            //handle cpu controls
+            if useCPUControls {
+                samBot.applyMove(grid: grid, beanPod: beanPod, game: self)
+            }
             if self.fastMovement {
                 self.movementSpeed = settings.movement.fastVerticalSpeed
             } else {
@@ -118,6 +128,7 @@ class Game {
                     beanPod.totalTimeNil = 0
                 }
             }
+
 
             
             else {
@@ -476,17 +487,27 @@ class Game {
     func keyDown(event: NSEvent) {
         switch event.keyCode {
         case self.controller.right:
-            beanPod.moveRight(grid: grid)
+            if !useCPUControls {
+                beanPod.moveRight(grid: grid)
+            }
         case self.controller.left:
-            beanPod.moveLeft(grid: grid)
+            if !useCPUControls{
+                beanPod.moveLeft(grid: grid)
+            }
         case self.controller.down:
-            if beanPod.active {
-                self.fastMovement = true
+            if !useCPUControls{
+                if beanPod.active {
+                    self.fastMovement = true
+                }
             }
         case self.controller.spinClockwise:
-            self.beanPod.spinPod(grid: self.grid, clockWise: true)
+            if !useCPUControls{
+                self.beanPod.spinPod(grid: self.grid, clockWise: true)
+            }
         case self.controller.spinCounter:
-            self.beanPod.spinPod(grid: self.grid, clockWise: false)
+            if !useCPUControls{
+                self.beanPod.spinPod(grid: self.grid, clockWise: false)
+            }
         default:
             break
         }

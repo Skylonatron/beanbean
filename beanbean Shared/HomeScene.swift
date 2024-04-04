@@ -59,8 +59,10 @@ class HomeScene: SKScene {
         labelNode.horizontalAlignmentMode = .center // Center horizontally
         labelNode.verticalAlignmentMode = .center // Center vertically
         button.addChild(labelNode) // Add label as child of shape node
-        return button
+        return button  
     }
+    
+
     
     
     override func didMove(to view: SKView) {
