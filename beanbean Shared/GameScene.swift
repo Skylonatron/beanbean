@@ -93,7 +93,7 @@ class GameScene: SKScene {
             //add games to array and set otherPlayerGame
             let gamePlayer1 = Game(params: gameParamsPlayer1)
             let gamePlayer2 = Game(params: gameParamsPlayer2)
-            gamePlayer1.useCPUControls = false
+            gamePlayer2.useCPUControls = true
             self.games.append(gamePlayer1)
             self.games.append(gamePlayer2)
             gamePlayer1.otherPlayerGame = gamePlayer2
