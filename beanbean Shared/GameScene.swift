@@ -20,6 +20,7 @@ class GameScene: SKScene {
     var moveAmtX: CGFloat = 0
     var moveAmtY: CGFloat = 0
     var gameMode: GameMode = .single
+    var player2CPU: Bool = false
     
     var games: [Game] = []
     
@@ -93,7 +94,7 @@ class GameScene: SKScene {
             //add games to array and set otherPlayerGame
             let gamePlayer1 = Game(params: gameParamsPlayer1)
             let gamePlayer2 = Game(params: gameParamsPlayer2)
-            gamePlayer2.useCPUControls = true
+            gamePlayer2.useCPUControls = self.player2CPU
             self.games.append(gamePlayer1)
             self.games.append(gamePlayer2)
             gamePlayer1.otherPlayerGame = gamePlayer2

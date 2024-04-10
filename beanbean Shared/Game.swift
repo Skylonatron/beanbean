@@ -51,7 +51,7 @@ class Game {
     var useCPUControls: Bool = false
     var primedNuisanceBeans: Int = 0
     var nuisanceWaiting: Bool = false
-    var maxNuisanceSend: Int = 10
+    var maxNuisanceSend: Int = 36
     var newBeanBeforeMoreNuisance: Bool = false
     
     // ios movement
