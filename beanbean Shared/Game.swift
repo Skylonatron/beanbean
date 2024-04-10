@@ -51,6 +51,8 @@ class Game {
     var useCPUControls: Bool = false
     var primedNuisanceBeans: Int = 0
     var nuisanceWaiting: Bool = false
+    var maxNuisanceSend: Int = 10
+    var newBeanBeforeMoreNuisance: Bool = false
     
     // ios movement
     var initialTouch: CGPoint = CGPoint.zero
@@ -256,7 +258,7 @@ class Game {
             self.submitScoreToLeaderboard(score: Int(self.score.numNuisanceBeans))
             otherPlayerGame?.primedNuisanceBeans += self.score.nuisanceBeansInt
             
-            if self.primedNuisanceBeans > 0 && self.otherPlayerGame != nil{
+            if self.primedNuisanceBeans > 0 && self.otherPlayerGame != nil && !self.newBeanBeforeMoreNuisance{
                 setGameState(state: .dropNuisanceBeans)
                 return
             }
@@ -270,6 +272,7 @@ class Game {
                     setGameState(state: .endScreen)
                     return
                 }
+                self.newBeanBeforeMoreNuisance = false
                 generateNewBeans(showNumber: settings.debug.showGroupNumber)
                 setGameState(state: .active)
             }
@@ -409,7 +412,7 @@ class Game {
 //    }
     func generateNuisanceBeans(showNumber: Bool) {
         var numRocks = self.primedNuisanceBeans
-        let originalNumRocks = numRocks
+        var totalNuisanceSent = 0
         var rocksToSendNow = 0
         
 //        let numChunks = numRocks / grid.columnCount + (numRocks % grid.columnCount > 0 ? 1 : 0)
@@ -419,12 +422,25 @@ class Game {
         print("start of dropping")
         while numRocks > 0 {
 //            self.nuisanceWaiting = true
-            print(numRocks)
+            print("num rocks:", numRocks)
+            print("total nuisance sent:", totalNuisanceSent)
             if numRocks >= numColumns{
                 rocksToSendNow = numColumns
             }
             if numRocks < numColumns{
                 rocksToSendNow = numRocks
+            }
+            if totalNuisanceSent + rocksToSendNow > self.maxNuisanceSend{
+                print("will be too many")
+                if totalNuisanceSent >= self.maxNuisanceSend{
+                    print("too many for now, sent:", totalNuisanceSent)
+                    self.newBeanBeforeMoreNuisance = true
+                    return
+                }
+                if totalNuisanceSent < self.maxNuisanceSend{
+                    rocksToSendNow = self.maxNuisanceSend - totalNuisanceSent
+                    print("sending smaller amount:", rocksToSendNow)
+                }
             }
             var chosenColumns: Set<Int> = []
             while chosenColumns.count < rocksToSendNow{
@@ -443,8 +459,12 @@ class Game {
                 self.scene.addChild(rock.shape)
                 
             }
+            if totalNuisanceSent > self.maxNuisanceSend{
+                print("did not exit")
+            }
             self.primedNuisanceBeans -= rocksToSendNow
             numRocks -= rocksToSendNow
+            totalNuisanceSent += rocksToSendNow
             rocksToSendNow = 0
             rowIndex += 1
             if self.primedNuisanceBeans == 0{
