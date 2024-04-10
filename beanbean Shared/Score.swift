@@ -228,7 +228,7 @@ class Score {
         return chainPowerMap[count]!
     }
     func updateChainCountLabel() {
-        if self.chainCount > 1{
+        if self.chainCount > 0{
             // Initialize the chain count label if it's nil
             if chainCountLabel == nil {
                 chainCountLabel = SKLabelNode(text: "\(self.chainCount) chain!")

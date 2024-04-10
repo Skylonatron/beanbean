@@ -82,7 +82,7 @@ class Game {
         self.grid = Grid(
             rowCount: params.rowCount,
             columnCount: params.columnCount,
-            extraTopRows: 2,
+            extraTopRows: 6,
             cellSize: params.cellSize,
             showCells: settings.debug.showCells,
             showRowColumn: settings.debug.showRowColumnNumbers,
@@ -164,11 +164,11 @@ class Game {
             }
             for bean in self.beans {
                 let currentCell = grid.getCell(x: bean.shape.position.x, y: bean.shape.position.y)
-                if self.nuisanceWaiting && self.grid.cells[2]![self.grid.rowCount]?.bean == nil
-                {
-                    print("yoyoyoyoyoyoyoyoyo")
-                    setGameState(state: .dropNuisanceBeans)
-                }
+//                if self.nuisanceWaiting && self.grid.cells[2]![self.grid.rowCount]?.bean == nil
+//                {
+//                    print("yoyoyoyoyoyoyoyoyo")
+//                    setGameState(state: .dropNuisanceBeans)
+//                }
                 if bean.canMoveDown(grid: self.grid, speed: settings.movement.gravitySpeed) {
                     // release the bean from the cell so others above can move down
                     currentCell?.bean = nil
@@ -409,22 +409,30 @@ class Game {
 //    }
     func generateNuisanceBeans(showNumber: Bool) {
         var numRocks = self.primedNuisanceBeans
+        let originalNumRocks = numRocks
+        var rocksToSendNow = 0
         
 //        let numChunks = numRocks / grid.columnCount + (numRocks % grid.columnCount > 0 ? 1 : 0)
 //        var isNextChunkReady = false
-        let numColumns = grid.columnCount + 1
-        if numRocks > 0 {
-            self.nuisanceWaiting = true
-            if numRocks > numColumns{
-                numRocks = numColumns
+        let numColumns = self.grid.columnCount + 1
+        var rowIndex = 0
+        print("start of dropping")
+        while numRocks > 0 {
+//            self.nuisanceWaiting = true
+            print(numRocks)
+            if numRocks >= numColumns{
+                rocksToSendNow = numColumns
+            }
+            if numRocks < numColumns{
+                rocksToSendNow = numRocks
             }
             var chosenColumns: Set<Int> = []
-            while chosenColumns.count < numRocks{
+            while chosenColumns.count < rocksToSendNow{
                 let randomColumn = Int.random(in: 0..<numColumns)
                 chosenColumns.insert(randomColumn)
             }
             for column in chosenColumns{
-                let chosenCell = self.grid.cells[column]![self.grid.rowCount]
+                let chosenCell = self.grid.cells[column]![self.grid.rowCount + rowIndex]
                 let rock = Bean(
                     color: .gray,
                     cellSize: self.grid.cellSize,
@@ -435,7 +443,10 @@ class Game {
                 self.scene.addChild(rock.shape)
                 
             }
-            self.primedNuisanceBeans -= numRocks
+            self.primedNuisanceBeans -= rocksToSendNow
+            numRocks -= rocksToSendNow
+            rocksToSendNow = 0
+            rowIndex += 1
             if self.primedNuisanceBeans == 0{
                 self.nuisanceWaiting = false
             }
@@ -444,6 +455,8 @@ class Game {
         
 //                self.beans.append(rock)
             }
+            
+        print("end of dropping")
         }
     
     func loadLeaderboard() async {

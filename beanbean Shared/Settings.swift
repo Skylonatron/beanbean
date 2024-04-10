@@ -33,6 +33,6 @@ let settings = Settings(
         showCells: false,
         showRowColumnNumbers: false,
         showGroupNumber: false,
-        printGameState: true
+        printGameState: false
     )
 )

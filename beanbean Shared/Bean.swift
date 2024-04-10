@@ -52,8 +52,8 @@ class Bean {
             beanImage = createBean(beanSize: beanSize, bodyImage: "yellow_body_circle", faceImage: "face_d")
             
         default:
-//            print("Unknown color")
-            break
+            print("Unknown color")
+//            break
         }
         self.shape.addChild(beanImage) // Add the image node to the scene
 
