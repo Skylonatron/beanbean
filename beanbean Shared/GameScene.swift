@@ -46,6 +46,7 @@ class GameScene: SKScene {
         #endif
         let columnCount = 5
         let rowCount = 12
+        let seed = UInt64.random(in: 0...1000000)
         let controller1 = Controller(
             up: Keycode.w,
             down: Keycode.s,
@@ -73,7 +74,8 @@ class GameScene: SKScene {
                 columnCount: columnCount,
                 bounds: bounds,
                 controller: controller2,
-                player: 2
+                player: 2,
+                seed: seed
             )
             
             self.games.append(Game(params: gameParams))
@@ -86,7 +88,8 @@ class GameScene: SKScene {
             columnCount: columnCount,
             bounds: bounds,
             controller: controller1,
-            player: player
+            player: player,
+            seed: seed
         )
         
         self.games.append(Game(params: gameParams))
