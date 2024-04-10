@@ -28,6 +28,7 @@ struct GameParams {
     let player: Int?
     let otherPlayerGame: Game?
     let samBot: samBot
+    let seed: UInt64
 }
 
 class Game {
@@ -53,6 +54,7 @@ class Game {
     var nuisanceWaiting: Bool = false
     var maxNuisanceSend: Int = 36
     var newBeanBeforeMoreNuisance: Bool = false
+    var random: GKRandom
     
     // ios movement
     var initialTouch: CGPoint = CGPoint.zero
@@ -67,6 +69,13 @@ class Game {
         self.scene.addChild(score.scoreOutline)
         self.scene.addChild(score.highScoreOutline)
         self.controller = params.controller
+        // these numbers should be the number of different colors we are using to randomize from
+        // we should check the distribution of these numbers generated
+        self.random = GKRandomDistribution(
+            randomSource: GKMersenneTwisterRandomSource(seed: params.seed),
+            lowestValue: 0,
+            highestValue: 3
+        )
         
         self.otherPlayerGame = params.otherPlayerGame
 //        self.player = params.player
@@ -366,8 +375,8 @@ class Game {
         // make another bean
         let colors = [SKColor.purple, SKColor.green, SKColor.red, SKColor.yellow]
 
-        let color = colors.randomElement()!
-        let color2 = colors.randomElement()!
+        let color = colors[random.nextInt()]
+        let color2 = colors[random.nextInt()]
         let mainBean = Bean(
             color: color,
             cellSize: grid.cellSize,

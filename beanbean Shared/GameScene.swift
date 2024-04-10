@@ -47,6 +47,7 @@ class GameScene: SKScene {
         #endif
         let columnCount = 5
         let rowCount = 12
+        let seed = UInt64.random(in: 0...1000000)
         let controller1 = Controller(
             up: Keycode.w,
             down: Keycode.s,
@@ -76,7 +77,8 @@ class GameScene: SKScene {
                 controller: controller2,
                 player: 2,
                 otherPlayerGame: nil,
-                samBot: samBot()
+                samBot: samBot(),
+                seed: seed
             )
 
             let gameParamsPlayer1 = GameParams(
@@ -88,7 +90,8 @@ class GameScene: SKScene {
                 controller: controller1,
                 player: player,
                 otherPlayerGame: nil,
-                samBot: samBot()
+                samBot: samBot(),
+                seed: seed
             )
             
             //add games to array and set otherPlayerGame
@@ -103,7 +106,7 @@ class GameScene: SKScene {
             
         }
         else{
-            let gameParamsPlayer1 = GameParams(
+            let gameParams = GameParams(
                 scene: self,
                 cellSize: cellSize,
                 rowCount: rowCount,
@@ -112,12 +115,13 @@ class GameScene: SKScene {
                 controller: controller1,
                 player: player,
                 otherPlayerGame: nil,
-                samBot: samBot()
+                samBot: samBot(),
+                seed: seed
+                
             )
-            let gamePlayer1 = Game(params: gameParamsPlayer1)
-            self.games.append(gamePlayer1)
+            
+            self.games.append(Game(params: gameParams))
         }
-        
     }
     
 
