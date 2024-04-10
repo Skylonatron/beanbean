@@ -253,37 +253,27 @@ class Game {
             self.beans = grid.getBeans()
             setGameState(state: .gravity)
         case .new:
-//            print(self.primedNuisanceBeans)
             self.score.sumFullChain()
             self.submitScoreToLeaderboard(score: Int(self.score.numNuisanceBeans))
             otherPlayerGame?.primedNuisanceBeans += self.score.nuisanceBeansInt
+            self.score.resetCombos()
             
+            if self.grid.getStartingCell()!.bean != nil {
+                setGameState(state: .endScreen)
+                return
+            }
             if self.primedNuisanceBeans > 0 && self.otherPlayerGame != nil && !self.newBeanBeforeMoreNuisance{
                 setGameState(state: .dropNuisanceBeans)
                 return
             }
-//            if self.nuisanceWaiting {
-//                self.nuisanceWaiting = false
-//                setGameState(state: .gravity)
-//            }
             else{
-                self.score.reset()
-                if self.grid.getStartingCell()!.bean != nil {
-                    setGameState(state: .endScreen)
-                    return
-                }
                 self.newBeanBeforeMoreNuisance = false
                 generateNewBeans(showNumber: settings.debug.showGroupNumber)
                 setGameState(state: .active)
             }
 
         case .dropNuisanceBeans:
-            self.score.reset()
             generateNuisanceBeans(showNumber: settings.debug.showGroupNumber)
-//            self.primedNuisanceBeans = 0
-//            if self.primedNuisanceBeans == 0{
-//                self.nuisanceWaiting = false
-//            }
             setGameState(state: .gravity)
             
             

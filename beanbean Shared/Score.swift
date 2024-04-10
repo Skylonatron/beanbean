@@ -184,7 +184,7 @@ class Score {
         
     }
     
-    func reset() {
+    func resetCombos() {
         self.chainCount = 0
         self.fullComboPoints = 0
 //        self.movementPoints = 0.0

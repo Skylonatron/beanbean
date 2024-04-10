@@ -20,7 +20,7 @@ class GameScene: SKScene {
     var moveAmtX: CGFloat = 0
     var moveAmtY: CGFloat = 0
     var gameMode: GameMode = .single
-    var player2CPU: Bool = false
+    var player2CPU: Bool = true
     
     var games: [Game] = []
     
