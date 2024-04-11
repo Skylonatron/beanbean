@@ -121,7 +121,7 @@ class Game {
             backgroundNode?.position = grid.outline.position
             backgroundNode?.zPosition = 0 // Ensure it's behind other nodes
             backgroundNode?.xScale = 0.96
-        backgroundNode?.yScale = 0.985
+            backgroundNode?.yScale = 0.985
             scene.addChild(backgroundNode!)
         }
     
