@@ -51,7 +51,7 @@ class Game {
     var samBot: samBot
     var useCPUControls: Bool = false
     var primedNuisanceBeans: Int = 0
-    var maxNuisanceSend: Int = 36
+    var maxNuisanceSend: Int = 4
     var newBeanBeforeMoreNuisance: Bool = false
     var random: GKRandom
     
@@ -261,7 +261,7 @@ class Game {
             otherPlayerGame?.primedNuisanceBeans += self.score.nuisanceBeansInt
             self.score.resetCombos()
             
-            if self.grid.getStartingCell()!.bean != nil {
+            if self.grid.getEndGameCell()!.bean != nil {
                 setGameState(state: .endScreen)
                 return
             }
@@ -408,10 +408,17 @@ class Game {
             rocksToSendNow = self.maxNuisanceSend
         }
         self.primedNuisanceBeans -= rocksToSendNow
-        
+                
         let result = rocksToSendNow.quotientAndRemainder(dividingBy: self.grid.columnCount + 1)
+        
+//        map[0] = 2
+        
         for row in (0..<result.quotient) {
             for column in (0...self.grid.columnCount) {
+//                numbeansPossible = mapName[column]
+//                numbeansPossible -= 1
+//                continue
+                
                 let chosenCell = self.grid.cells[column]![self.grid.rowCount + row + 1]
                 let rock = Bean(
                     color: .gray,
@@ -426,7 +433,7 @@ class Game {
         // drop the last beans randomly
         var allSpots = Array(0...self.grid.columnCount)
         allSpots.shuffle()
-        for column in Array(allSpots.prefix(result.remainder)) {
+        for column in allSpots.prefix(result.remainder) {
             let chosenCell = self.grid.cells[column]![self.grid.rowCount + result.quotient + 1]
             let rock = Bean(
                 color: .gray,
