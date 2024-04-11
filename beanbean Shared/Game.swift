@@ -51,7 +51,6 @@ class Game {
     var samBot: samBot
     var useCPUControls: Bool = false
     var primedNuisanceBeans: Int = 0
-    var nuisanceWaiting: Bool = false
     var maxNuisanceSend: Int = 36
     var newBeanBeforeMoreNuisance: Bool = false
     var random: GKRandom
@@ -175,11 +174,6 @@ class Game {
             }
             for bean in self.beans {
                 let currentCell = grid.getCell(x: bean.shape.position.x, y: bean.shape.position.y)
-//                if self.nuisanceWaiting && self.grid.cells[2]![self.grid.rowCount]?.bean == nil
-//                {
-//                    print("yoyoyoyoyoyoyoyoyo")
-//                    setGameState(state: .dropNuisanceBeans)
-//                }
                 if bean.canMoveDown(grid: self.grid, speed: settings.movement.gravitySpeed) {
                     // release the bean from the cell so others above can move down
                     currentCell?.bean = nil
@@ -284,7 +278,6 @@ class Game {
         case .dropNuisanceBeans:
             generateNuisanceBeans(showNumber: settings.debug.showGroupNumber)
             setGameState(state: .gravity)
-            
             
         case .endScreen:
             
