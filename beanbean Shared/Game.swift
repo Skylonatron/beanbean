@@ -65,9 +65,7 @@ class Game {
         self.scene = params.scene
         self.bounds = params.bounds
         
-        self.score = Score(bounds: params.bounds, scene: params.scene)
-        self.scene.addChild(score.scoreOutline)
-        self.scene.addChild(score.highScoreOutline)
+
         self.controller = params.controller
         // these numbers should be the number of different colors we are using to randomize from
         // we should check the distribution of these numbers generated
@@ -106,6 +104,9 @@ class Game {
         }
         params.scene.addChild(self.grid.outline)
         
+        self.score = Score(bounds: params.bounds, scene: params.scene, grid: self.grid)
+        self.scene.addChild(score.scoreOutline)
+        self.scene.addChild(score.highScoreOutline)
         addBackground()
 
     }
@@ -368,7 +369,7 @@ class Game {
             
             self.gameOver = true
         }
-        
+        score.updateChainCountLabel()
     }
     
     func setGameState(state: GameState) {

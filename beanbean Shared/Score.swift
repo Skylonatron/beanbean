@@ -72,9 +72,12 @@ class Score {
     var highScoreOutline: SKShapeNode!
     var highScores: SKLabelNode!
     
+    var grid : Grid!
     
-    init(bounds: CGRect, scene: SKScene){
+    
+    init(bounds: CGRect, scene: SKScene, grid: Grid){
         self.scene = scene
+        self.grid = grid
         
         // Initialize the score label
         scoreOutline = outline(width: bounds.size.width / 2, height: bounds.size.height / 5, lineWidth: 8)
@@ -232,35 +235,23 @@ class Score {
             // Initialize the chain count label if it's nil
             if chainCountLabel == nil {
                 chainCountLabel = SKLabelNode(text: "\(self.chainCount) chain!")
-                chainCountLabel?.position = CGPoint(x: 0, y: 0) // Adjust position if necessary
+                chainCountLabel?.position = grid.outline.position // Adjust position if necessary
                 chainCountLabel?.fontName = "chalkduster"
                 chainCountLabel?.fontSize = 60
-                chainCountLabel?.fontColor = .black
+                chainCountLabel?.fontColor = .white
                 chainCountLabel?.horizontalAlignmentMode = .center
                 chainCountLabel?.verticalAlignmentMode = .center
                 chainCountLabel?.zPosition = 10
-                
-//                chainCountLabelOutline = SKLabelNode(text: "\(self.chainCount) chain!")
-//                chainCountLabelOutline?.position = CGPoint(x: 1, y: 1)
-////                chainCountLabelOutline?.horizontalAlignmentMode = .center
-////                chainCountLabelOutline?.verticalAlignmentMode = .center
-//                chainCountLabelOutline?.fontName = chainCountLabel.fontName
-//                chainCountLabelOutline?.fontSize = chainCountLabel.fontSize + 1
-//                chainCountLabelOutline?.fontColor = .black // Outline color
-//                chainCountLabelOutline?.zPosition = chainCountLabel.zPosition - 1
 
                 
                 scene?.addChild(chainCountLabel)
-//                scene?.addChild(chainCountLabelOutline)
             } else {
                 // Update the text if the label already exists
                 chainCountLabel?.text = "\(self.chainCount) chain!"
-//                chainCountLabelOutline?.text = "\(self.chainCount) chain!"
             }
 
             // Cancel any existing fade-out action
             chainCountLabel?.removeAllActions()
-//            chainCountLabelOutline?.removeAllActions()
             
             // Create a new fade-out action
             let fadeIn = SKAction.fadeIn(withDuration: 0.1)
@@ -272,14 +263,9 @@ class Score {
             // Run the actions sequence
             chainCountLabel?.run(sequence) {
                 // remove the label from the scene after fading out
-                self.chainCountLabel?.removeFromParent()
-                self.chainCountLabel = nil
+            self.chainCountLabel?.removeFromParent()
+            self.chainCountLabel = nil
             }
-//            chainCountLabelOutline?.run(sequence) {
-//                // remove the label from the scene after fading out
-//                self.chainCountLabelOutline?.removeFromParent()
-//                self.chainCountLabelOutline = nil
-//            }
         }
         else{
             return
