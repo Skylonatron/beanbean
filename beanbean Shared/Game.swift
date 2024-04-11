@@ -410,44 +410,19 @@ class Game {
 //        }
 //    }
     func generateNuisanceBeans(showNumber: Bool) {
-        var numRocks = self.primedNuisanceBeans
-        var totalNuisanceSent = 0
-        var rocksToSendNow = 0
+//        var numRocks = self.primedNuisanceBeans
+//        var totalNuisanceSent = 0
+        var rocksToSendNow = self.primedNuisanceBeans
+        if self.primedNuisanceBeans > self.maxNuisanceSend {
+            rocksToSendNow = self.maxNuisanceSend
+        }
+        print("rocks to send now", rocksToSendNow)
+        self.primedNuisanceBeans -= rocksToSendNow
         
-//        let numChunks = numRocks / grid.columnCount + (numRocks % grid.columnCount > 0 ? 1 : 0)
-//        var isNextChunkReady = false
-        let numColumns = self.grid.columnCount + 1
-        var rowIndex = 0
-        print("start of dropping")
-        while numRocks > 0 {
-//            self.nuisanceWaiting = true
-            print("num rocks:", numRocks)
-            print("total nuisance sent:", totalNuisanceSent)
-            if numRocks >= numColumns{
-                rocksToSendNow = numColumns
-            }
-            if numRocks < numColumns{
-                rocksToSendNow = numRocks
-            }
-            if totalNuisanceSent + rocksToSendNow > self.maxNuisanceSend{
-                print("will be too many")
-                if totalNuisanceSent >= self.maxNuisanceSend{
-                    print("too many for now, sent:", totalNuisanceSent)
-                    self.newBeanBeforeMoreNuisance = true
-                    return
-                }
-                if totalNuisanceSent < self.maxNuisanceSend{
-                    rocksToSendNow = self.maxNuisanceSend - totalNuisanceSent
-                    print("sending smaller amount:", rocksToSendNow)
-                }
-            }
-            var chosenColumns: Set<Int> = []
-            while chosenColumns.count < rocksToSendNow{
-                let randomColumn = Int.random(in: 0..<numColumns)
-                chosenColumns.insert(randomColumn)
-            }
-            for column in chosenColumns{
-                let chosenCell = self.grid.cells[column]![self.grid.rowCount + rowIndex]
+        let result = rocksToSendNow.quotientAndRemainder(dividingBy: self.grid.columnCount + 1)
+        for row in (0..<result.quotient) {
+            for column in (0..<self.grid.columnCount) {
+                let chosenCell = self.grid.cells[column]![self.grid.rowCount + row]
                 let rock = Bean(
                     color: .gray,
                     cellSize: self.grid.cellSize,
@@ -456,26 +431,90 @@ class Game {
                 )
                 chosenCell!.bean = rock
                 self.scene.addChild(rock.shape)
-                
             }
-            if totalNuisanceSent > self.maxNuisanceSend{
-                print("did not exit")
-            }
-            self.primedNuisanceBeans -= rocksToSendNow
-            numRocks -= rocksToSendNow
-            totalNuisanceSent += rocksToSendNow
-            rocksToSendNow = 0
-            rowIndex += 1
-            if self.primedNuisanceBeans == 0{
-                self.nuisanceWaiting = false
-            }
+        }
+        // drop the last beans randomly
+        var allSpots = Array(0..<self.grid.columnCount)
+        allSpots.shuffle()
+        for column in Array(allSpots.prefix(result.quotient)) {
+            let chosenCell = self.grid.cells[column]![self.grid.rowCount + result.quotient]
+            let rock = Bean(
+                color: .gray,
+                cellSize: self.grid.cellSize,
+                startingPosition: chosenCell!.shape.position,
+                showNumber: showNumber
+            )
+            chosenCell!.bean = rock
+            self.scene.addChild(rock.shape)
+        }
+        self.newBeanBeforeMoreNuisance = true
+        
+        
+        
+//        var rowsToSend = rocksToSendNow
+        
+//        let numChunks = numRocks / grid.columnCount + (numRocks % grid.columnCount > 0 ? 1 : 0)
+//        var isNextChunkReady = false
+//        let numColumns = self.grid.columnCount + 1
+//        var rowIndex = 0
+//        print("start of dropping")
+//        while numRocks > 0 {
+//            self.nuisanceWaiting = true
+//            print("num rocks:", numRocks)
+//            print("total nuisance sent:", totalNuisanceSent)
+//            if numRocks >= numColumns{
+//                rocksToSendNow = numColumns
+//            }
+//            if numRocks < numColumns{
+//                rocksToSendNow = numRocks
+//            }
+//            if totalNuisanceSent + rocksToSendNow > self.maxNuisanceSend{
+//                print("will be too many")
+//                if totalNuisanceSent >= self.maxNuisanceSend{
+//                    print("too many for now, sent:", totalNuisanceSent)
+//                    self.newBeanBeforeMoreNuisance = true
+//                    return
+//                }
+//                if totalNuisanceSent < self.maxNuisanceSend{
+//                    rocksToSendNow = self.maxNuisanceSend - totalNuisanceSent
+//                    print("sending smaller amount:", rocksToSendNow)
+//                }
+//            }
+//            var chosenColumns: Set<Int> = []
+//            while chosenColumns.count < rocksToSendNow{
+//                let randomColumn = Int.random(in: 0..<numColumns)
+//                chosenColumns.insert(randomColumn)
+//            }
+//            for column in chosenColumns{
+//                let chosenCell = self.grid.cells[column]![self.grid.rowCount + rowIndex]
+//                let rock = Bean(
+//                    color: .gray,
+//                    cellSize: self.grid.cellSize,
+//                    startingPosition: chosenCell!.shape.position,
+//                    showNumber: showNumber
+//                )
+//                chosenCell!.bean = rock
+//                self.scene.addChild(rock.shape)
+//                
+//            }
+//            if totalNuisanceSent > self.maxNuisanceSend{
+//                print("did not exit")
+//            }
+//            self.primedNuisanceBeans -= rocksToSendNow
+//            numRocks -= rocksToSendNow
+//            totalNuisanceSent += rocksToSendNow
+//            rocksToSendNow = 0
+//            rowIndex += 1
+//            if self.primedNuisanceBeans == 0{
+//                self.nuisanceWaiting = false
+//            }
             
-            self.beans = self.grid.getBeans()
         
 //                self.beans.append(rock)
-            }
+//            }
             
         print("end of dropping")
+        self.beans = self.grid.getBeans()
         }
     
     func loadLeaderboard() async {
