@@ -51,9 +51,10 @@ class Game {
     var samBot: samBot
     var useCPUControls: Bool = false
     var primedNuisanceBeans: Int = 0
-    var maxNuisanceSend: Int = 4
+    var maxNuisanceSend: Int = 36
     var newBeanBeforeMoreNuisance: Bool = false
     var random: GKRandom
+    var backgroundNode: SKSpriteNode?
     
     // ios movement
     var initialTouch: CGPoint = CGPoint.zero
@@ -86,7 +87,7 @@ class Game {
         
         var offsetLeft = 0
         if params.player == 1 {
-            offsetLeft = params.cellSize * (params.columnCount + 1)
+            offsetLeft = params.cellSize * (params.columnCount + 1) + params.cellSize / 4
         }
         
         self.grid = Grid(
@@ -105,8 +106,24 @@ class Game {
         }
         params.scene.addChild(self.grid.outline)
         
+        addBackground()
 
     }
+    
+    func addBackground() {
+            // Remove existing background if any
+            backgroundNode?.removeFromParent()
+            
+            // Create a new background node
+            let backgroundSize = self.grid.outline.frame.size
+            let backgroundTexture = SKTexture(imageNamed: "beanBackground")
+            backgroundNode = SKSpriteNode(texture: backgroundTexture, size: backgroundSize)
+            backgroundNode?.position = grid.outline.position
+            backgroundNode?.zPosition = 0 // Ensure it's behind other nodes
+            backgroundNode?.xScale = 0.96
+        backgroundNode?.yScale = 0.985
+            scene.addChild(backgroundNode!)
+        }
     
     func update() {
         switch gameState {

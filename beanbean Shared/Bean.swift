@@ -38,22 +38,43 @@ class Bean {
         
         var beanImage: SKSpriteNode!
         
-        if color == .gray{
-            beanImage = createBean(beanSize: beanSize, bodyImage: "tile_grey", faceImage: "face_j")
+        if salmon{
+            if color == .gray{
+                beanImage = createBean(beanSize: beanSize, bodyImage: "tile_grey", faceImage: "samFace")
+            }
+            switch self.color {
+            case .green:
+                beanImage = createBean(beanSize: beanSize, bodyImage: "green_body_circle", faceImage: "samFace")
+            case .purple:
+                beanImage = createBean(beanSize: beanSize, bodyImage: "purple_body_circle", faceImage: "samFace")
+            case .red:
+                beanImage = createBean(beanSize: beanSize, bodyImage: "red_body_circle", faceImage: "samFace")
+            case .yellow:
+                beanImage = createBean(beanSize: beanSize, bodyImage: "yellow_body_circle", faceImage: "samFace")
+                
+            default:
+                print("Unknown color")
+    //            break
+            }
         }
-        switch self.color {
-        case .green:
-            beanImage = createBean(beanSize: beanSize, bodyImage: "green_body_circle", faceImage: "face_a")
-        case .purple:
-            beanImage = createBean(beanSize: beanSize, bodyImage: "purple_body_circle", faceImage: "face_b")
-        case .red:
-            beanImage = createBean(beanSize: beanSize, bodyImage: "red_body_circle", faceImage: "face_c")
-        case .yellow:
-            beanImage = createBean(beanSize: beanSize, bodyImage: "yellow_body_circle", faceImage: "face_d")
-            
-        default:
-            print("Unknown color")
-//            break
+        else{
+            if color == .gray{
+                beanImage = createBean(beanSize: beanSize, bodyImage: "tile_grey", faceImage: "face_j")
+            }
+            switch self.color {
+            case .green:
+                beanImage = createBean(beanSize: beanSize, bodyImage: "green_body_circle", faceImage: "face_a")
+            case .purple:
+                beanImage = createBean(beanSize: beanSize, bodyImage: "purple_body_circle", faceImage: "face_b")
+            case .red:
+                beanImage = createBean(beanSize: beanSize, bodyImage: "red_body_circle", faceImage: "face_c")
+            case .yellow:
+                beanImage = createBean(beanSize: beanSize, bodyImage: "yellow_body_circle", faceImage: "face_d")
+                
+            default:
+                print("Unknown color")
+    //            break
+            }
         }
         self.shape.addChild(beanImage) // Add the image node to the scene
 
@@ -105,6 +126,9 @@ class Bean {
         self.shape.run(repeatAnimationSequence)
     }
 }
+
+var salmon = false
+
 func createBean(beanSize: CGSize, bodyImage: String, faceImage: String) -> SKSpriteNode {
     let body = SKSpriteNode(imageNamed: bodyImage)
     body.position = CGPoint(x: 0, y: 0)
@@ -112,12 +136,23 @@ func createBean(beanSize: CGSize, bodyImage: String, faceImage: String) -> SKSpr
     body.zPosition = 1
     
     let face = SKSpriteNode(imageNamed: faceImage)
-    face.position = CGPoint(x: 0, y: 0)
-    face.size = beanSize
-    face.size = CGSize(
-        width: beanSize.width / 1.7,
-        height: beanSize.width / 1.7
-    )
+    if salmon{
+        face.position = CGPoint(x: 0, y: 20)
+        face.size = beanSize
+        face.size = CGSize(
+            width: beanSize.width * 1.5,
+            height: beanSize.width * 2
+        )
+    }
+    else{
+        face.position = CGPoint(x: 0, y: 0)
+        face.size = beanSize
+        face.size = CGSize(
+            width: beanSize.width / 1.7,
+            height: beanSize.width / 1.7
+        )
+    }
+
     face.zPosition = 2
     body.addChild(face)
     
