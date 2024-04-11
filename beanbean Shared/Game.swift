@@ -51,8 +51,7 @@ class Game {
     var samBot: samBot
     var useCPUControls: Bool = false
     var primedNuisanceBeans: Int = 0
-    var nuisanceWaiting: Bool = false
-    var maxNuisanceSend: Int = 36
+    var maxNuisanceSend: Int = 4
     var newBeanBeforeMoreNuisance: Bool = false
     var random: GKRandom
     
@@ -175,11 +174,6 @@ class Game {
             }
             for bean in self.beans {
                 let currentCell = grid.getCell(x: bean.shape.position.x, y: bean.shape.position.y)
-//                if self.nuisanceWaiting && self.grid.cells[2]![self.grid.rowCount]?.bean == nil
-//                {
-//                    print("yoyoyoyoyoyoyoyoyo")
-//                    setGameState(state: .dropNuisanceBeans)
-//                }
                 if bean.canMoveDown(grid: self.grid, speed: settings.movement.gravitySpeed) {
                     // release the bean from the cell so others above can move down
                     currentCell?.bean = nil
@@ -267,7 +261,7 @@ class Game {
             otherPlayerGame?.primedNuisanceBeans += self.score.nuisanceBeansInt
             self.score.resetCombos()
             
-            if self.grid.getStartingCell()!.bean != nil {
+            if self.grid.getEndGameCell()!.bean != nil {
                 setGameState(state: .endScreen)
                 return
             }
@@ -284,7 +278,6 @@ class Game {
         case .dropNuisanceBeans:
             generateNuisanceBeans(showNumber: settings.debug.showGroupNumber)
             setGameState(state: .gravity)
-            
             
         case .endScreen:
             
@@ -410,44 +403,23 @@ class Game {
 //        }
 //    }
     func generateNuisanceBeans(showNumber: Bool) {
-        var numRocks = self.primedNuisanceBeans
-        var totalNuisanceSent = 0
-        var rocksToSendNow = 0
+        var rocksToSendNow = self.primedNuisanceBeans
+        if self.primedNuisanceBeans > self.maxNuisanceSend {
+            rocksToSendNow = self.maxNuisanceSend
+        }
+        self.primedNuisanceBeans -= rocksToSendNow
+                
+        let result = rocksToSendNow.quotientAndRemainder(dividingBy: self.grid.columnCount + 1)
         
-//        let numChunks = numRocks / grid.columnCount + (numRocks % grid.columnCount > 0 ? 1 : 0)
-//        var isNextChunkReady = false
-        let numColumns = self.grid.columnCount + 1
-        var rowIndex = 0
-        print("start of dropping")
-        while numRocks > 0 {
-//            self.nuisanceWaiting = true
-            print("num rocks:", numRocks)
-            print("total nuisance sent:", totalNuisanceSent)
-            if numRocks >= numColumns{
-                rocksToSendNow = numColumns
-            }
-            if numRocks < numColumns{
-                rocksToSendNow = numRocks
-            }
-            if totalNuisanceSent + rocksToSendNow > self.maxNuisanceSend{
-                print("will be too many")
-                if totalNuisanceSent >= self.maxNuisanceSend{
-                    print("too many for now, sent:", totalNuisanceSent)
-                    self.newBeanBeforeMoreNuisance = true
-                    return
-                }
-                if totalNuisanceSent < self.maxNuisanceSend{
-                    rocksToSendNow = self.maxNuisanceSend - totalNuisanceSent
-                    print("sending smaller amount:", rocksToSendNow)
-                }
-            }
-            var chosenColumns: Set<Int> = []
-            while chosenColumns.count < rocksToSendNow{
-                let randomColumn = Int.random(in: 0..<numColumns)
-                chosenColumns.insert(randomColumn)
-            }
-            for column in chosenColumns{
-                let chosenCell = self.grid.cells[column]![self.grid.rowCount + rowIndex]
+//        map[0] = 2
+        
+        for row in (0..<result.quotient) {
+            for column in (0...self.grid.columnCount) {
+//                numbeansPossible = mapName[column]
+//                numbeansPossible -= 1
+//                continue
+                
+                let chosenCell = self.grid.cells[column]![self.grid.rowCount + row + 1]
                 let rock = Bean(
                     color: .gray,
                     cellSize: self.grid.cellSize,
@@ -456,27 +428,27 @@ class Game {
                 )
                 chosenCell!.bean = rock
                 self.scene.addChild(rock.shape)
-                
             }
-            if totalNuisanceSent > self.maxNuisanceSend{
-                print("did not exit")
-            }
-            self.primedNuisanceBeans -= rocksToSendNow
-            numRocks -= rocksToSendNow
-            totalNuisanceSent += rocksToSendNow
-            rocksToSendNow = 0
-            rowIndex += 1
-            if self.primedNuisanceBeans == 0{
-                self.nuisanceWaiting = false
-            }
-            
-            self.beans = self.grid.getBeans()
-        
-//                self.beans.append(rock)
-            }
+        }
+        // drop the last beans randomly
+        var allSpots = Array(0...self.grid.columnCount)
+        allSpots.shuffle()
+        for column in allSpots.prefix(result.remainder) {
+            let chosenCell = self.grid.cells[column]![self.grid.rowCount + result.quotient + 1]
+            let rock = Bean(
+                color: .gray,
+                cellSize: self.grid.cellSize,
+                startingPosition: chosenCell!.shape.position,
+                showNumber: showNumber
+            )
+            chosenCell!.bean = rock
+            self.scene.addChild(rock.shape)
+        }
+        self.newBeanBeforeMoreNuisance = true
             
         print("end of dropping")
-        }
+        self.beans = self.grid.getBeans()
+    }
     
     func loadLeaderboard() async {
         let leaderboards = try! await GKLeaderboard.loadLeaderboards(IDs: ["BestCombo"])
