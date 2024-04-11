@@ -410,18 +410,15 @@ class Game {
 //        }
 //    }
     func generateNuisanceBeans(showNumber: Bool) {
-//        var numRocks = self.primedNuisanceBeans
-//        var totalNuisanceSent = 0
         var rocksToSendNow = self.primedNuisanceBeans
         if self.primedNuisanceBeans > self.maxNuisanceSend {
             rocksToSendNow = self.maxNuisanceSend
         }
-        print("rocks to send now", rocksToSendNow)
         self.primedNuisanceBeans -= rocksToSendNow
         
         let result = rocksToSendNow.quotientAndRemainder(dividingBy: self.grid.columnCount + 1)
         for row in (0..<result.quotient) {
-            for column in (0..<self.grid.columnCount) {
+            for column in (0...self.grid.columnCount) {
                 let chosenCell = self.grid.cells[column]![self.grid.rowCount + row]
                 let rock = Bean(
                     color: .gray,
@@ -434,9 +431,9 @@ class Game {
             }
         }
         // drop the last beans randomly
-        var allSpots = Array(0..<self.grid.columnCount)
+        var allSpots = Array(0...self.grid.columnCount)
         allSpots.shuffle()
-        for column in Array(allSpots.prefix(result.quotient)) {
+        for column in Array(allSpots.prefix(result.remainder)) {
             let chosenCell = self.grid.cells[column]![self.grid.rowCount + result.quotient]
             let rock = Bean(
                 color: .gray,
@@ -448,8 +445,6 @@ class Game {
             self.scene.addChild(rock.shape)
         }
         self.newBeanBeforeMoreNuisance = true
-        
-        
         
 //        var rowsToSend = rocksToSendNow
         
