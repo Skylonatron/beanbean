@@ -30,12 +30,16 @@ class HomeScene: SKScene {
         self.addChild(outline)
 
         let soloButton = addButton(outlineFrame: outline.frame, name: "Solo")
-        soloButton.position = CGPoint(x: 0, y: frame.width / 20)
+        soloButton.position = CGPoint(x: 0, y: frame.width / 10)
         outline.addChild(soloButton)
         
         let multiButton = addButton(outlineFrame: outline.frame, name: "Multi")
-        multiButton.position = CGPoint(x: 0, y: -frame.width / 20)
+        multiButton.position = CGPoint(x: 0, y: 0)
         outline.addChild(multiButton)
+        
+        let matchmakingButton = addButton(outlineFrame: outline.frame, name: "Online")
+        matchmakingButton.position = CGPoint(x: 0, y: -frame.width / 10)
+        outline.addChild(matchmakingButton)
     }
     
     func addButton(outlineFrame: CGRect, name: String) -> SKShapeNode {
@@ -96,6 +100,11 @@ extension HomeScene {
             let gameScene = GameScene.newGameScene(mode: .localMultiplayer)
             self.view?.presentScene(gameScene, transition: SKTransition.doorsOpenHorizontal(withDuration: 1.0))
             
+        }
+        if node.name == "Online" {
+            let matchmakingScene = MatchmakingScene(size: self.size)
+            matchmakingScene.scaleMode = self.scaleMode
+            self.view?.presentScene(matchmakingScene, transition: SKTransition.doorsOpenHorizontal(withDuration: 1.0))
         }
     }
 }
