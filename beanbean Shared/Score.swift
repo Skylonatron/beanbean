@@ -85,13 +85,14 @@ class Score {
         scoreOutline.position.y = bounds.size.height / 1.7
         
         scoreLabel = SKLabelNode(text: "Score: 0")
-        scoreLabel.position = CGPoint(x: -scoreOutline.frame.width / 2.2, y: scoreOutline.frame.height / 12)
+        scoreLabel.position = CGPoint(x: grid.outline.position.x, y: grid.outline.position.y - CGFloat(grid.cellSize * 7))
         scoreLabel.fontName = "Arial"
-        scoreLabel.fontSize = 42
-        scoreLabel.fontColor = .black
-        scoreLabel.horizontalAlignmentMode = .left
+        scoreLabel.fontSize = 36
+        scoreLabel.fontColor = .systemPink
+        scoreLabel.horizontalAlignmentMode = .center
         scoreLabel.verticalAlignmentMode = .bottom
-        scoreOutline.addChild(scoreLabel)
+        scoreLabel.zPosition = 8
+        scene.addChild(scoreLabel)
         
         // Initialize the nuisance label
         nuisanceLabel = SKLabelNode(text: "Beans Sent: 0")
