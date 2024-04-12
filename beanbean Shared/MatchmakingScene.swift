@@ -6,6 +6,7 @@
 //
 
 import SpriteKit
+import GameKit
 
 class MatchmakingScene: SKScene {
     var game: Game!
@@ -33,8 +34,13 @@ class MatchmakingScene: SKScene {
         self.addChild(outline)
         
         let backButton = addButton(outlineFrame: outline.frame, name: "Back")
-        backButton.position = CGPoint(x: 0, y: 0)
+        backButton.position = CGPoint(x: 0, y: frame.width / 10)
         outline.addChild(backButton)
+        
+        let findMatchButton = addButton(outlineFrame: outline.frame, name: "FindMatch")
+        findMatchButton.position = CGPoint(x: 0, y: -frame.width / 10)
+        outline.addChild(findMatchButton)
+        
     }
 
     
@@ -76,7 +82,39 @@ class MatchmakingScene: SKScene {
 
 #if os(OSX)
 // Mouse-based event handling
-extension MatchmakingScene {
+extension MatchmakingScene: GKMatchmakerViewControllerDelegate {
+    func initiateMatchmaking(){
+        guard GKLocalPlayer.local.isAuthenticated else{
+            print("Player is not authenticated.")
+            return
+        }
+        
+        let request = GKMatchRequest()
+        request.minPlayers = 2
+        request.maxPlayers = 2
+        request.defaultNumberOfPlayers = 2
+        
+        let matchmakerViewController = GKMatchmakerViewController(matchRequest: request)
+        matchmakerViewController?.matchmakerDelegate = self
+        
+        guard let viewController = matchmakerViewController else{
+            print("Failed to create matchmaker view controller.")
+            return
+        }
+        
+        self.view?.window?.contentViewController?.presentAsSheet(viewController)
+    }
+    func matchmakerViewControllerWasCancelled(_ viewController: GKMatchmakerViewController) {
+        viewController.dismiss(true)
+    }
+    
+    func matchmakerViewController(_ viewController: GKMatchmakerViewController, didFailWithError error: Error) {
+        print("Matchmaking failed with error: \(error.localizedDescription)")
+    }
+    func matchmakerViewController(_ viewController: GKMatchmakerViewController, didFind match: GKMatch) {
+        viewController.dismiss(true)
+    }
+    
     
     override func mouseDown(with event: NSEvent) {
         // for debugging you can click on a cell and see if there is a bean there
@@ -87,6 +125,11 @@ extension MatchmakingScene {
             homeScene.scaleMode = .aspectFill
             view?.presentScene(homeScene, transition: .doorsCloseHorizontal(withDuration: 1.0))
         }
+        if node.name == "FindMatch" {
+            initiateMatchmaking()
+        }
     }
+    
+
 }
 #endif
