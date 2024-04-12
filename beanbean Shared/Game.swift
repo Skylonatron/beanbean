@@ -429,13 +429,36 @@ class Game {
                 
         let result = rocksToSendNow.quotientAndRemainder(dividingBy: self.grid.columnCount + 1)
         
-//        map[0] = 2
+        var findEmptyCellsForNuisance: [Int: Int] = [
+            0:0,
+            1:0,
+            2:0,
+            3:0,
+            4:0,
+            5:0
+        ]
+//        var numNuisancePossible: Int = 0
+//        for row in (0..<Int(self.maxNuisanceSend / (self.grid.columnCount + 1)){
+        for row in (0...5){
+            for column in (0...self.grid.columnCount){
+                let currentCell = self.grid.cells[column]![self.grid.rowCount - row]
+                if currentCell?.bean == nil{
+                    findEmptyCellsForNuisance[column]! += 1
+                }
+            }
+        }
+        print(findEmptyCellsForNuisance)
         
         for row in (0..<result.quotient) {
             for column in (0...self.grid.columnCount) {
-//                numbeansPossible = mapName[column]
-//                numbeansPossible -= 1
-//                continue
+                var numNuisancePossible = findEmptyCellsForNuisance[column]
+                if numNuisancePossible != 0{
+                    findEmptyCellsForNuisance[column]! -= 1
+                }
+                else{
+                    self.primedNuisanceBeans += 1
+                    continue
+                }
                 
                 let chosenCell = self.grid.cells[column]![self.grid.rowCount + row + 1]
                 let rock = Bean(
@@ -452,6 +475,14 @@ class Game {
         var allSpots = Array(0...self.grid.columnCount)
         allSpots.shuffle()
         for column in allSpots.prefix(result.remainder) {
+            var numNuisancePossible = findEmptyCellsForNuisance[column]
+            if numNuisancePossible != 0{
+                findEmptyCellsForNuisance[column]! -= 1
+            }
+            else{
+                self.primedNuisanceBeans += 1
+                continue
+            }
             let chosenCell = self.grid.cells[column]![self.grid.rowCount + result.quotient + 1]
             let rock = Bean(
                 color: .gray,
@@ -462,6 +493,7 @@ class Game {
             chosenCell!.bean = rock
             self.scene.addChild(rock.shape)
         }
+        print(findEmptyCellsForNuisance)
         self.newBeanBeforeMoreNuisance = true
             
         print("end of dropping")

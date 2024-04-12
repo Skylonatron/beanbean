@@ -58,9 +58,6 @@ class Bean {
             }
         }
         else{
-            if color == .gray{
-                beanImage = createBean(beanSize: beanSize, bodyImage: "tile_grey", faceImage: "face_j")
-            }
             switch self.color {
             case .green:
                 beanImage = createBean(beanSize: beanSize, bodyImage: "green_body_circle", faceImage: "face_a")
@@ -70,10 +67,11 @@ class Bean {
                 beanImage = createBean(beanSize: beanSize, bodyImage: "red_body_circle", faceImage: "face_c")
             case .yellow:
                 beanImage = createBean(beanSize: beanSize, bodyImage: "yellow_body_circle", faceImage: "face_d")
+            case .gray:
+                beanImage = createBean(beanSize: beanSize, bodyImage: "tile_grey", faceImage: "face_j")
                 
             default:
                 print("Unknown color")
-    //            break
             }
         }
         self.shape.addChild(beanImage) // Add the image node to the scene
