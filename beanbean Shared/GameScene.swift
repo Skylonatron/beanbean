@@ -7,10 +7,12 @@
 
 
 import SpriteKit
+import GameKit
 
 enum GameMode {
     case single
     case localMultiplayer
+    case onlineMultiplayer
 }
 
 class GameScene: SKScene {
@@ -21,6 +23,14 @@ class GameScene: SKScene {
     var moveAmtY: CGFloat = 0
     var gameMode: GameMode = .single
     var player2CPU: Bool = true
+    var match: GKMatch?
+    var localPlayerID: String?
+    
+    convenience init(match: GKMatch) {
+        self.init()
+        self.match = match
+        self.localPlayerID = GKLocalPlayer.local.gamePlayerID
+    }
     
     var games: [Game] = []
     
@@ -104,6 +114,51 @@ class GameScene: SKScene {
             gamePlayer2.otherPlayerGame = gamePlayer1
             
             
+        }
+        else if gameMode == .onlineMultiplayer{
+            let match = match
+            
+            let playerIDs = match?.players.map { $0.gamePlayerID}
+            let remotePlayerIDs = playerIDs?.filter { $0 != localPlayerID}
+            
+            player = 1
+            let otherPlayerID = remotePlayerIDs?.first
+            
+            let gameParamsPlayer1 = GameParams(
+                scene: self,
+                cellSize: cellSize,
+                rowCount: rowCount,
+                columnCount: columnCount,
+                bounds: bounds,
+                controller: controller1,
+                player: player,
+                otherPlayerGame: nil,
+                samBot: samBot(),
+                seed: seed
+            )
+            
+            let gameParamsPlayer2 = GameParams(
+                scene: self,
+                cellSize: cellSize,
+                rowCount: rowCount,
+                columnCount: columnCount,
+                bounds: bounds,
+                controller: controller1,
+                player: 2,
+                otherPlayerGame: nil,
+                samBot: samBot(),
+                seed: seed
+                
+            )
+            let gamePlayer1 = Game(params: gameParamsPlayer1)
+            let gamePlayer2 = Game(params: gameParamsPlayer2)
+            gamePlayer2.useCPUControls = false
+            self.games.append(gamePlayer1)
+            self.games.append(gamePlayer2)
+            gamePlayer1.otherPlayerGame = gamePlayer2
+            gamePlayer2.otherPlayerGame = gamePlayer1
+            
+//            gameParamsPlayer2.otherPlayerGame = gamePlayer1
         }
         else{
             let gameParams = GameParams(
