@@ -7,6 +7,7 @@
 
 import SpriteKit
 import GameKit
+import UIKit
 
 class MatchmakingScene: SKScene {
     var game: Game!
@@ -134,5 +135,64 @@ extension MatchmakingScene: GKMatchmakerViewControllerDelegate {
     }
     
 
+}
+#endif
+
+#if os(iOS) || os(tvOS)
+
+extension MatchmakingScene: GKMatchmakerViewControllerDelegate {
+    func initiateMatchmaking(){
+        guard GKLocalPlayer.local.isAuthenticated else {
+            print("Player is not authenticated.")
+            return
+        }
+        
+        let request = GKMatchRequest()
+        request.minPlayers = 2
+        request.maxPlayers = 2
+        request.defaultNumberOfPlayers = 2
+        
+        let matchmakerViewController = GKMatchmakerViewController(matchRequest: request)
+        matchmakerViewController?.matchmakerDelegate = self
+        
+        guard let viewController = matchmakerViewController else {
+            print("Failed to create matchmaker view controller.")
+            return
+        }
+        
+        if let rootViewController = UIApplication.shared.windows.first?.rootViewController {
+            rootViewController.present(viewController, animated: true, completion: nil)
+        }
+    }
+    
+    func matchmakerViewControllerWasCancelled(_ viewController: GKMatchmakerViewController) {
+        viewController.dismiss(animated: true, completion: nil)
+    }
+    
+    func matchmakerViewController(_ viewController: GKMatchmakerViewController, didFailWithError error: Error) {
+        print("Matchmaking failed with error: \(error.localizedDescription)")
+    }
+    
+    func matchmakerViewController(_ viewController: GKMatchmakerViewController, didFind match: GKMatch) {
+        viewController.dismiss(animated: true, completion: nil)
+        let gameScene = GameScene(match: match)
+        gameScene.scaleMode = .aspectFill
+        view?.presentScene(gameScene, transition: .doorsOpenHorizontal(withDuration: 1.0))
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard let touch = touches.first else { return }
+        let location = touch.location(in: self)
+        let node = self.atPoint(location)
+        
+        if node.name == "Back" {
+            let homeScene = HomeScene.newHomeScene()
+            homeScene.scaleMode = .aspectFill
+            view?.presentScene(homeScene, transition: .doorsCloseHorizontal(withDuration: 1.0))
+        }
+        if node.name == "FindMatch" {
+            initiateMatchmaking()
+        }
+    }
 }
 #endif

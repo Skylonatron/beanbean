@@ -124,6 +124,11 @@ extension HomeScene {
             let gameScene = GameScene.newGameScene(mode: .single)
             self.view?.presentScene(gameScene, transition: SKTransition.doorsOpenHorizontal(withDuration: 1.0))
         }
+        if node.name == "Online" {
+            let matchmakingScene = MatchmakingScene.newMatchmakingScene()
+            matchmakingScene.scaleMode = .aspectFill
+            self.view?.presentScene(matchmakingScene, transition: SKTransition.doorsOpenHorizontal(withDuration: 1.0))
+        }
     }
 }
 
