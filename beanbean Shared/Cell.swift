@@ -29,8 +29,8 @@ class Cell: Hashable{
         // Set the position of the rectangle
         self.shape.position = CGPoint(x: x, y: y)
         // Set the fill color of the rectangle
-        self.shape.fillColor = SKColor.black
-        self.shape.strokeColor = SKColor.black
+        self.shape.fillColor = SKColor(red: 0.15, green: 0.15, blue: 0.15, alpha: 1.0)
+        self.shape.strokeColor = SKColor(red: 0.15, green: 0.15, blue: 0.15, alpha: 1.0)
         // Set the stroke color of the rectangle
         
         self.column = column
