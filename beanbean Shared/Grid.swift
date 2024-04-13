@@ -27,6 +27,7 @@ class Grid {
         self.outline.strokeColor = .darkGray
         self.outline.lineWidth = 8
         self.outline.position.x = CGFloat(-offsetLeft)
+        self.outline.zPosition = 5
         
         self.offsetLeft = CGFloat((columnCount + 1) / 2) * CGFloat(cellSize) - (CGFloat(cellSize) / 2) + CGFloat(offsetLeft)
         self.offsetDown = CGFloat((rowCount + 1) / 2) * CGFloat(cellSize)
@@ -48,7 +49,21 @@ class Grid {
                     column: column,
                     row: row,
                     show: showCells,
-                    showRowColumn: showRowColumn
+                    showRowColumn: showRowColumn,
+                    invisibleTopRow: false
+                )
+                cells[column]![row] = cell
+            }
+            for row in (rowCount+1)...(rowCount + extraTopRows) {
+                let cell = Cell(
+                    cellSize: cellSize,
+                    x: CGFloat(cellSize * column) - self.offsetLeft,
+                    y: CGFloat(cellSize * row) - self.offsetDown,
+                    column: column,
+                    row: row,
+                    show: showCells,
+                    showRowColumn: showRowColumn,
+                    invisibleTopRow: true
                 )
                 cells[column]![row] = cell
             }

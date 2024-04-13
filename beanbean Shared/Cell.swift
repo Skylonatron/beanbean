@@ -21,7 +21,7 @@ class Cell: Hashable{
         hasher.combine(self.row)
     }
     
-    init(cellSize: Int, x: CGFloat, y: CGFloat, column: Int, row: Int, show: Bool, showRowColumn: Bool) {
+    init(cellSize: Int, x: CGFloat, y: CGFloat, column: Int, row: Int, show: Bool, showRowColumn: Bool, invisibleTopRow: Bool) {
         self.shape = SKShapeNode(rectOf: CGSize(
             width: cellSize,
             height: cellSize
@@ -29,13 +29,18 @@ class Cell: Hashable{
         // Set the position of the rectangle
         self.shape.position = CGPoint(x: x, y: y)
         // Set the fill color of the rectangle
-        self.shape.fillColor = SKColor.white
+        self.shape.fillColor = SKColor.black
+        self.shape.strokeColor = SKColor.black
         // Set the stroke color of the rectangle
         
         self.column = column
         self.row = row
         if show {
             self.shape.strokeColor = SKColor.black
+        }
+        
+        if invisibleTopRow {
+            self.shape.zPosition = 4
         }
         
         
