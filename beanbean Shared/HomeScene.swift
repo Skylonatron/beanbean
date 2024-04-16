@@ -63,7 +63,7 @@ class HomeScene: SKScene {
         labelNode.horizontalAlignmentMode = .center // Center horizontally
         labelNode.verticalAlignmentMode = .center // Center vertically
         button.addChild(labelNode) // Add label as child of shape node
-        return button  
+        return button
     }
     
 
@@ -124,9 +124,13 @@ extension HomeScene {
             let gameScene = GameScene.newGameScene(mode: .single)
             self.view?.presentScene(gameScene, transition: SKTransition.doorsOpenHorizontal(withDuration: 1.0))
         }
+        if node.name == "Multi" {
+            let gameScene = GameScene.newGameScene(mode: .localMultiplayer)
+            self.view?.presentScene(gameScene, transition: SKTransition.doorsOpenHorizontal(withDuration: 1.0))
+        }
         if node.name == "Online" {
             let matchmakingScene = MatchmakingScene.newMatchmakingScene()
-            matchmakingScene.scaleMode = .aspectFill
+//            matchmakingScene.scaleMode = .aspectFill
             self.view?.presentScene(matchmakingScene, transition: SKTransition.doorsOpenHorizontal(withDuration: 1.0))
         }
     }
