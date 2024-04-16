@@ -23,14 +23,13 @@ struct MatchModel: Codable {
 extension GKMatch: GKMatchDelegate {
     public func match(_: GKMatch, didReceive: Data, forRecipient: GKPlayer, fromRemotePlayer: GKPlayer)
     {
-        print(didReceive)
-        if let decoded = try? JSONDecoder().decode(MatchModel.self, from: didReceive) {
-            print(decoded.hitesh)
-        }
-//
-//        if let dataString = String(data: didReceive, encoding: .utf8) {
-//            print(dataString)
+//        if let decoded = try? JSONDecoder().decode(MatchModel.self, from: didReceive) {
+//            print(decoded.hitesh)
 //        }
+//
+        if let dataString = String(data: didReceive, encoding: .utf8) {
+            print(dataString)
+        }
 //
 //        if let dataString2 = String(data: didReceive, encoding: .ascii) {
 //            print(dataString2)

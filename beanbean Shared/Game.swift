@@ -532,10 +532,8 @@ class Game {
             print("No current match session")
             return
         }
-        
-        print("sendGameData")
-            
-        let stringToSend = "Hello World"
+                    
+        let stringToSend = "Sammy is Gay"
         do {
             try match.sendData(toAllPlayers: stringToSend.data(using: .utf8)!, with: .reliable)
         } catch {
