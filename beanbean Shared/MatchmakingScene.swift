@@ -114,7 +114,7 @@ extension MatchmakingScene: GKMatchmakerViewControllerDelegate {
     func matchmakerViewController(_ viewController: GKMatchmakerViewController, didFind match: GKMatch) {
         viewController.dismiss(true)
 //        let gameScene = GameScene(match: match)
-        let gameScene = GameScene.newGameScene(mode: .single)
+        let gameScene = GameScene.newGameScene(mode: .onlineMultiplayer, match: match)
 //        gameScene.scaleMode = .aspectFill
         view?.presentScene(gameScene, transition: .doorsOpenHorizontal(withDuration: 1.0))
     }

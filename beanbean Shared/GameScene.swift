@@ -26,15 +26,17 @@ class GameScene: SKScene {
     var match: GKMatch?
     var localPlayerID: String?
     
-    convenience init(match: GKMatch) {
-        self.init()
-        self.match = match
-        self.localPlayerID = GKLocalPlayer.local.gamePlayerID
-    }
+//    convenience init(match: GKMatch) {
+//        self.init()
+//        self.match = match
+//        self.localPlayerID = GKLocalPlayer.local.gamePlayerID
+//        
+//        
+//    }
     
     var games: [Game] = []
     
-    class func newGameScene(mode: GameMode) -> GameScene {
+    class func newGameScene(mode: GameMode, match: GKMatch? = nil) -> GameScene {
         // Load 'GameScene.sks' as an SKScene.
 //        let scene = GameScene()
         guard let scene = SKScene(fileNamed: "GameScene") as? GameScene else {
@@ -42,7 +44,9 @@ class GameScene: SKScene {
             abort()
         }
         
+        scene.match = match
         scene.gameMode = mode
+        scene.localPlayerID = GKLocalPlayer.local.gamePlayerID
         // Set the scale mode to scale to fit the window
         scene.scaleMode = .aspectFill
         
