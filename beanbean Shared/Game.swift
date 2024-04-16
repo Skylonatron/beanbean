@@ -68,7 +68,7 @@ class Game {
         self.bounds = params.bounds
         
         self.match = params.match
-        
+        match?.delegate = match
 
         self.controller = params.controller
         // these numbers should be the number of different colors we are using to randomize from
@@ -527,6 +527,21 @@ class Game {
             }
         }
     }
+    func sendGameData(_ data: Data) {
+        guard let match = self.match else {
+            print("No current match session")
+            return
+        }
+        
+        print("sendGameData")
+            
+        let stringToSend = "Hello World"
+        do {
+            try match.sendData(toAllPlayers: stringToSend.data(using: .utf8)!, with: .reliable)
+        } catch {
+            print("Failed to send game data:", error)
+        }
+    }
     
 
     
@@ -577,20 +592,6 @@ class Game {
         //      1 is S
         if event.keyCode == self.controller.down {
             self.fastMovement = false
-        }
-    }
-    
-    func sendGameData(_ data: Data) {
-        guard let match = self.match else {
-            print("No current match session")
-            return
-        }
-            
-        let stringToSend = "Hello World"
-        do {
-            try match.sendData(toAllPlayers: stringToSend.data(using: .utf8)!, with: .reliable)
-        } catch {
-            print("Failed to send game data:", error)
         }
     }
     
