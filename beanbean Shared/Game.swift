@@ -29,6 +29,7 @@ struct GameParams {
     let otherPlayerGame: Game?
     let samBot: samBot
     let seed: UInt64
+    let match: GKMatch?
 }
 
 class Game {
@@ -55,6 +56,7 @@ class Game {
     var newBeanBeforeMoreNuisance: Bool = false
     var random: GKRandom
     var backgroundNode: SKSpriteNode?
+    let match: GKMatch?
     
     // ios movement
     var initialTouch: CGPoint = CGPoint.zero
@@ -64,6 +66,8 @@ class Game {
     init(params: GameParams){
         self.scene = params.scene
         self.bounds = params.bounds
+        
+        self.match = params.match
         
 
         self.controller = params.controller
@@ -576,12 +580,29 @@ class Game {
         }
     }
     
+    func sendGameData(_ data: Data) {
+        guard let match = self.match else {
+            print("No current match session")
+            return
+        }
+            
+        let stringToSend = "Hello World"
+        do {
+            try match.sendData(toAllPlayers: stringToSend.data(using: .utf8)!, with: .reliable)
+        } catch {
+            print("Failed to send game data:", error)
+        }
+    }
+    
     func keyDown(event: NSEvent) {
         switch event.keyCode {
         case self.controller.right:
             if !useCPUControls {
                 beanPod.moveRight(grid: grid)
             }
+            let model = MatchModel(text: "Hello World", hitesh: "HITESH")
+            let data: Data? = try? JSONEncoder().encode(model)
+            self.sendGameData(data!)
         case self.controller.left:
             if !useCPUControls{
                 beanPod.moveLeft(grid: grid)

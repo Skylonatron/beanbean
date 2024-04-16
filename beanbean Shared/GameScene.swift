@@ -15,6 +15,29 @@ enum GameMode {
     case onlineMultiplayer
 }
 
+struct MatchModel: Codable {
+    var text: String
+    var hitesh = "Hitesh"
+}
+
+extension GKMatch: GKMatchDelegate {
+    public func match(_: GKMatch, didReceive: Data, forRecipient: GKPlayer, fromRemotePlayer: GKPlayer)
+    {
+        print(didReceive)
+        if let decoded = try? JSONDecoder().decode(MatchModel.self, from: didReceive) {
+            print(decoded.hitesh)
+        }
+//
+//        if let dataString = String(data: didReceive, encoding: .utf8) {
+//            print(dataString)
+//        }
+//
+//        if let dataString2 = String(data: didReceive, encoding: .ascii) {
+//            print(dataString2)
+//        }
+    }
+}
+
 class GameScene: SKScene {
         
     // ios movement
@@ -92,7 +115,8 @@ class GameScene: SKScene {
                 player: 2,
                 otherPlayerGame: nil,
                 samBot: samBot(),
-                seed: seed
+                seed: seed,
+                match: nil
             )
 
             let gameParamsPlayer1 = GameParams(
@@ -105,7 +129,8 @@ class GameScene: SKScene {
                 player: player,
                 otherPlayerGame: nil,
                 samBot: samBot(),
-                seed: seed
+                seed: seed,
+                match: nil
             )
             
             //add games to array and set otherPlayerGame
@@ -116,6 +141,7 @@ class GameScene: SKScene {
             self.games.append(gamePlayer2)
             gamePlayer1.otherPlayerGame = gamePlayer2
             gamePlayer2.otherPlayerGame = gamePlayer1
+            
             
             
         }
@@ -138,7 +164,8 @@ class GameScene: SKScene {
                 player: player,
                 otherPlayerGame: nil,
                 samBot: samBot(),
-                seed: seed
+                seed: seed,
+                match: self.match
             )
             
             let gameParamsPlayer2 = GameParams(
@@ -151,9 +178,11 @@ class GameScene: SKScene {
                 player: 2,
                 otherPlayerGame: nil,
                 samBot: samBot(),
-                seed: seed
+                seed: seed,
+                match: self.match
                 
             )
+            
             let gamePlayer1 = Game(params: gameParamsPlayer1)
             let gamePlayer2 = Game(params: gameParamsPlayer2)
             gamePlayer2.useCPUControls = false
@@ -175,7 +204,8 @@ class GameScene: SKScene {
                 player: player,
                 otherPlayerGame: nil,
                 samBot: samBot(),
-                seed: seed
+                seed: seed,
+                match: nil
                 
             )
             
@@ -196,7 +226,6 @@ class GameScene: SKScene {
             game.update()
         }
     }
-
 }
 
 #if os(iOS) || os(tvOS)
