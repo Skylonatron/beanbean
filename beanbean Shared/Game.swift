@@ -283,8 +283,7 @@ class Game {
             self.score.sumFullChain()
             self.submitScoreToLeaderboard(score: Int(self.score.numNuisanceBeans))
             otherPlayerGame?.primedNuisanceBeans += self.score.nuisanceBeansInt
-            if self.score.nuisanceBeansInt > 0 {
-                print("should play now")
+            if self.score.nuisanceBeansInt > 30 {
                 self.sounds.playRedRockSound()
             }
             self.score.resetCombos()

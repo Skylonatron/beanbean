@@ -13,6 +13,7 @@ class Sounds {
     
     init() {
         preloadPopSound()
+        preloadRedRockSound()
     }
     
     private func preloadPopSound() {
@@ -38,25 +39,24 @@ class Sounds {
         }
     }
     private func preloadRedRockSound() {
-        DispatchQueue.global().async {
-            if let redRockSoundURL = Bundle.main.url(forResource: "redRockSound", withExtension: "m4a") {
-                do {
-                    self.redRockSoundPlayer = try AVAudioPlayer(contentsOf: redRockSoundURL)
-                    self.redRockSoundPlayer?.volume = 0
-                    self.redRockSoundPlayer?.play()
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                        // Reset volume and stop playback
-                        self.redRockSoundPlayer?.volume = 1
-                        self.redRockSoundPlayer?.stop()
+            DispatchQueue.global().async {
+                if let redRockSoundURL = Bundle.main.url(forResource: "redRockSound", withExtension: "m4a") {
+                    do {
+                        self.redRockSoundPlayer = try AVAudioPlayer(contentsOf: redRockSoundURL)
+                        self.redRockSoundPlayer?.volume = 0
+                        self.redRockSoundPlayer?.play()
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            self.redRockSoundPlayer?.volume = 1
+                            self.redRockSoundPlayer?.stop()
+                        }
+                    } catch {
+                        print("Error preloading red rock sound: \(error.localizedDescription)")
                     }
-                } catch {
-                    print("Error preloading red rock sound: \(error.localizedDescription)")
+                } else {
+                    print("Red rock sound file not found")
                 }
-            } else {
-                print("Red rock sound file not found")
             }
         }
-    }
     
     func playPopSound(chainCount: Int) {
         if let player = popSoundPlayer{
@@ -75,7 +75,6 @@ class Sounds {
     func playRedRockSound() {
         if let player = redRockSoundPlayer{
             player.stop()
-            print("playing sound")
             player.play()
         }
 
