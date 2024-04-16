@@ -32,6 +32,24 @@ struct GameParams {
     let match: GKMatch?
 }
 
+extension GKMatch: GKMatchDelegate {
+    public func match(_: GKMatch, didReceive: Data, forRecipient: GKPlayer, fromRemotePlayer: GKPlayer)
+    {
+//        if let decoded = try? JSONDecoder().decode(MatchModel.self, from: didReceive) {
+//            print(decoded.hitesh)
+//        }
+//
+        if let dataString = String(data: didReceive, encoding: .utf8) {
+            print(dataString)
+        }
+        
+//
+//        if let dataString2 = String(data: didReceive, encoding: .ascii) {
+//            print(dataString2)
+//        }
+    }
+}
+
 class Game {
     var num: Int!
     var gameState: GameState = .new

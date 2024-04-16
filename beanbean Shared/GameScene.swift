@@ -20,23 +20,6 @@ struct MatchModel: Codable {
     var hitesh = "Hitesh"
 }
 
-extension GKMatch: GKMatchDelegate {
-    public func match(_: GKMatch, didReceive: Data, forRecipient: GKPlayer, fromRemotePlayer: GKPlayer)
-    {
-//        if let decoded = try? JSONDecoder().decode(MatchModel.self, from: didReceive) {
-//            print(decoded.hitesh)
-//        }
-//
-        if let dataString = String(data: didReceive, encoding: .utf8) {
-            print(dataString)
-        }
-//
-//        if let dataString2 = String(data: didReceive, encoding: .ascii) {
-//            print(dataString2)
-//        }
-    }
-}
-
 class GameScene: SKScene {
         
     // ios movement
@@ -167,13 +150,21 @@ class GameScene: SKScene {
                 match: self.match
             )
             
+            let controller2 = Controller(
+                up: Keycode.i,
+                down: Keycode.k,
+                right: Keycode.l,
+                left: Keycode.j,
+                spinClockwise: Keycode.semicolon,
+                spinCounter: Keycode.apostrophe
+            )
             let gameParamsPlayer2 = GameParams(
                 scene: self,
                 cellSize: cellSize,
                 rowCount: rowCount,
                 columnCount: columnCount,
                 bounds: bounds,
-                controller: controller1,
+                controller: controller2,
                 player: 2,
                 otherPlayerGame: nil,
                 samBot: samBot(),
