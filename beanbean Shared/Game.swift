@@ -7,7 +7,6 @@
 
 import SpriteKit
 import GameKit
-import AVFoundation
 
 enum GameState {
     case active
@@ -56,7 +55,8 @@ class Game {
     var newBeanBeforeMoreNuisance: Bool = false
     var random: GKRandom
     var backgroundNode: SKSpriteNode?
-    var popSoundPlayer: AVAudioPlayer?
+    var sounds: Sounds!
+    
     
     // ios movement
     var initialTouch: CGPoint = CGPoint.zero
@@ -66,6 +66,7 @@ class Game {
     init(params: GameParams){
         self.scene = params.scene
         self.bounds = params.bounds
+        self.sounds = Sounds()
         
 
         self.controller = params.controller
@@ -127,18 +128,7 @@ class Game {
             backgroundNode?.yScale = 0.985
             scene.addChild(backgroundNode!)
         }
-    func playPopSound() {
-        if let popSoundURL = Bundle.main.url(forResource: "popSound", withExtension: "mp3") {
-            do {
-                popSoundPlayer = try AVAudioPlayer(contentsOf: popSoundURL)
-                popSoundPlayer?.play()
-            } catch {
-                print("Error playing pop sound: \(error.localizedDescription)")
-            }
-        } else {
-            print("Pop sound file not found")
-        }
-    }
+
     
     func update() {
         switch gameState {
@@ -274,7 +264,7 @@ class Game {
             }
             explosionPause = 0
             
-            playPopSound()
+            sounds.playPopSound(chainCount: self.score.chainCount)
             
             self.score.calculateChainStep(cellsToExplode: self.cellsToExplode)
                         
@@ -293,6 +283,10 @@ class Game {
             self.score.sumFullChain()
             self.submitScoreToLeaderboard(score: Int(self.score.numNuisanceBeans))
             otherPlayerGame?.primedNuisanceBeans += self.score.nuisanceBeansInt
+            if self.score.nuisanceBeansInt > 0 {
+                print("should play now")
+                self.sounds.playRedRockSound()
+            }
             self.score.resetCombos()
             
             if self.grid.getEndGameCell()!.bean != nil {
