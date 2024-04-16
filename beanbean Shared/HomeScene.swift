@@ -103,7 +103,7 @@ extension HomeScene {
         }
         if node.name == "Online" {
             let matchmakingScene = MatchmakingScene.newMatchmakingScene()
-            matchmakingScene.scaleMode = .aspectFill
+//            matchmakingScene.scaleMode = .aspectFill
             self.view?.presentScene(matchmakingScene, transition: SKTransition.doorsOpenHorizontal(withDuration: 1.0))
         }
     }

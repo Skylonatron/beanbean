@@ -7,7 +7,6 @@
 
 import SpriteKit
 import GameKit
-import UIKit
 
 class MatchmakingScene: SKScene {
     var game: Game!
@@ -21,7 +20,7 @@ class MatchmakingScene: SKScene {
         let scene = MatchmakingScene()
         
         // Set the scale mode to scale to fit the window
-        scene.scaleMode = .aspectFill
+//        scene.scaleMode = .aspectFill
         
         return scene
     }
@@ -114,8 +113,9 @@ extension MatchmakingScene: GKMatchmakerViewControllerDelegate {
     }
     func matchmakerViewController(_ viewController: GKMatchmakerViewController, didFind match: GKMatch) {
         viewController.dismiss(true)
-        let gameScene = GameScene(match: match)
-        gameScene.scaleMode = .aspectFill
+//        let gameScene = GameScene(match: match)
+        let gameScene = GameScene.newGameScene(mode: .single)
+//        gameScene.scaleMode = .aspectFill
         view?.presentScene(gameScene, transition: .doorsOpenHorizontal(withDuration: 1.0))
     }
     
