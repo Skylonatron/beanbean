@@ -7,6 +7,7 @@
 
 import SpriteKit
 import GameKit
+import AVFoundation
 
 enum GameState {
     case active
@@ -55,6 +56,7 @@ class Game {
     var newBeanBeforeMoreNuisance: Bool = false
     var random: GKRandom
     var backgroundNode: SKSpriteNode?
+    var popSoundPlayer: AVAudioPlayer?
     
     // ios movement
     var initialTouch: CGPoint = CGPoint.zero
@@ -125,6 +127,18 @@ class Game {
             backgroundNode?.yScale = 0.985
             scene.addChild(backgroundNode!)
         }
+    func playPopSound() {
+        if let popSoundURL = Bundle.main.url(forResource: "popSound", withExtension: "mp3") {
+            do {
+                popSoundPlayer = try AVAudioPlayer(contentsOf: popSoundURL)
+                popSoundPlayer?.play()
+            } catch {
+                print("Error playing pop sound: \(error.localizedDescription)")
+            }
+        } else {
+            print("Pop sound file not found")
+        }
+    }
     
     func update() {
         switch gameState {
@@ -259,6 +273,8 @@ class Game {
                 return
             }
             explosionPause = 0
+            
+            playPopSound()
             
             self.score.calculateChainStep(cellsToExplode: self.cellsToExplode)
                         
