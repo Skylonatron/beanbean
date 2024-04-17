@@ -32,6 +32,8 @@ struct GameParams {
     let match: GKMatch?
 }
 
+var lastMessage: String?
+
 extension GKMatch: GKMatchDelegate {
     public func match(_: GKMatch, didReceive: Data, forRecipient: GKPlayer, fromRemotePlayer: GKPlayer)
     {
@@ -40,7 +42,7 @@ extension GKMatch: GKMatchDelegate {
 //        }
 //
         if let dataString = String(data: didReceive, encoding: .utf8) {
-            print(dataString)
+            lastMessage = dataString
         }
         
 //
@@ -551,7 +553,7 @@ class Game {
             return
         }
                     
-        let stringToSend = "Sammy is Gay"
+        let stringToSend = "randomString"
         do {
             try match.sendData(toAllPlayers: stringToSend.data(using: .utf8)!, with: .reliable)
         } catch {
@@ -621,6 +623,7 @@ class Game {
             let data: Data? = try? JSONEncoder().encode(model)
             self.sendGameData(data!)
         case self.controller.left:
+            print("Left", lastMessage)
             if !useCPUControls{
                 beanPod.moveLeft(grid: grid)
             }
