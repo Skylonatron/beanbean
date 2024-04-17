@@ -108,8 +108,8 @@ class Game {
         params.scene.addChild(self.grid.outline)
         
         self.score = Score(bounds: params.bounds, scene: params.scene, grid: self.grid)
-        self.scene.addChild(score.scoreOutline)
-        self.scene.addChild(score.highScoreOutline)
+//        self.scene.addChild(score.scoreOutline)
+//        self.scene.addChild(score.highScoreOutline)
         addBackground()
 
     }

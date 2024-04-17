@@ -43,7 +43,7 @@ class GameScene: SKScene {
         let bounds = self.view!.bounds
         var cellSize = Int(bounds.size.width / 11)
         #if os(iOS)
-            cellSize = Int(bounds.size.width / 7)
+        cellSize = Int(bounds.size.width / 5.5)
         #endif
         let columnCount = 5
         let rowCount = 12

@@ -46,7 +46,7 @@ class Score {
     ]
     var totalPoints: Double = 0 {
         didSet {
-            scoreLabel.text = "Score: \(Int(totalPoints))"
+            scoreLabel.text = "\(Int(totalPoints))"
         }
     }
     var movementPoints: Double = 0.0
@@ -84,11 +84,11 @@ class Score {
         scoreOutline.position.x = bounds.size.width / 1.75
         scoreOutline.position.y = bounds.size.height / 1.7
         
-        scoreLabel = SKLabelNode(text: "Score: 0")
-        scoreLabel.position = CGPoint(x: grid.outline.position.x, y: grid.outline.position.y - CGFloat(grid.cellSize * 7))
+        scoreLabel = SKLabelNode(text: "0")
+        scoreLabel.position = CGPoint(x: grid.outline.position.x, y: grid.outline.position.y - CGFloat(grid.cellSize) * 7.1)
         scoreLabel.fontName = "Arial"
-        scoreLabel.fontSize = 36
-        scoreLabel.fontColor = .systemPink
+        scoreLabel.fontSize = bounds.size.height / 20
+        scoreLabel.fontColor = .cyan
         scoreLabel.horizontalAlignmentMode = .center
         scoreLabel.verticalAlignmentMode = .bottom
         scoreLabel.zPosition = 8
