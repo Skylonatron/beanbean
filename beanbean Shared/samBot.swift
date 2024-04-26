@@ -12,115 +12,40 @@ class samBot {
     var moveRight = false
     var rotateClockwise = true
     var hasPerformedRotation = false
-//    var grid: Grid
     
-//    init(grid: Grid) {
-//        self.grid = grid
-//    }
+    var qLearning: QLearning
     
-    func decideMove(grid: Grid, beanPod: BeanPod) -> (Int) {
+    init(qLearning: QLearning) {
+        self.qLearning = qLearning
+    }
+    
+    func decideMove(action: QLearning.QLearningAction) -> (Int) {
         // Implement logic to determine the next move for the AI
-        if beanPod.active{
-            let mainBeanColor = beanPod.mainBean.color
-            let sideBeanColor = beanPod.sideBean.color
+        switch action {
             
-            let foundGroupsLessThanThree = findGroupsLessThanThree(grid: grid, beanPod: beanPod)
+        case .moveLeft:
+            return -1
             
-            moveLeft = false
-            moveRight = false
+        case .moveRight:
+            return 1
             
-
-            for row in (0..<grid.rowCount).reversed(){
-                for column in 0..<grid.columnCount{
-                    if let cell = grid.cells[column]?[row]{
-                        let cellBeanColor = cell.bean?.color
-                        let cellXPosition = cell.shape.position.x
-                        let upCell = cell.getUpCell(grid: grid)
-                        let rightCell = cell.getRightCell(grid: grid)
-                        let leftCell = cell.getLeftCell(grid: grid)
-                        let mainBeanCell = beanPod.mainBean.getCell(grid: grid)
-                        let mainBeanXPosition = beanPod.mainBean.shape.position.x
-                        let sideBeanXPosition = beanPod.sideBean.shape.position.x
-                        if cellBeanColor == mainBeanColor{
-                            if upCell?.bean == nil{
-                                let moveDistance = Int(cellXPosition - mainBeanXPosition) / grid.cellSize
-                                return moveDistance
-                            }
-                            if rightCell?.bean == nil{
-                                let moveDistance = Int(cellXPosition - mainBeanXPosition) / grid.cellSize + 1
-                                return moveDistance
-                            }
-                            if leftCell?.bean == nil{
-                                let moveDistance = Int(cellXPosition - mainBeanXPosition) / grid.cellSize - 1
-                                return moveDistance
-                            }
-                        }
-                        if cellBeanColor == sideBeanColor{
-                            if upCell?.bean == nil{
-                                let moveDistance = Int(cellXPosition - sideBeanXPosition) / grid.cellSize
-                                return moveDistance
-                            }
-                            if rightCell?.bean == nil{
-                                let moveDistance = Int(cellXPosition - sideBeanXPosition) / grid.cellSize + 1
-                                return moveDistance
-                            }
-                            if leftCell?.bean == nil{
-                                let moveDistance = Int(cellXPosition - sideBeanXPosition) / grid.cellSize - 1
-                                return moveDistance
-                            }
-                        }
-//                        print(cell.shape.position)
-//                        if cell.bean != nil{
-//                            let cellBeanColor = cell.bean?.color
-//                            let cellXPosition = cell.shape.position.x
-//                            let upCell = cell.getUpCell(grid: grid)
-//                            let mainBeanCell = beanPod.mainBean.getCell(grid: grid)
-//                            if cellBeanColor == mainBeanColor && upCell?.bean != nil{
-//                                moveLeft = cellXPosition < beanPod.mainBean.shape.position.x
-//                                break
-//                            }
-//                            if cellBeanColor == mainBeanColor && upCell?.bean != nil{
-//                                moveRight = cellXPosition > beanPod.mainBean.shape.position.x
-//                                break
-//                            }
-//                            if cellBeanColor == sideBeanColor && cellXPosition < beanPod.sideBean.shape.position.x{
-//                                moveLeft = true
-//                                break
-//                            }
-//                            if cellBeanColor == sideBeanColor && cellXPosition > beanPod.sideBean.shape.position.x{
-//                                moveRight = true
-//                                break
-//                            }
-//                    
-//                        }
-                    }
-                    
-                    //                if clockwiseRotation {
-                    //                    beanPod.spinPod(grid: grid, clockWise: true)
-                    //                }
-                    //                else{
-                    //                    beanPod.spinPod(grid: grid, clockWise: false)
-                    //                }
-                    
-//                    while cellXPosition > beanPod.mainBean.shape.position.x {
-//                        beanPod.moveLeft(grid: grid)
-                }
-                
-            }
-       
+        case .rotateClockwise:
+            return 0
+        
+        case .defaultAction:
+            return 2
             
         }
-        return (0)
         
     }
     
-    func applyMove(grid: Grid, beanPod: BeanPod, game: Game){
+    func applyMove(grid: Grid, beanPod: BeanPod, game: Game, action: QLearning.QLearningAction ){
         if !hasPerformedRotation {
-            beanPod.spinPod(grid: grid, clockWise: true)
+            beanPod.spinPod(grid: grid, clockWise: action == .rotateClockwise)
             hasPerformedRotation = true
             return
         }
-        let moveDistance = self.decideMove(grid: grid, beanPod: beanPod)
+        let moveDistance = self.decideMove(action: action)
         if moveDistance != 0{
 //            print(moveDistance)
             if moveDistance > 0{

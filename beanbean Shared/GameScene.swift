@@ -23,6 +23,16 @@ class GameScene: SKScene {
     var player2CPU: Bool = false
     
     var games: [Game] = []
+    var qLearning: QLearning?
+    
+    init(qLearning: QLearning) {
+        self.qLearning = qLearning // Initialize qLearning before initializing samBot
+        super.init(size: CGSize(width: 100, height: 100)) // Initialize SKScene superclass
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     class func newGameScene(mode: GameMode) -> GameScene {
         // Load 'GameScene.sks' as an SKScene.
@@ -77,7 +87,7 @@ class GameScene: SKScene {
                 controller: controller2,
                 player: 2,
                 otherPlayerGame: nil,
-                samBot: samBot(),
+                samBot: samBot(qLearning: qLearning!),
                 seed: seed
             )
 
@@ -90,7 +100,7 @@ class GameScene: SKScene {
                 controller: controller1,
                 player: player,
                 otherPlayerGame: nil,
-                samBot: samBot(),
+                samBot: samBot(qLearning: qLearning!),
                 seed: seed
             )
             
@@ -115,7 +125,7 @@ class GameScene: SKScene {
                 controller: controller1,
                 player: player,
                 otherPlayerGame: nil,
-                samBot: samBot(),
+                samBot: samBot(qLearning: qLearning!),
                 seed: seed
                 
             )

@@ -56,6 +56,9 @@ class Game {
     var random: GKRandom
     var backgroundNode: SKSpriteNode?
     var sounds: Sounds!
+    lazy var qLearning: QLearning = {
+        return self.setupQLearning()
+    }()
     
     
     // ios movement
@@ -64,10 +67,10 @@ class Game {
     var moveAmtY: CGFloat = 0
         
     init(params: GameParams){
+        
         self.scene = params.scene
         self.bounds = params.bounds
         self.sounds = Sounds()
-        
 
         self.controller = params.controller
         // these numbers should be the number of different colors we are using to randomize from
@@ -111,8 +114,25 @@ class Game {
 //        self.scene.addChild(score.scoreOutline)
 //        self.scene.addChild(score.highScoreOutline)
         addBackground()
+        
+        
+        
+
 
     }
+    
+    func setupQLearning() -> QLearning {
+            return QLearning(
+                learningRate: 0.1,
+                discountFactor: 0.9,
+                explorationRate: 0.1,
+                currentState: "active",
+                previousState: nil,
+                previousAction: nil,
+                initialState: "active",
+                game: self
+            )
+        }
     
     func addBackground() {
             // Remove existing background if any
@@ -134,8 +154,9 @@ class Game {
         switch gameState {
         case .active:
             //handle cpu controls
+            let action = qLearning.selectAction(state: qLearning.currentState!)
             if useCPUControls {
-                samBot.applyMove(grid: grid, beanPod: beanPod, game: self)
+                samBot.applyMove(grid: grid, beanPod: beanPod, game: self, action: action)
             }
             if self.fastMovement {
                 self.movementSpeed = settings.movement.fastVerticalSpeed
