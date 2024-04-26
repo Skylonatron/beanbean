@@ -32,6 +32,8 @@ struct GameParams {
 }
 
 class Game {
+    var qLearning: QLearning
+//    var currentState: State
     var num: Int!
     var gameState: GameState = .new
     var beans : [Bean] = []
@@ -68,6 +70,10 @@ class Game {
         self.bounds = params.bounds
         self.sounds = Sounds()
         
+        self.qLearning = QLearning(learningRate: 0.1, discountFactor: 0.9, explorationRate: 0.1)
+//        self.currentState = .emptyBoard
+        self.qLearning.currentState = .emptyBoard
+
 
         self.controller = params.controller
         // these numbers should be the number of different colors we are using to randomize from
@@ -111,6 +117,7 @@ class Game {
 //        self.scene.addChild(score.scoreOutline)
 //        self.scene.addChild(score.highScoreOutline)
         addBackground()
+        
 
     }
     
@@ -128,6 +135,31 @@ class Game {
             backgroundNode?.yScale = 0.985
             scene.addChild(backgroundNode!)
         }
+    
+    func getCurrentQState() -> State {
+        if self.beans.count != 0{
+            for cell in grid.getCellsWithBeans() {
+                if cell.bean?.color != .gray{
+                    return .handleNuisanceBeans
+                }
+            }
+            return .searchForCombos
+        }
+        if self.beans.count == 0{
+            return .emptyBoard
+        }
+        if beanPod.active {
+            return .navigateBean
+        }
+        else {
+            return .gameOver
+        }
+    }
+    
+    func updateQState(){
+        self.qLearning.previousState = self.qLearning.currentState
+        self.qLearning.currentState = getCurrentQState()
+    }
 
     
     func update() {
@@ -135,7 +167,12 @@ class Game {
         case .active:
             //handle cpu controls
             if useCPUControls {
-                samBot.applyMove(grid: grid, beanPod: beanPod, game: self)
+//                samBot.applyMove(grid: grid, beanPod: beanPod, game: self)
+                updateQState()
+                let chosenAction = self.qLearning.chooseAction(state: self.qLearning.currentState!, possibleActions: self.qLearning.possibleActions)
+                self.performAction(action: chosenAction)
+                
+
             }
             if self.fastMovement {
                 self.movementSpeed = settings.movement.fastVerticalSpeed
@@ -388,6 +425,30 @@ class Game {
         gameState = state
     }
     
+    func performAction (action: Action) {
+        switch action{
+        case .moveLeft:
+            self.movementSpeed = settings.movement.defaultVerticalSpeed
+            self.beanPod.moveLeft(grid: grid)
+            break
+        case .moveRight:
+            self.movementSpeed = settings.movement.defaultVerticalSpeed
+            self.beanPod.moveRight(grid: grid)
+            break
+        case .rotateClockwise:
+            self.movementSpeed = settings.movement.defaultVerticalSpeed
+            self.beanPod.spinPod(grid: grid, clockWise: true)
+            break
+        case .rotateCounterClockwise:
+            self.movementSpeed = settings.movement.defaultVerticalSpeed
+            self.beanPod.spinPod(grid: grid, clockWise: false)
+            break
+        case .moveDown:
+            self.movementSpeed = settings.movement.fastVerticalSpeed
+            break
+        }
+    }
+    
     func generateNewBeans(showNumber: Bool){
         //reset flag for samBot rotation
         self.samBot.hasPerformedRotation = false
@@ -418,17 +479,6 @@ class Game {
     }
     
 
-    
-//    func accrueNuisanceBeans(){
-//        self.primedNuisanceBeans += score.nuisanceBeansInt
-//    }
-    
-//    func checkForOtherPlayerGameState(){
-//        if self.primedNuisanceBeans > 0{
-//            otherPlayerGame?.generateNuisanceBeans(showNumber: false)
-//            self.primedNuisanceBeans = 0
-//        }
-//    }
     func generateNuisanceBeans(showNumber: Bool) {
         var rocksToSendNow = self.primedNuisanceBeans
         if self.primedNuisanceBeans > self.maxNuisanceSend {

@@ -12,15 +12,16 @@ enum Action {
     case moveRight
     case rotateClockwise
     case rotateCounterClockwise
+    case moveDown
 }
 
 enum State {
     case searchForCombos
-    case lookAtNextBean
     case emptyBoard
     case navigateBean
     case handleNuisanceBeans
     case gameOver
+    case analyzeBeans
 }
 
 class QLearning{
@@ -29,6 +30,9 @@ class QLearning{
     let learningRate: Double
     let discountFactor: Double
     let explorationRate: Double
+    var currentState: State?
+    var previousState: State?
+    let possibleActions: [Action] = [.moveLeft, .moveRight, .rotateClockwise, .rotateCounterClockwise, .moveDown]
     
     init(learningRate: Double, discountFactor: Double, explorationRate: Double) {
         self.learningRate = learningRate
@@ -45,6 +49,8 @@ class QLearning{
             return greedyAction(state: state, possibleActions: possibleActions)
         }
     }
+    
+
     
     func initializeQTable(states: [State], actions: [Action]) {
         for state in states {
@@ -72,4 +78,28 @@ class QLearning{
         return actions.max { $0.value < $1.value }!.key
         
     }
+    
+    //    func performAction(action: Action, game: Game) {
+    //        switch action{
+    //        case .moveLeft:
+    //            self.movementSpeed = settings.movement.defaultVerticalSpeed
+    //            self.beanPod.moveLeft(grid: grid)
+    //            break
+    //        case .moveRight:
+    //            self.movementSpeed = settings.movement.defaultVerticalSpeed
+    //            self.beanPod.moveRight(grid: grid)
+    //            break
+    //        case .rotateClockwise:
+    //            self.movementSpeed = settings.movement.defaultVerticalSpeed
+    //            self.beanPod.spinPod(grid: grid, clockWise: true)
+    //            break
+    //        case .rotateCounterClockwise:
+    //            self.movementSpeed = settings.movement.defaultVerticalSpeed
+    //            self.beanPod.spinPod(grid: grid, clockWise: false)
+    //            break
+    //        case .moveDown:
+    //            self.movementSpeed = settings.movement.fastVerticalSpeed
+    //            break
+    //        }
+    //    }
 }
