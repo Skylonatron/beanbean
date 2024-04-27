@@ -74,7 +74,7 @@ class Game {
         
         self.qLearning = QLearning(learningRate: 0.1, discountFactor: 0.9, explorationRate: 0.1)
 //        self.currentState = .emptyBoard
-        self.qLearning.currentState = .emptyBoard
+        self.qLearning.currentState = .searchForCombos
 
 
         self.controller = params.controller
@@ -147,19 +147,13 @@ class Game {
             }
             return .searchForCombos
         }
-        if self.beans.count == 0{
-            return .emptyBoard
-        }
-        if beanPod.active {
-            return .navigateBean
-        }
         else {
             return .gameOver
         }
     }
     
     func updateQState(){
-        self.qLearning.previousState = self.qLearning.currentState ?? .emptyBoard
+        self.qLearning.previousState = self.qLearning.currentState ?? .searchForCombos
         self.qLearning.currentState = getCurrentQState()
     }
 
@@ -486,7 +480,7 @@ class Game {
                 }
             }
         }
-        print(findEmptyCellsForNuisance)
+//        print(findEmptyCellsForNuisance)
         
         for row in (0..<result.quotient) {
             for column in (0...self.grid.columnCount) {
@@ -532,10 +526,10 @@ class Game {
             chosenCell!.bean = rock
             self.scene.addChild(rock.shape)
         }
-        print(findEmptyCellsForNuisance)
+//        print(findEmptyCellsForNuisance)
         self.newBeanBeforeMoreNuisance = true
             
-        print("end of dropping")
+//        print("end of dropping")
         self.beans = self.grid.getBeans()
     }
     

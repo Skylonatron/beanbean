@@ -17,11 +17,8 @@ enum Action {
 
 enum State {
     case searchForCombos
-    case emptyBoard
-    case navigateBean
     case handleNuisanceBeans
     case gameOver
-    case analyzeBeans
 }
 
 class QLearning{
@@ -42,10 +39,10 @@ class QLearning{
     
     func learn(chosenAction: Action, reward: Double, game: Game) {
         if self.currentState == nil || self.previousState == nil{
-            self.currentState = .emptyBoard
-            self.previousState = .emptyBoard
+            self.currentState = .searchForCombos
+            self.previousState = .searchForCombos
         }
-        updateQValue(state: self.previousState!, action: chosenAction, reward: reward, nextState: self.currentState!)
+        self.updateQValue(state: self.previousState!, action: chosenAction, reward: reward, nextState: self.currentState!)
     }
     
     func calculateReward(game: Game, qState: State) -> Double {
@@ -54,26 +51,12 @@ class QLearning{
         case .searchForCombos:
             finalReward += 4.0 * Double(game.score.chainCount)
             
-        case .navigateBean:
-            finalReward += 4.0 * Double(game.score.chainCount)
-            
-        case .analyzeBeans
-        }
-        if game.gameState == .new {
-            
-            if game.beans.count == 0 {
-                finalReward += 10.0
-            }
+        case .handleNuisanceBeans:
             if game.nuisanceBeansToExplode.count != 0 {
                 finalReward += 5.0
             }
-            
-        }
-        if game.gameState == .endScreen {
+        case .gameOver:
             finalReward -= 100.0
-        }
-        else {
-            finalReward += 1.0
         }
         return finalReward
     }
@@ -107,7 +90,7 @@ class QLearning{
         qTable[state, default: [:]][action] = qValue
     }
     
-    private func greedyAction(state: State, possibleActions: [Action]) -> Action {
+    func greedyAction(state: State, possibleActions: [Action]) -> Action {
         //favor exploitation
         guard let actions = qTable[state] else{
             return possibleActions.randomElement()!
