@@ -141,10 +141,13 @@ class Game {
     func getCurrentQState() -> State {
         if self.beans.count != 0{
             for cell in grid.getCellsWithBeans() {
-                if cell.bean?.color != .gray{
+                if cell.bean?.color == .gray{
                     return .handleNuisanceBeans
                 }
             }
+            return .searchForCombos
+        }
+        if self.beans.count == 0{
             return .searchForCombos
         }
         else {
@@ -164,7 +167,12 @@ class Game {
             //handle cpu controls
             if useCPUControls {
 //                samBot.applyMove(grid: grid, beanPod: beanPod, game: self)
+                self.updateQState()
+                self.chosenAction = self.qLearning.chooseAction(state: self.qLearning.currentState!, possibleActions: self.qLearning.possibleActions)
+                let reward = self.qLearning.calculateReward(game: self, qState: self.qLearning.currentState!)
+                
                 self.qLearning.performAction(action: chosenAction, game: self, settings: settings, beanPod: beanPod, grid: grid)
+                self.qLearning.learn(chosenAction: chosenAction, reward: reward, game: self)
                 
             }
             if self.fastMovement {
