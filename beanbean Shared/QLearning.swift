@@ -40,6 +40,45 @@ class QLearning{
         self.explorationRate = explorationRate
     }
     
+    func learn(chosenAction: Action, reward: Double, game: Game) {
+        if self.currentState == nil || self.previousState == nil{
+            self.currentState = .emptyBoard
+            self.previousState = .emptyBoard
+        }
+        updateQValue(state: self.previousState!, action: chosenAction, reward: reward, nextState: self.currentState!)
+    }
+    
+    func calculateReward(game: Game, qState: State) -> Double {
+        var finalReward = 0.0
+        switch qState {
+        case .searchForCombos:
+            finalReward += 4.0 * Double(game.score.chainCount)
+            
+        case .navigateBean:
+            finalReward += 4.0 * Double(game.score.chainCount)
+            
+        case .analyzeBeans
+        }
+        if game.gameState == .new {
+            
+            if game.beans.count == 0 {
+                finalReward += 10.0
+            }
+            if game.nuisanceBeansToExplode.count != 0 {
+                finalReward += 5.0
+            }
+            
+        }
+        if game.gameState == .endScreen {
+            finalReward -= 100.0
+        }
+        else {
+            finalReward += 1.0
+        }
+        return finalReward
+    }
+    
+    
     func chooseAction(state: State, possibleActions: [Action]) -> Action {
         //exploration/exploitation strategy here, epsilon greedy?
         if Double.random(in: 0..<1) < explorationRate {
@@ -49,8 +88,6 @@ class QLearning{
             return greedyAction(state: state, possibleActions: possibleActions)
         }
     }
-    
-
     
     func initializeQTable(states: [State], actions: [Action]) {
         for state in states {
@@ -79,27 +116,27 @@ class QLearning{
         
     }
     
-    //    func performAction(action: Action, game: Game) {
-    //        switch action{
-    //        case .moveLeft:
-    //            self.movementSpeed = settings.movement.defaultVerticalSpeed
-    //            self.beanPod.moveLeft(grid: grid)
-    //            break
-    //        case .moveRight:
-    //            self.movementSpeed = settings.movement.defaultVerticalSpeed
-    //            self.beanPod.moveRight(grid: grid)
-    //            break
-    //        case .rotateClockwise:
-    //            self.movementSpeed = settings.movement.defaultVerticalSpeed
-    //            self.beanPod.spinPod(grid: grid, clockWise: true)
-    //            break
-    //        case .rotateCounterClockwise:
-    //            self.movementSpeed = settings.movement.defaultVerticalSpeed
-    //            self.beanPod.spinPod(grid: grid, clockWise: false)
-    //            break
-    //        case .moveDown:
-    //            self.movementSpeed = settings.movement.fastVerticalSpeed
-    //            break
-    //        }
-    //    }
+    func performAction (action: Action, game: Game, settings: Settings, beanPod: BeanPod, grid: Grid) {
+        switch action{
+        case .moveLeft:
+            game.movementSpeed = settings.movement.defaultVerticalSpeed
+            game.beanPod.moveLeft(grid: grid)
+            break
+        case .moveRight:
+            game.movementSpeed = settings.movement.defaultVerticalSpeed
+            game.beanPod.moveRight(grid: grid)
+            break
+        case .rotateClockwise:
+            game.movementSpeed = settings.movement.defaultVerticalSpeed
+            game.beanPod.spinPod(grid: grid, clockWise: true)
+            break
+        case .rotateCounterClockwise:
+            game.movementSpeed = settings.movement.defaultVerticalSpeed
+            game.beanPod.spinPod(grid: grid, clockWise: false)
+            break
+        case .moveDown:
+            game.movementSpeed = settings.movement.fastVerticalSpeed
+            break
+        }
+    }
 }

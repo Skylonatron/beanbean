@@ -39,6 +39,7 @@ class Game {
     var beans : [Bean] = []
     var cellsToExplode: [Cell] = []
     var cellsToExplodeWithNuisance: [Cell] = []
+    var nuisanceBeansToExplode: Set<Cell> = []
     var grid : Grid!
     var beanPod: BeanPod!
     var score: Score!
@@ -58,6 +59,7 @@ class Game {
     var random: GKRandom
     var backgroundNode: SKSpriteNode?
     var sounds: Sounds!
+    var chosenAction: Action!
     
     
     // ios movement
@@ -157,7 +159,7 @@ class Game {
     }
     
     func updateQState(){
-        self.qLearning.previousState = self.qLearning.currentState
+        self.qLearning.previousState = self.qLearning.currentState ?? .emptyBoard
         self.qLearning.currentState = getCurrentQState()
     }
 
@@ -168,11 +170,8 @@ class Game {
             //handle cpu controls
             if useCPUControls {
 //                samBot.applyMove(grid: grid, beanPod: beanPod, game: self)
-                updateQState()
-                let chosenAction = self.qLearning.chooseAction(state: self.qLearning.currentState!, possibleActions: self.qLearning.possibleActions)
-                self.performAction(action: chosenAction)
+                self.qLearning.performAction(action: chosenAction, game: self, settings: settings, beanPod: beanPod, grid: grid)
                 
-
             }
             if self.fastMovement {
                 self.movementSpeed = settings.movement.fastVerticalSpeed
@@ -255,7 +254,7 @@ class Game {
             }
 
         case .checkGroups:
-            var nuisanceBeansToExplode: Set<Cell> = []
+            self.nuisanceBeansToExplode = []
             for cell in grid.getCellsWithBeans() {
                 cell.mergeAllGroups(grid: grid)
             }
@@ -323,6 +322,11 @@ class Game {
             if self.score.nuisanceBeansInt > 30 {
                 self.sounds.playRedRockSound()
             }
+            self.updateQState()
+            self.chosenAction = self.qLearning.chooseAction(state: self.qLearning.currentState!, possibleActions: self.qLearning.possibleActions)
+            let reward = self.qLearning.calculateReward(game: self, qState: self.qLearning.currentState!)
+            self.qLearning.learn(chosenAction: chosenAction, reward: reward, game: self)
+            
             self.score.resetCombos()
             
             if self.grid.getEndGameCell()!.bean != nil {
@@ -423,30 +427,6 @@ class Game {
             print("Setting state to \(state)")
         }
         gameState = state
-    }
-    
-    func performAction (action: Action) {
-        switch action{
-        case .moveLeft:
-            self.movementSpeed = settings.movement.defaultVerticalSpeed
-            self.beanPod.moveLeft(grid: grid)
-            break
-        case .moveRight:
-            self.movementSpeed = settings.movement.defaultVerticalSpeed
-            self.beanPod.moveRight(grid: grid)
-            break
-        case .rotateClockwise:
-            self.movementSpeed = settings.movement.defaultVerticalSpeed
-            self.beanPod.spinPod(grid: grid, clockWise: true)
-            break
-        case .rotateCounterClockwise:
-            self.movementSpeed = settings.movement.defaultVerticalSpeed
-            self.beanPod.spinPod(grid: grid, clockWise: false)
-            break
-        case .moveDown:
-            self.movementSpeed = settings.movement.fastVerticalSpeed
-            break
-        }
     }
     
     func generateNewBeans(showNumber: Bool){
