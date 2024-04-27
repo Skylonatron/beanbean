@@ -173,6 +173,7 @@ class Game {
                 
                 self.qLearning.performAction(action: chosenAction, game: self, settings: settings, beanPod: beanPod, grid: grid)
                 self.qLearning.learn(chosenAction: chosenAction, reward: reward, game: self)
+                print(self.qLearning.qTable)
                 
             }
             if self.fastMovement {

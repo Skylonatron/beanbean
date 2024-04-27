@@ -64,7 +64,7 @@ class QLearning{
     
     func chooseAction(state: State, possibleActions: [Action]) -> Action {
         //exploration/exploitation strategy here, epsilon greedy?
-        print(state)
+//        print(state)
         if Double.random(in: 0..<1) < explorationRate {
             return possibleActions.randomElement()!
         }
