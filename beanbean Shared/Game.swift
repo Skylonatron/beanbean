@@ -74,7 +74,7 @@ class Game {
         
         self.qLearning = QLearning(learningRate: 0.1, discountFactor: 0.9, explorationRate: 0.1)
 //        self.currentState = .emptyBoard
-        self.qLearning.currentState = .searchForCombos
+        self.qLearning.currentState = .buildCombos
 
 
         self.controller = params.controller
@@ -145,18 +145,18 @@ class Game {
                     return .handleNuisanceBeans
                 }
             }
-            return .searchForCombos
+            return .buildCombos
         }
         if self.beans.count == 0{
-            return .searchForCombos
+            return .buildCombos
         }
         else {
-            return .gameOver
+            return .gameLost
         }
     }
     
     func updateQState(){
-        self.qLearning.previousState = self.qLearning.currentState ?? .searchForCombos
+        self.qLearning.previousState = self.qLearning.currentState ?? .buildCombos
         self.qLearning.currentState = getCurrentQState()
     }
 
@@ -173,7 +173,7 @@ class Game {
                 
                 self.qLearning.performAction(action: chosenAction, game: self, settings: settings, beanPod: beanPod, grid: grid)
                 self.qLearning.learn(chosenAction: chosenAction, reward: reward, game: self)
-                print(self.qLearning.qTable)
+//                print(self.qLearning.qTable)
                 
             }
             if self.fastMovement {
@@ -351,7 +351,7 @@ class Game {
             setGameState(state: .gravity)
             
         case .endScreen:
-            
+            self.qLearning.saveQTableToFile()
             //add menu rectangle
             if self.gameOver == false {
                 let endMenuWidth = self.grid.cellSize * 5

@@ -7,40 +7,55 @@
 
 import Foundation
 
-enum Action {
+enum Action: Codable {
     case moveLeft
     case moveRight
     case rotateClockwise
     case rotateCounterClockwise
     case moveDown
+    case breakCombos
 }
 
-enum State {
-    case searchForCombos
+enum State: Codable {
+    case buildCombos
     case handleNuisanceBeans
-    case gameOver
+    case breakDown
+    case gameLost
 }
 
 class QLearning{
     var qTable: [State: [Action: Double]] = [:]
+    let possibleStates: [State] = [
+        .buildCombos,
+        .handleNuisanceBeans,
+        .gameLost
+    ]
+    let possibleActions: [Action] = [
+        .moveLeft,
+        .moveRight,
+        .rotateClockwise,
+        .rotateCounterClockwise,
+        .moveDown
+    ]
     
     let learningRate: Double
     let discountFactor: Double
     let explorationRate: Double
     var currentState: State?
     var previousState: State?
-    let possibleActions: [Action] = [.moveLeft, .moveRight, .rotateClockwise, .rotateCounterClockwise, .moveDown]
+
     
     init(learningRate: Double, discountFactor: Double, explorationRate: Double) {
         self.learningRate = learningRate
         self.discountFactor = discountFactor
         self.explorationRate = explorationRate
+        initializeQTable(states: possibleStates, actions: possibleActions)
     }
     
     func learn(chosenAction: Action, reward: Double, game: Game) {
         if self.currentState == nil || self.previousState == nil{
-            self.currentState = .searchForCombos
-            self.previousState = .searchForCombos
+            self.currentState = .buildCombos
+            self.previousState = .buildCombos
         }
         self.updateQValue(state: self.previousState!, action: chosenAction, reward: reward, nextState: self.currentState!)
     }
@@ -48,16 +63,21 @@ class QLearning{
     func calculateReward(game: Game, qState: State) -> Double {
         var finalReward = 0.0
         switch qState {
-        case .searchForCombos:
+        case .buildCombos:
             finalReward += 4.0 * Double(game.score.chainCount)
             
         case .handleNuisanceBeans:
             if game.nuisanceBeansToExplode.count != 0 {
                 finalReward += 5.0
             }
-        case .gameOver:
+        case .breakDown:
+            if game.cellsToExplodeWithNuisance.count > 0 {
+                finalReward += Double(game.cellsToExplodeWithNuisance.count) * 2.0
+            }
+        case .gameLost:
             finalReward -= 100.0
         }
+        
         return finalReward
     }
     
@@ -74,10 +94,21 @@ class QLearning{
     }
     
     func initializeQTable(states: [State], actions: [Action]) {
-        for state in states {
-            qTable[state] = [:]
-            for action in actions {
-                qTable[state]?[action] = 0.0
+        do {
+            let url = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
+                .appendingPathComponent("qtable.json")
+            let data = try Data(contentsOf: url)
+            let loadedQTable = try JSONDecoder().decode([State: [Action: Double]].self, from: data)
+            qTable = loadedQTable
+            print("Q-table loaded successfully.")
+        }
+        catch {
+            print("no Q Table found, creating new one")
+            for state in states {
+                qTable[state] = [:]
+                for action in actions {
+                    qTable[state]?[action] = 0.0
+                }
             }
         }
     }
@@ -121,6 +152,23 @@ class QLearning{
         case .moveDown:
             game.movementSpeed = settings.movement.fastVerticalSpeed
             break
+        case .breakCombos: 
+            
+            break
+            
+        }
+    }
+    
+    func saveQTableToFile() {
+        do {
+            let url = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+                .appendingPathComponent("qtable.json")
+            let data = try JSONEncoder().encode(qTable)
+            try data.write(to: url)
+            print("Q-table saved successfully.")
+            print("Q-table file path:", url.path)
+        } catch {
+            print("Error saving Q-table:", error)
         }
     }
 }
