@@ -159,6 +159,36 @@ class QLearning{
         }
     }
     
+    func analyzeBeans(beanPod: BeanPod, grid: Grid) {
+        let mainBeanColor = beanPod.mainBean.color
+        let sideBeanColor = beanPod.sideBean.color
+        var mainBeanMatch = false
+        var sideBeanMatch = false
+        for row in (0..<grid.rowCount).reversed(){
+            for column in 0..<grid.columnCount{
+                if let cell = grid.cells[column]?[row]{
+                    let cellBeanColor = cell.bean?.color
+                    let cellXPosition = cell.shape.position.x
+                    let upCell = cell.getUpCell(grid: grid)
+                    let rightCell = cell.getRightCell(grid: grid)
+                    let leftCell = cell.getLeftCell(grid: grid)
+                    let mainBeanCell = beanPod.mainBean.getCell(grid: grid)
+                    let mainBeanXPosition = beanPod.mainBean.shape.position.x
+                    let sideBeanXPosition = beanPod.sideBean.shape.position.x
+                    if cellBeanColor == mainBeanColor{
+                        mainBeanMatch = true
+                        if upCell?.bean?.color == sideBeanColor {
+                            
+                        }
+                    }
+                    if cellBeanColor == sideBeanColor{
+                        sideBeanMatch = true
+                    }
+                }
+            }
+        }
+    }
+    
     func saveQTableToFile() {
         do {
             let url = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
