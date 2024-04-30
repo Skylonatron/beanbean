@@ -46,7 +46,8 @@ class Game {
     var scene: SKScene
     var bounds: CGRect
     let controller: Controller
-    var gameOver = false
+    var gameLost: Bool = false
+    var gameOver: Bool = false
     var otherPlayerGame: Game?
     var samBot: samBot
     var useCPUControls: Bool = false
@@ -136,6 +137,9 @@ class Game {
             //handle cpu controls
             if useCPUControls {
                 samBot.applyMove(grid: grid, beanPod: beanPod, game: self)
+            }
+            if self.gameOver == true{
+                self.setGameState(state: .endScreen)
             }
             if self.fastMovement {
                 self.movementSpeed = settings.movement.fastVerticalSpeed
@@ -289,6 +293,9 @@ class Game {
             self.score.resetCombos()
             
             if self.grid.getEndGameCell()!.bean != nil {
+                self.gameLost = true
+                self.gameOver = true
+                self.otherPlayerGame?.gameOver = true
                 setGameState(state: .endScreen)
                 return
             }
@@ -309,25 +316,25 @@ class Game {
         case .endScreen:
             
             //add menu rectangle
-            if self.gameOver == false {
-                let endMenuWidth = self.grid.cellSize * 5
-                let endMenuHeight = self.grid.cellSize * 6
-                let emptyRectangle = SKShapeNode(rectOf: CGSize(
-                    width: endMenuWidth,
-                    height: endMenuHeight
-                ))
-                emptyRectangle.fillColor = SKColor.systemPink
-                emptyRectangle.strokeColor = SKColor.black
-                emptyRectangle.lineWidth = 4
-                emptyRectangle.name = "end menu"
-                
-                // Set its position to the starting cell's position
-                emptyRectangle.position = CGPoint(x: 0, y: 0)
-                emptyRectangle.zPosition = 4
-                // Add the rectangle node to the scene
-                self.scene.addChild(emptyRectangle)
-                
-                //add top text
+            let endMenuWidth = self.grid.cellSize * 5
+            let endMenuHeight = self.grid.cellSize * 6
+            let emptyRectangle = SKShapeNode(rectOf: CGSize(
+                width: endMenuWidth,
+                height: endMenuHeight
+            ))
+            emptyRectangle.fillColor = SKColor.systemPink
+            emptyRectangle.strokeColor = SKColor.black
+            emptyRectangle.lineWidth = 4
+            emptyRectangle.name = "end menu"
+            
+            // Set its position to the starting cell's position
+            emptyRectangle.position = self.grid.outline.position
+            emptyRectangle.zPosition = 4
+            // Add the rectangle node to the scene
+            self.scene.addChild(emptyRectangle)
+            
+            //add top text
+            if self.gameLost == true {
                 let topLabelNode = SKLabelNode(text: "You Suck!! Try again?")
                 topLabelNode.position = CGPoint(x: 0, y: 5 * endMenuHeight / 12)
                 topLabelNode.fontColor = .black
@@ -337,46 +344,58 @@ class Game {
                 topLabelNode.verticalAlignmentMode = .center
                 topLabelNode.zPosition = 5
                 emptyRectangle.addChild(topLabelNode)
-                
-                //add image
-                let texture = SKTexture(imageNamed: "sadBean")
-                // Create an SKSpriteNode using the texture
-                let sprite = SKSpriteNode(texture: texture)
-                sprite.setScale(0.5)
-                // Set position, scale, etc. for the sprite node
-                sprite.position = CGPoint(x: 0, y: 0)
-                sprite.zPosition = 5
-                
-                // Add the sprite node to the scene
-                emptyRectangle.addChild(sprite)
-                
-                
-                let button = SKShapeNode(rectOf: CGSize(
-                    width: 150,
-                    height: 50
-                ))
-                button.position = CGPoint(x: 0, y: -5 * endMenuHeight / 12)
-                button.fillColor = SKColor.white
-                button.strokeColor = SKColor.black
-                button.lineWidth = 4
-                button.name = "New Game"
-                
-                let labelNode = SKLabelNode()
-                labelNode.text = "New Game"
-                labelNode.name = "New Game"
-                labelNode.position = CGPoint(x: 0, y: 0) // Adjust position relative to shape node
-                labelNode.zPosition = 6
-                button.zPosition = 5
-                labelNode.fontColor = .black
-                labelNode.fontSize = 25
-                labelNode.fontName = "ChalkboardSE-Bold"
-                labelNode.horizontalAlignmentMode = .center // Center horizontally
-                labelNode.verticalAlignmentMode = .center // Center vertically
-                button.addChild(labelNode) // Add label as child of shape node
-                emptyRectangle.addChild(button)
+            }
+            else {
+                let topLabelNode = SKLabelNode(text: "You Rock!! Try again?")
+                topLabelNode.position = CGPoint(x: 0, y: 5 * endMenuHeight / 12)
+                topLabelNode.fontColor = .black
+                topLabelNode.fontSize = 30
+                topLabelNode.fontName = "ChalkboardSE-Bold"
+                topLabelNode.horizontalAlignmentMode = .center
+                topLabelNode.verticalAlignmentMode = .center
+                topLabelNode.zPosition = 5
+                emptyRectangle.addChild(topLabelNode)
             }
             
-            self.gameOver = true
+
+            
+            //add image
+            let texture = SKTexture(imageNamed: "sadBean")
+            // Create an SKSpriteNode using the texture
+            let sprite = SKSpriteNode(texture: texture)
+            sprite.setScale(0.5)
+            // Set position, scale, etc. for the sprite node
+            sprite.position = CGPoint(x: 0, y: 0)
+            sprite.zPosition = 5
+            
+            // Add the sprite node to the scene
+            emptyRectangle.addChild(sprite)
+            
+            
+            let button = SKShapeNode(rectOf: CGSize(
+                width: 150,
+                height: 50
+            ))
+            button.position = CGPoint(x: 0, y: -5 * endMenuHeight / 12)
+            button.fillColor = SKColor.white
+            button.strokeColor = SKColor.black
+            button.lineWidth = 4
+            button.name = "New Game"
+            
+            let labelNode = SKLabelNode()
+            labelNode.text = "New Game"
+            labelNode.name = "New Game"
+            labelNode.position = CGPoint(x: 0, y: 0) // Adjust position relative to shape node
+            labelNode.zPosition = 6
+            button.zPosition = 5
+            labelNode.fontColor = .black
+            labelNode.fontSize = 25
+            labelNode.fontName = "ChalkboardSE-Bold"
+            labelNode.horizontalAlignmentMode = .center // Center horizontally
+            labelNode.verticalAlignmentMode = .center // Center vertically
+            button.addChild(labelNode) // Add label as child of shape node
+            emptyRectangle.addChild(button)
+            
         }
         score.updateChainCountLabel()
     }
