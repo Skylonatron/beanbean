@@ -22,6 +22,7 @@ class GameScene: SKScene {
     var gameMode: GameMode = .single
     var player2CPU: Bool = false
     
+    
     var games: [Game] = []
     
     class func newGameScene(mode: GameMode) -> GameScene {
@@ -57,9 +58,7 @@ class GameScene: SKScene {
             spinCounter: Keycode.downArrow
         )
         
-        var player: Int?
         if gameMode == .localMultiplayer {
-            player = 1
             let controller2 = Controller(
                 up: Keycode.i,
                 down: Keycode.k,
@@ -68,6 +67,21 @@ class GameScene: SKScene {
                 spinClockwise: Keycode.semicolon,
                 spinCounter: Keycode.apostrophe
             )
+            
+            let gameParamsPlayer1 = GameParams(
+                scene: self,
+                cellSize: cellSize,
+                rowCount: rowCount,
+                columnCount: columnCount,
+                bounds: bounds,
+                controller: controller1,
+                player: 1,
+                otherPlayerGame: nil,
+                samBot: samBot(),
+                seed: seed,
+                gameMode: self.gameMode
+            )
+            
             let gameParamsPlayer2 = GameParams(
                 scene: self,
                 cellSize: cellSize,
@@ -78,20 +92,8 @@ class GameScene: SKScene {
                 player: 2,
                 otherPlayerGame: nil,
                 samBot: samBot(),
-                seed: seed
-            )
-
-            let gameParamsPlayer1 = GameParams(
-                scene: self,
-                cellSize: cellSize,
-                rowCount: rowCount,
-                columnCount: columnCount,
-                bounds: bounds,
-                controller: controller1,
-                player: player,
-                otherPlayerGame: nil,
-                samBot: samBot(),
-                seed: seed
+                seed: seed,
+                gameMode: self.gameMode
             )
             
             //add games to array and set otherPlayerGame
@@ -113,10 +115,11 @@ class GameScene: SKScene {
                 columnCount: columnCount,
                 bounds: bounds,
                 controller: controller1,
-                player: player,
+                player: nil,
                 otherPlayerGame: nil,
                 samBot: samBot(),
-                seed: seed
+                seed: seed,
+                gameMode: self.gameMode
                 
             )
             

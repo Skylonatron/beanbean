@@ -29,6 +29,7 @@ struct GameParams {
     let otherPlayerGame: Game?
     let samBot: samBot
     let seed: UInt64
+    let gameMode: GameMode!
 }
 
 class Game {
@@ -57,6 +58,12 @@ class Game {
     var random: GKRandom
     var backgroundNode: SKSpriteNode?
     var sounds: Sounds!
+    var gameMode: GameMode!
+    
+//  might need to change these speeds to int
+    var defaultVerticalSpeed: Int!
+    var fastVerticalSpeed: Int!
+    var gravitySpeed: Int!
     
     
     // ios movement
@@ -68,6 +75,8 @@ class Game {
         self.scene = params.scene
         self.bounds = params.bounds
         self.sounds = Sounds()
+        self.gameMode = params.gameMode
+        var cellSize = params.cellSize
         
 
         self.controller = params.controller
@@ -89,14 +98,26 @@ class Game {
         
         var offsetLeft = 0
         if params.player == 1 {
-            offsetLeft = params.cellSize * (params.columnCount + 1) + params.cellSize / 4
+            #if os(OSX)
+                offsetLeft = params.cellSize * (params.columnCount + 1) + params.cellSize / 4
+            #endif
+            #if os(iOS) || os(tvOS)
+            cellSize = Int(bounds.size.width / 7)
+            offsetLeft = Int(Double(cellSize))
+//            offsetLeft = cellSize * (params.columnCount + 1) + cellSize / 4
+            #endif
+        } else if params.player == 2 {
+            #if os(iOS) || os(tvOS)
+            cellSize = Int(bounds.size.width / 30)
+            offsetLeft = -Int(Double(cellSize) * 14)
+            #endif
         }
         
         self.grid = Grid(
             rowCount: params.rowCount,
             columnCount: params.columnCount,
             extraTopRows: 6,
-            cellSize: params.cellSize,
+            cellSize: cellSize,
             showCells: settings.debug.showCells,
             showRowColumn: settings.debug.showRowColumnNumbers,
             offsetLeft: offsetLeft
