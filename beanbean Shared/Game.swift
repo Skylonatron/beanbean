@@ -59,6 +59,7 @@ class Game {
     var backgroundNode: SKSpriteNode?
     var sounds: Sounds!
     var gameMode: GameMode!
+    var player: Int?
     
 //  might need to change these speeds to int
     var defaultVerticalSpeed: Int!
@@ -76,6 +77,7 @@ class Game {
         self.bounds = params.bounds
         self.sounds = Sounds()
         self.gameMode = params.gameMode
+        self.player = params.player
         var cellSize = params.cellSize
         
 
@@ -97,6 +99,7 @@ class Game {
         }
         
         var offsetLeft = 0
+        
         if params.player == 1 {
             #if os(OSX)
                 offsetLeft = params.cellSize * (params.columnCount + 1) + params.cellSize / 4
@@ -153,6 +156,39 @@ class Game {
 
     
     func update() {
+        if self.player == 2 && self.gameMode == .onlineMultiplayer {
+            for column in 0...self.grid.columnCount {
+                for row in 0...self.grid.rowCount {
+                    let inGameCell =  self.grid.cells[column]?[row]
+                    let otherGameCell = self.otherPlayerGame?.grid.cells[column]?[row]
+                    
+                    if inGameCell?.bean != nil && otherGameCell?.bean == nil {
+                        
+                        inGameCell?.bean?.shape.removeFromParent()
+                        inGameCell?.bean = nil
+                        continue
+                    }
+                    if inGameCell?.bean == nil && otherGameCell?.bean != nil {
+                        print("got here")
+                        
+                        let bean = Bean(
+                            color: otherGameCell!.bean!.color,
+                            cellSize: grid.cellSize,
+                            startingPosition: inGameCell!.shape.position,
+                            showNumber: false
+                        )
+                        inGameCell?.bean = bean
+                        scene.addChild(bean.shape)
+                        continue
+                    }
+                    
+                }
+            }
+       
+            
+            
+            return
+        }
         switch gameState {
         case .active:
             //handle cpu controls
@@ -584,6 +620,9 @@ class Game {
         }
     }
     func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if self.player == 2 && self.gameMode == .onlineMultiplayer {
+            return
+        }
         for t in touches {
             let movingPoint: CGPoint = t.location(in: self.scene.view)
             
@@ -606,6 +645,9 @@ class Game {
         }
     }
     func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if self.player == 2 && self.gameMode == .onlineMultiplayer {
+            return
+        }
         if let touch = touches.first as UITouch? {
             self.fastMovement = false
             if moveAmtX == 0 {

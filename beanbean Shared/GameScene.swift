@@ -11,6 +11,7 @@ import SpriteKit
 enum GameMode {
     case single
     case localMultiplayer
+    case onlineMultiplayer
 }
 
 class GameScene: SKScene {
@@ -20,7 +21,7 @@ class GameScene: SKScene {
     var moveAmtX: CGFloat = 0
     var moveAmtY: CGFloat = 0
     var gameMode: GameMode = .single
-    var player2CPU: Bool = false
+    var player2CPU: Bool = true
     
     
     var games: [Game] = []
@@ -58,7 +59,25 @@ class GameScene: SKScene {
             spinCounter: Keycode.downArrow
         )
         
-        if gameMode == .localMultiplayer {
+        switch gameMode {
+        case .single:
+            let gameParams = GameParams(
+                scene: self,
+                cellSize: cellSize,
+                rowCount: rowCount,
+                columnCount: columnCount,
+                bounds: bounds,
+                controller: controller1,
+                player: nil,
+                otherPlayerGame: nil,
+                samBot: samBot(),
+                seed: seed,
+                gameMode: self.gameMode
+                
+            )
+            
+            self.games.append(Game(params: gameParams))
+        case .localMultiplayer:
             let controller2 = Controller(
                 up: Keycode.i,
                 down: Keycode.k,
@@ -104,26 +123,52 @@ class GameScene: SKScene {
             self.games.append(gamePlayer2)
             gamePlayer1.otherPlayerGame = gamePlayer2
             gamePlayer2.otherPlayerGame = gamePlayer1
+        case .onlineMultiplayer:
+            let controller2 = Controller(
+                up: Keycode.i,
+                down: Keycode.k,
+                right: Keycode.l,
+                left: Keycode.j,
+                spinClockwise: Keycode.semicolon,
+                spinCounter: Keycode.apostrophe
+            )
             
-            
-        }
-        else{
-            let gameParams = GameParams(
+            let gameParamsPlayer1 = GameParams(
                 scene: self,
                 cellSize: cellSize,
                 rowCount: rowCount,
                 columnCount: columnCount,
                 bounds: bounds,
                 controller: controller1,
-                player: nil,
+                player: 1,
                 otherPlayerGame: nil,
                 samBot: samBot(),
                 seed: seed,
                 gameMode: self.gameMode
-                
             )
             
-            self.games.append(Game(params: gameParams))
+            let gameParamsPlayer2 = GameParams(
+                scene: self,
+                cellSize: cellSize,
+                rowCount: rowCount,
+                columnCount: columnCount,
+                bounds: bounds,
+                controller: controller2,
+                player: 2,
+                otherPlayerGame: nil,
+                samBot: samBot(),
+                seed: seed,
+                gameMode: self.gameMode
+            )
+            
+            //add games to array and set otherPlayerGame
+            let gamePlayer1 = Game(params: gameParamsPlayer1)
+            let gamePlayer2 = Game(params: gameParamsPlayer2)
+            gamePlayer2.useCPUControls = self.player2CPU
+            gamePlayer1.otherPlayerGame = gamePlayer2
+            gamePlayer2.otherPlayerGame = gamePlayer1
+            self.games.append(gamePlayer1)
+            self.games.append(gamePlayer2)
         }
     }
     
