@@ -123,9 +123,42 @@ class Bean {
         let repeatAnimationSequence = SKAction.repeatForever(animationSequence)
         self.shape.run(repeatAnimationSequence)
     }
+    func getColorString() -> String! {
+        return switch self.color {
+        case .green:
+            "green"
+        case .purple:
+            "purple"
+        case .red:
+            "red"
+        case .yellow:
+            "yellow"
+        case .gray:
+            "gray"
+        default:
+            ""
+        }
+    }
 }
 
 var salmon = false
+
+func getColorFromString(color: String) -> SKColor {
+    return switch color {
+    case "green":
+        .green
+    case "purple":
+        .purple
+    case "red":
+        .red
+    case "yellow":
+        .yellow
+    case "gray":
+        .gray
+    default:
+        .white
+    }
+}
 
 func createBean(beanSize: CGSize, bodyImage: String, faceImage: String) -> SKSpriteNode {
     let body = SKSpriteNode(imageNamed: bodyImage)

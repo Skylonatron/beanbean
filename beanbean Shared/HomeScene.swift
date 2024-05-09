@@ -124,8 +124,8 @@ extension HomeScene {
             self.view?.presentScene(gameScene, transition: SKTransition.doorsOpenHorizontal(withDuration: 1.0))
         }
         if node.name == "Online" {
-            let gameScene = GameScene.newGameScene(mode: .onlineMultiplayer)
-            self.view?.presentScene(gameScene, transition: SKTransition.doorsOpenHorizontal(withDuration: 1.0))
+            let matchmakingScene = MatchmakingScene.newMatchmakingScene()
+            self.view?.presentScene(matchmakingScene, transition: SKTransition.doorsOpenHorizontal(withDuration: 1.0))
         }
     }
 }

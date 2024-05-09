@@ -30,6 +30,23 @@ struct GameParams {
     let samBot: samBot
     let seed: UInt64
     let gameMode: GameMode!
+    let match: GKMatch?
+}
+
+var onlineOtherPlayCells: [String: [String: [String: String]]] = [:]
+
+extension GKMatch: GKMatchDelegate {
+    public func match(_: GKMatch, didReceive: Data, forRecipient: GKPlayer, fromRemotePlayer: GKPlayer) {
+        do {
+            if let jsonObject = try JSONSerialization.jsonObject(with: didReceive, options: []) as?  [String: [String: [String: String]]] {
+                onlineOtherPlayCells = jsonObject
+            } else {
+                print("Received data is not a valid JSON object")
+            }
+        } catch {
+            print("Error deserializing received data: \(error)")
+        }
+    }
 }
 
 class Game {
@@ -62,6 +79,7 @@ class Game {
     var player: Int?
     var endScreenGenerated: Bool = false
     var totalGamesWon: Int = 0
+    let match: GKMatch?
     
 //  might need to change these speeds to int
     var defaultVerticalSpeed: Int!
@@ -82,6 +100,8 @@ class Game {
         self.player = params.player
         var cellSize = params.cellSize
         
+        self.match = params.match
+        self.match?.delegate = self.match
 
         self.controller = params.controller
         // these numbers should be the number of different colors we are using to randomize from
@@ -91,6 +111,7 @@ class Game {
             lowestValue: 0,
             highestValue: 3
         )
+        
         
         self.otherPlayerGame = params.otherPlayerGame
 //        self.player = params.player
@@ -161,25 +182,23 @@ class Game {
         if self.player == 2 && self.gameMode == .onlineMultiplayer {
             for column in 0...self.grid.columnCount {
                 for row in 0...self.grid.rowCount {
-                    let inGameCell =  self.grid.cells[column]?[row]
+                    let otherGameCellOnline = onlineOtherPlayCells[String(column)]?[String(row)]
                     let otherGameCell = self.otherPlayerGame?.grid.cells[column]?[row]
                     
-                    if inGameCell?.bean != nil && otherGameCell?.bean == nil {
+                    if otherGameCell?.bean != nil && otherGameCellOnline == nil {
                         
-                        inGameCell?.bean?.shape.removeFromParent()
-                        inGameCell?.bean = nil
+                        otherGameCell?.bean?.shape.removeFromParent()
+                        otherGameCell?.bean = nil
                         continue
                     }
-                    if inGameCell?.bean == nil && otherGameCell?.bean != nil {
-                        print("got here")
-                        
+                    if otherGameCell?.bean == nil && otherGameCellOnline != nil {
                         let bean = Bean(
-                            color: otherGameCell!.bean!.color,
-                            cellSize: grid.cellSize,
-                            startingPosition: inGameCell!.shape.position,
+                            color: getColorFromString(color: otherGameCellOnline!["color"]!),
+                            cellSize: self.otherPlayerGame!.grid.cellSize,
+                            startingPosition: otherGameCell!.shape.position,
                             showNumber: false
                         )
-                        inGameCell?.bean = bean
+                        otherGameCell?.bean = bean
                         scene.addChild(bean.shape)
                         continue
                     }
@@ -346,6 +365,7 @@ class Game {
             self.beans = grid.getBeans()
             setGameState(state: .gravity)
         case .new:
+            sendGameData()
             self.score.sumFullChain()
             self.submitScoreToLeaderboard(score: Int(self.score.numNuisanceBeans))
             otherPlayerGame?.primedNuisanceBeans += self.score.nuisanceBeansInt
@@ -499,21 +519,10 @@ class Game {
         self.scene.addChild(sideBean.shape)
         
         self.beanPod = BeanPod(activeBean: mainBean, sideBean: sideBean)
+        
 
     }
     
-
-    
-//    func accrueNuisanceBeans(){
-//        self.primedNuisanceBeans += score.nuisanceBeansInt
-//    }
-    
-//    func checkForOtherPlayerGameState(){
-//        if self.primedNuisanceBeans > 0{
-//            otherPlayerGame?.generateNuisanceBeans(showNumber: false)
-//            self.primedNuisanceBeans = 0
-//        }
-//    }
     func generateNuisanceBeans(showNumber: Bool) {
         var rocksToSendNow = self.primedNuisanceBeans
         if self.primedNuisanceBeans > self.maxNuisanceSend {
@@ -541,11 +550,10 @@ class Game {
                 }
             }
         }
-        print(findEmptyCellsForNuisance)
         
         for row in (0..<result.quotient) {
             for column in (0...self.grid.columnCount) {
-                var numNuisancePossible = findEmptyCellsForNuisance[column]
+                let numNuisancePossible = findEmptyCellsForNuisance[column]
                 if numNuisancePossible != 0{
                     findEmptyCellsForNuisance[column]! -= 1
                 }
@@ -587,11 +595,30 @@ class Game {
             chosenCell!.bean = rock
             self.scene.addChild(rock.shape)
         }
-        print(findEmptyCellsForNuisance)
         self.newBeanBeforeMoreNuisance = true
             
         print("end of dropping")
         self.beans = self.grid.getBeans()
+    }
+    
+    func sendGameData() {
+        guard let match = self.match else {
+            print("No current match session")
+            return
+        }
+
+        let jsonData = try! JSONSerialization.data(withJSONObject: self.grid.cells, options: [])
+        let stringToSend = "randomString"
+        do {
+            do {
+                var jsonData = try JSONSerialization.data(withJSONObject: self.grid.getCellsJSON(), options: [])
+            } catch {
+                print("Error converting dictionary to JSON string: \(error)")
+            }
+            try match.sendData(toAllPlayers: jsonData, with: .reliable)
+        } catch {
+            print("Failed to send game data:", error)
+        }
     }
     
     func loadLeaderboard() async {
