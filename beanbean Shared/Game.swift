@@ -61,6 +61,7 @@ class Game {
     var gameMode: GameMode!
     var player: Int?
     var endScreenGenerated: Bool = false
+    var totalGamesWon: Int = 0
     
 //  might need to change these speeds to int
     var defaultVerticalSpeed: Int!
@@ -193,6 +194,7 @@ class Game {
         switch gameState {
         case .active:
             //handle cpu controls
+
             if useCPUControls {
                 samBot.applyMove(grid: grid, beanPod: beanPod, game: self)
             }
@@ -216,7 +218,9 @@ class Game {
 //                        score.totalPoints += 1
 //                    }
                 }
+//                print("got here")
                 beanPod.moveDown(speed: self.movementSpeed)
+//                print("also here")
                 beanPod.currentTimeOverNil = 0
                 beanPod.timeSinceNil += 1/60
                 
@@ -364,6 +368,7 @@ class Game {
             else{
                 self.newBeanBeforeMoreNuisance = false
                 generateNewBeans(showNumber: settings.debug.showGroupNumber)
+//                print("generated new beans")
                 setGameState(state: .active)
             }
 
@@ -372,6 +377,7 @@ class Game {
             setGameState(state: .gravity)
             
         case .endScreen:
+//            print("self: ", self.totalGamesWon, "other player: ", self.otherPlayerGame?.totalGamesWon)
             if self.endScreenGenerated == false {
                 //add menu rectangle
                 let endMenuWidth = self.grid.cellSize * 5
@@ -613,8 +619,34 @@ class Game {
     }
     
     func startNewGame() {
-        self.scene.removeAllChildren()
+//        self.scene.removeAllChildren()
+        for column in grid.cells.values {
+            for cell in column.values {
+                cell.bean?.shape.removeFromParent()
+                cell.bean = nil
+            }
+        }
+        self.beanPod.mainBean.shape.removeFromParent()
+        self.beanPod.sideBean.shape.removeFromParent()
+        beans.removeAll()
+        
+        self.score.resetScoreForNewGame()
+        if self.gameLost == false {
+            self.totalGamesWon += 1
+        }
+        self.primedNuisanceBeans = 0
+        
+        // Remove the end screen
+        if let endMenu = self.scene.childNode(withName: "end menu") {
+            endMenu.removeFromParent()
+        }
+        
         self.gameOver = false
+        self.endScreenGenerated = false
+//        self.otherPlayerGame?.gameOver = false
+        
+//        generateNewBeans(showNumber: settings.debug.showGroupNumber)
+        self.setGameState(state: .new)
     }
     
 
@@ -629,9 +661,6 @@ class Game {
 
     }
     func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        if self.player == 2 && self.gameMode == .onlineMultiplayer {
-            return
-        }
         for t in touches {
             let movingPoint: CGPoint = t.location(in: self.scene.view)
             
@@ -654,9 +683,6 @@ class Game {
         }
     }
     func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        if self.player == 2 && self.gameMode == .onlineMultiplayer {
-            return
-        }
         if let touch = touches.first as UITouch? {
             self.fastMovement = false
             if moveAmtX == 0 {

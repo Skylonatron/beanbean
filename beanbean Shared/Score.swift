@@ -194,6 +194,11 @@ class Score {
 //        self.movementPoints = 0.0
     }
     
+    func resetScoreForNewGame() {
+        self.resetCombos()
+        self.totalPoints = 0
+    }
+    
     func calculateLeftovers() {
         self.nuisanceBeansLeftovers += self.numNuisanceBeans.truncatingRemainder(dividingBy: 1)
         

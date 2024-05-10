@@ -22,6 +22,8 @@ class GameScene: SKScene {
     var moveAmtY: CGFloat = 0
     var gameMode: GameMode = .single
     var player2CPU: Bool = true
+    var totalGamesWon: Int = 0
+    var newGamePushed: Bool = false
     
     
     var games: [Game] = []
@@ -193,9 +195,7 @@ class GameScene: SKScene {
 extension GameScene {
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for game in games {
-            game.touchesBegan(touches, with: event)
-        }
+        games[0].touchesBegan(touches, with: event)
         guard let touch = touches.first else { return }
         
         let touchLocation = touch.location(in: self)
@@ -203,23 +203,29 @@ extension GameScene {
         
         // Check if touch intersects with the node's frame
         if node.name == "New Game" {
-            for game in games {
-                game.startNewGame()
-                let gameScene = GameScene.newGameScene(mode: self.gameMode)
-                self.view?.presentScene(gameScene, transition: SKTransition.fade(withDuration: 1.0))
-            }
+            self.newGamePushed = true
         }
+        
     }
     
+    
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for game in games {
-            game.touchesMoved(touches, with: event)
-        }
+        games[0].touchesMoved(touches, with: event)
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for game in games {
-            game.touchesEnded(touches, with: event)
+        games[0].touchesEnded(touches, with: event)
+        guard let touch = touches.first else { return }
+        
+        let touchLocation = touch.location(in: self)
+        let node = self.atPoint(touchLocation)
+        
+        // Check if touch intersects with the node's frame
+        if node.name == "New Game" && self.newGamePushed == true {
+            for game in games {
+                game.startNewGame()
+            }
+            self.newGamePushed = false
         }
     }
 }
