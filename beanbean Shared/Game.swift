@@ -612,24 +612,9 @@ class Game {
         }
     }
     
-    func handleNewGameButtonTap(location: CGPoint) {
-        // Check if the touch is within the bounds of the "New Game" button
-        if let nodeTapped = scene.nodes(at: location).first(where: { $0.name == "New Game" }) {
-            // If the "New Game" button is tapped, initiate the action to start a new game
-            startNewGame()
-        }
-    }
-    
     func startNewGame() {
-        // Reset game state variables
-        // Clear the game grid
-        // Generate a new game
-        
-        // Remove the end screen UI elements
-        scene.removeAllChildren()
-        
-        // Transition back to the game
-        gameState = .new
+        self.scene.removeAllChildren()
+        self.gameOver = false
     }
     
 
@@ -642,7 +627,6 @@ class Game {
             moveAmtY = 0
         }
 
-        
     }
     func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         if self.player == 2 && self.gameMode == .onlineMultiplayer {

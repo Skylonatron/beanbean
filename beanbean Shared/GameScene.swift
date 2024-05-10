@@ -196,6 +196,19 @@ extension GameScene {
         for game in games {
             game.touchesBegan(touches, with: event)
         }
+        guard let touch = touches.first else { return }
+        
+        let touchLocation = touch.location(in: self)
+        let node = self.atPoint(touchLocation)
+        
+        // Check if touch intersects with the node's frame
+        if node.name == "New Game" {
+            for game in games {
+                game.startNewGame()
+                let gameScene = GameScene.newGameScene(mode: self.gameMode)
+                self.view?.presentScene(gameScene, transition: SKTransition.fade(withDuration: 1.0))
+            }
+        }
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
