@@ -117,4 +117,23 @@ class Grid {
         return cells[Int(self.columnCount / 2)]![self.rowCount + 1]
     }
     
+    func getCellsJSON() -> [String: [String: [String: String]]] {
+        var myDictionary: [String: [String: [String: String]]] = [:]
+
+        for column in 0...self.columnCount {
+            myDictionary[String(column)] = [:]
+            for row in 0...self.rowCount {
+                if self.cells[column]?[row]?.bean != nil {
+                    let b = self.cells[column]?[row]?.bean
+                    
+                    myDictionary[String(column)]?[String(row)] = [
+                        "color" : b!.getColorString()
+                    ]
+                }
+            }
+        }
+        
+        return myDictionary
+    }
+    
 }

@@ -7,6 +7,7 @@
 
 
 import SpriteKit
+import GameKit
 
 enum GameMode {
     case single
@@ -24,11 +25,13 @@ class GameScene: SKScene {
     var player2CPU: Bool = true
     var totalGamesWon: Int = 0
     var newGamePushed: Bool = false
+    var match: GKMatch?
+    var localPlayerID: String?
     
     
     var games: [Game] = []
     
-    class func newGameScene(mode: GameMode) -> GameScene {
+    class func newGameScene(mode: GameMode, match: GKMatch? = nil) -> GameScene {
         // Load 'GameScene.sks' as an SKScene.
 //        let scene = GameScene()
         guard let scene = SKScene(fileNamed: "GameScene") as? GameScene else {
@@ -36,7 +39,9 @@ class GameScene: SKScene {
             abort()
         }
         
+        scene.match = match
         scene.gameMode = mode
+        scene.localPlayerID = GKLocalPlayer.local.gamePlayerID
         // Set the scale mode to scale to fit the window
         scene.scaleMode = .aspectFill
         
@@ -74,7 +79,8 @@ class GameScene: SKScene {
                 otherPlayerGame: nil,
                 samBot: samBot(),
                 seed: seed,
-                gameMode: self.gameMode
+                gameMode: self.gameMode,
+                match: nil
                 
             )
             
@@ -100,7 +106,8 @@ class GameScene: SKScene {
                 otherPlayerGame: nil,
                 samBot: samBot(),
                 seed: seed,
-                gameMode: self.gameMode
+                gameMode: self.gameMode,
+                match: nil
             )
             
             let gameParamsPlayer2 = GameParams(
@@ -114,7 +121,8 @@ class GameScene: SKScene {
                 otherPlayerGame: nil,
                 samBot: samBot(),
                 seed: seed,
-                gameMode: self.gameMode
+                gameMode: self.gameMode,
+                match: nil
             )
             
             //add games to array and set otherPlayerGame
@@ -146,7 +154,8 @@ class GameScene: SKScene {
                 otherPlayerGame: nil,
                 samBot: samBot(),
                 seed: seed,
-                gameMode: self.gameMode
+                gameMode: self.gameMode,
+                match: self.match
             )
             
             let gameParamsPlayer2 = GameParams(
@@ -160,13 +169,14 @@ class GameScene: SKScene {
                 otherPlayerGame: nil,
                 samBot: samBot(),
                 seed: seed,
-                gameMode: self.gameMode
+                gameMode: self.gameMode,
+                match: self.match
             )
             
             //add games to array and set otherPlayerGame
             let gamePlayer1 = Game(params: gameParamsPlayer1)
             let gamePlayer2 = Game(params: gameParamsPlayer2)
-            gamePlayer2.useCPUControls = self.player2CPU
+//            gamePlayer2.useCPUControls = self.player2CPU
             gamePlayer1.otherPlayerGame = gamePlayer2
             gamePlayer2.otherPlayerGame = gamePlayer1
             self.games.append(gamePlayer1)
