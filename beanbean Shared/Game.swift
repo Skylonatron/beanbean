@@ -7,6 +7,7 @@
 
 import SpriteKit
 import GameKit
+import AVFoundation
 
 enum GameState {
     case active
@@ -88,6 +89,7 @@ class Game {
     var endScreenGenerated: Bool = false
     var totalGamesWon: Int = 0
     let match: GKMatch?
+    var backgroundMusicPlayer: AVAudioPlayer?
     
 //  might need to change these speeds to int
     var defaultVerticalSpeed: Int!
@@ -167,7 +169,26 @@ class Game {
 //        self.scene.addChild(score.scoreOutline)
 //        self.scene.addChild(score.highScoreOutline)
         addBackground()
+        
+        if params.player != 1 {
+            self.playBackgroundMusic()
+        }
 
+    }
+    
+    func playBackgroundMusic() {
+        if let musicURL = Bundle.main.url(forResource: "orbDorbTest", withExtension: "wav") {
+            do {
+                try backgroundMusicPlayer = AVAudioPlayer(contentsOf: musicURL)
+                backgroundMusicPlayer?.numberOfLoops = -1 // Loop indefinitely
+                backgroundMusicPlayer?.volume = 0.5 // Set initial volume level
+                backgroundMusicPlayer?.play()
+            } catch {
+                print("Could not play background music: \(error)")
+            }
+        } else {
+            print("Background music file not found")
+        }
     }
     
     func addBackground() {
