@@ -34,17 +34,25 @@ struct GameParams {
 }
 
 var onlineOtherPlayCells: [String: [String: [String: String]]] = [:]
+var pNuisanceBeans: String = ""
 
 extension GKMatch: GKMatchDelegate {
     public func match(_: GKMatch, didReceive: Data, forRecipient: GKPlayer, fromRemotePlayer: GKPlayer) {
         do {
             if let jsonObject = try JSONSerialization.jsonObject(with: didReceive, options: []) as?  [String: [String: [String: String]]] {
                 onlineOtherPlayCells = jsonObject
+                return
             } else {
                 print("Received data is not a valid JSON object")
             }
         } catch {
             print("Error deserializing received data: \(error)")
+        }
+        if let receivedString = String(data: didReceive, encoding: .utf8) {
+            // Handle the received string
+            pNuisanceBeans = receivedString
+        } else {
+            print("Failed to convert data to string")
         }
     }
 }
@@ -182,23 +190,22 @@ class Game {
         if self.player == 2 && self.gameMode == .onlineMultiplayer {
             for column in 0...self.grid.columnCount {
                 for row in 0...self.grid.rowCount {
-                    let otherGameCellOnline = onlineOtherPlayCells[String(column)]?[String(row)]
-                    let otherGameCell = self.otherPlayerGame?.grid.cells[column]?[row]
+                    let onlineGameCell = onlineOtherPlayCells[String(column)]?[String(row)]
+                    let inGameCell = self.grid.cells[column]?[row]
                     
-                    if otherGameCell?.bean != nil && otherGameCellOnline == nil {
-                        
-                        otherGameCell?.bean?.shape.removeFromParent()
-                        otherGameCell?.bean = nil
+                    if inGameCell?.bean != nil && onlineGameCell == nil {
+                        inGameCell?.bean?.shape.removeFromParent()
+                        inGameCell?.bean = nil
                         continue
                     }
-                    if otherGameCell?.bean == nil && otherGameCellOnline != nil {
+                    if inGameCell?.bean == nil && onlineGameCell != nil {
                         let bean = Bean(
-                            color: getColorFromString(color: otherGameCellOnline!["color"]!),
-                            cellSize: self.otherPlayerGame!.grid.cellSize,
-                            startingPosition: otherGameCell!.shape.position,
+                            color: getColorFromString(color: onlineGameCell!["color"]!),
+                            cellSize: self.grid.cellSize,
+                            startingPosition: inGameCell!.shape.position,
                             showNumber: false
                         )
-                        otherGameCell?.bean = bean
+                        inGameCell?.bean = bean
                         scene.addChild(bean.shape)
                         continue
                     }
@@ -210,8 +217,14 @@ class Game {
             
             return
         }
+        if pNuisanceBeans != "" {
+            self.primedNuisanceBeans += Int(pNuisanceBeans)!
+            pNuisanceBeans = ""
+        }
+        
         switch gameState {
         case .active:
+            
             //handle cpu controls
 
             if useCPUControls {
@@ -372,6 +385,7 @@ class Game {
             if self.score.nuisanceBeansInt > 30 {
                 self.sounds.playRedRockSound()
             }
+            sendGameDataRocks(rocksToSendInt: self.score.nuisanceBeansInt)
             self.score.resetCombos()
             
             if self.grid.getEndGameCell()!.bean != nil {
@@ -601,17 +615,35 @@ class Game {
         self.beans = self.grid.getBeans()
     }
     
+    func sendGameDataRocks(rocksToSendInt: Int) {
+        guard let match = self.match else {
+            print("No current match session")
+            return
+        }
+        
+        if let dataToSend = String(rocksToSendInt).data(using: .utf8) {
+            do {
+                try match.sendData(toAllPlayers: dataToSend, with: .reliable)
+            } catch {
+                print("Failed to send data: \(error.localizedDescription)")
+            }
+        } else {
+            print("Failed to convert string to data")
+        }
+    }
+    
     func sendGameData() {
         guard let match = self.match else {
             print("No current match session")
             return
         }
 
-        let jsonData = try! JSONSerialization.data(withJSONObject: self.grid.cells, options: [])
-        let stringToSend = "randomString"
+//        let jsonData = try! JSONSerialization.data(withJSONObject: self.grid.cells, options: [])
+//        let stringToSend = "randomString"
+        var jsonData: Data!
         do {
             do {
-                var jsonData = try JSONSerialization.data(withJSONObject: self.grid.getCellsJSON(), options: [])
+                jsonData = try JSONSerialization.data(withJSONObject: self.grid.getCellsJSON(), options: [])
             } catch {
                 print("Error converting dictionary to JSON string: \(error)")
             }
