@@ -177,7 +177,7 @@ class Game {
     }
     
     func playBackgroundMusic() {
-        if let musicURL = Bundle.main.url(forResource: "orbDorbTest", withExtension: "wav") {
+        if let musicURL = Bundle.main.url(forResource: "orbDorbTest", withExtension: "flac") {
             do {
                 try backgroundMusicPlayer = AVAudioPlayer(contentsOf: musicURL)
                 backgroundMusicPlayer?.numberOfLoops = -1 // Loop indefinitely
