@@ -15,7 +15,7 @@
 - [ ] animate spins/movement
 - [ ] add horz/vert movement of main bean if sidebean is hitting a wall or beans
 
-#### New TO DOs
+#### New TO DOs for Online
 - [ ] figure out proper layout for different phones
 - [ ] make players have same beans for online
 - [ ] score not showing for online
@@ -23,6 +23,17 @@
   - [ ] leaderboard
   - [ ] new game: have both players confirm new game before starting
 - [ ] Show Next Bean
+
+#### Finishing Touches To DOs
+- [ ] Music
+- [ ] Sounds
+- [ ] Animations
+-   [ ] Sending nuisance animation
+-   [ ] Nuisance waiting sprites
+- [ ] Art
+-   [ ] Home Screen
+-   [ ] End Screen
+-   [ ] iOS icon
 
 #### Tips
 * If any files are being added that are getting created automatically then add to .gitignore. Only push up code that you have updated.
