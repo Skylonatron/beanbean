@@ -28,12 +28,12 @@
 - [ ] Music
 - [ ] Sounds
 - [ ] Animations
--   [ ] Sending nuisance animation
--   [ ] Nuisance waiting sprites
+  - [ ] Sending nuisance animation
+  - [ ] Nuisance waiting sprites
 - [ ] Art
--   [ ] Home Screen
--   [ ] End Screen
--   [ ] iOS icon
+  - [ ] Home Screen
+  - [ ] End Screen
+  - [ ] iOS icon
 
 #### Tips
 * If any files are being added that are getting created automatically then add to .gitignore. Only push up code that you have updated.
