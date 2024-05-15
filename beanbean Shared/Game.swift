@@ -138,14 +138,14 @@ class Game {
                 offsetLeft = params.cellSize * (params.columnCount + 1) + params.cellSize / 4
             #endif
             #if os(iOS) || os(tvOS)
-            cellSize = Int(bounds.size.width / 7)
+            cellSize = Int(bounds.size.width / 9)
             offsetLeft = Int(Double(cellSize))
 //            offsetLeft = cellSize * (params.columnCount + 1) + cellSize / 4
             #endif
         } else if params.player == 2 {
             #if os(iOS) || os(tvOS)
-            cellSize = Int(bounds.size.width / 30)
-            offsetLeft = -Int(Double(cellSize) * 14)
+            cellSize = Int(bounds.size.width / 35)
+            offsetLeft = -Int(Double(cellSize) * 13)
             #endif
         }
         

@@ -43,7 +43,7 @@ class GameScene: SKScene {
         scene.gameMode = mode
         scene.localPlayerID = GKLocalPlayer.local.gamePlayerID
         // Set the scale mode to scale to fit the window
-        scene.scaleMode = .aspectFill
+//        scene.scaleMode = .aspectFill
         
         return scene
     }
