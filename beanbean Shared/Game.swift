@@ -732,6 +732,7 @@ class Game {
         self.beanPod.sideBean.shape.removeFromParent()
         self.nextBeanPod!.mainBean.shape.removeFromParent()
         self.nextBeanPod!.sideBean.shape.removeFromParent()
+        self.nextBeanPod = nil
         beans.removeAll()
         
         self.score.resetScoreForNewGame()
