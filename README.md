@@ -6,7 +6,6 @@
 - [ ] End Menu
   - [ ] leaderboard
   - [ ] new game: have both players confirm new game before starting
-- [ ] Show Next Bean
 - [ ] Add general settings menu to go back mid game / adjust volume what not
 - [ ] Fix end screen, pop it up for both games when one person loses or don't pop it up for player 2
 
