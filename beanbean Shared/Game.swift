@@ -37,27 +37,6 @@ struct GameParams {
 var onlineOtherPlayCells: [String: [String: [String: String]]] = [:]
 var pNuisanceBeans: String = ""
 
-extension GKMatch: GKMatchDelegate {
-    public func match(_: GKMatch, didReceive: Data, forRecipient: GKPlayer, fromRemotePlayer: GKPlayer) {
-        do {
-            if let jsonObject = try JSONSerialization.jsonObject(with: didReceive, options: []) as?  [String: [String: [String: String]]] {
-                onlineOtherPlayCells = jsonObject
-                return
-            } else {
-                print("Received data is not a valid JSON object")
-            }
-        } catch {
-            print("Error deserializing received data: \(error)")
-        }
-        if let receivedString = String(data: didReceive, encoding: .utf8) {
-            // Handle the received string
-            pNuisanceBeans = receivedString
-        } else {
-            print("Failed to convert data to string")
-        }
-    }
-}
-
 class Game {
     var num: Int!
     var gameState: GameState = .new
@@ -89,7 +68,7 @@ class Game {
     var endScreenGenerated: Bool = false
     var totalGamesWon: Int = 0
     let match: GKMatch?
-    var backgroundMusicPlayer: AVAudioPlayer?
+    var nextBeanPod: BeanPod?
     
 //  might need to change these speeds to int
     var defaultVerticalSpeed: Int!
@@ -109,6 +88,7 @@ class Game {
         self.gameMode = params.gameMode
         self.player = params.player
         var cellSize = params.cellSize
+//        let music = Music()
         
         self.match = params.match
         self.match?.delegate = self.match
@@ -171,24 +151,10 @@ class Game {
         addBackground()
         
         if params.player != 1 {
-            self.playBackgroundMusic()
+            print("play background music")
+            playBackgroundMusic()
         }
 
-    }
-    
-    func playBackgroundMusic() {
-        if let musicURL = Bundle.main.url(forResource: "orbDorbTest", withExtension: "flac") {
-            do {
-                try backgroundMusicPlayer = AVAudioPlayer(contentsOf: musicURL)
-                backgroundMusicPlayer?.numberOfLoops = -1 // Loop indefinitely
-                backgroundMusicPlayer?.volume = 0.5 // Set initial volume level
-                backgroundMusicPlayer?.play()
-            } catch {
-                print("Could not play background music: \(error)")
-            }
-        } else {
-            print("Background music file not found")
-        }
     }
     
     func addBackground() {
@@ -638,7 +604,6 @@ class Game {
     
     func sendGameDataRocks(rocksToSendInt: Int) {
         guard let match = self.match else {
-            print("No current match session")
             return
         }
         
@@ -655,7 +620,6 @@ class Game {
     
     func sendGameData() {
         guard let match = self.match else {
-            print("No current match session")
             return
         }
 
