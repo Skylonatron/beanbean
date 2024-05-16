@@ -12,6 +12,8 @@
   - [ ]  turn of sounds
   - [ ] change default spin to CCW
   - [ ] brightness
+  - [ ] change username
+  - [ ] vibration on/off?
   - [ ] colorblind setting?
   - [ ] change sprites possibly
 - [ ] Fix end screen, pop it up for both games when one person loses or don't pop it up for player 2
