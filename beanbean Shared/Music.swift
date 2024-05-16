@@ -8,7 +8,7 @@
 import AVFoundation
 
 var backgroundMusicPlayer: AVAudioPlayer?
-var playMusic: Bool = true
+var playMusic: Bool = false
 
 func playBackgroundMusic() {
     

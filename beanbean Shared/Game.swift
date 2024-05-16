@@ -112,17 +112,16 @@ class Game {
         }
         
         var offsetLeft = 0
-        
-        if params.player == 1 {
-            #if os(OSX)
-                offsetLeft = params.cellSize * (params.columnCount + 1) + params.cellSize / 4
-            #endif
-            #if os(iOS) || os(tvOS)
-            cellSize = Int(bounds.size.width / 9)
-            offsetLeft = Int(Double(cellSize))
+    
+        #if os(OSX)
+            offsetLeft = params.cellSize * (params.columnCount + 1) + params.cellSize / 4
+        #endif
+        #if os(iOS) || os(tvOS)
+        cellSize = Int(bounds.size.width / 9)
+        offsetLeft = Int(Double(cellSize))
 //            offsetLeft = cellSize * (params.columnCount + 1) + cellSize / 4
-            #endif
-        } else if params.player == 2 {
+        #endif
+        if params.player == 2 {
             #if os(iOS) || os(tvOS)
             cellSize = Int(bounds.size.width / 35)
             offsetLeft = -Int(Double(cellSize) * 13)
@@ -497,29 +496,88 @@ class Game {
     func generateNewBeans(showNumber: Bool){
         //reset flag for samBot rotation
         self.samBot.hasPerformedRotation = false
-        
-        // make another bean
         let colors = [SKColor.purple, SKColor.green, SKColor.red, SKColor.yellow]
-
-        let color = colors[random.nextInt()]
-        let color2 = colors[random.nextInt()]
-        let mainBean = Bean(
-            color: color,
-            cellSize: grid.cellSize,
-            startingPosition: grid.getStartingCell()!.shape.position,
-            showNumber: showNumber
-        )
-        self.scene.addChild(mainBean.shape)
         
-        let sideBean = Bean(
-            color: color2,
-            cellSize: grid.cellSize,
-            startingPosition: grid.getStartingCell()!.getUpCell(grid: grid)!.shape.position,
-            showNumber: showNumber
-        )
-        self.scene.addChild(sideBean.shape)
-        
-        self.beanPod = BeanPod(activeBean: mainBean, sideBean: sideBean)
+        if self.nextBeanPod == nil {
+            self.beanPod = BeanPod(
+                activeBean: Bean(
+                    color: colors[random.nextInt()],
+                    cellSize: grid.cellSize,
+                    startingPosition: grid.getStartingCell()!.shape.position,
+                    showNumber: showNumber
+                ),
+                sideBean: Bean(
+                    color: colors[random.nextInt()],
+                    cellSize: grid.cellSize,
+                    startingPosition: grid.getStartingCell()!.getUpCell(grid: grid)!.shape.position,
+                    showNumber: showNumber
+                )
+            )
+            self.scene.addChild(self.beanPod.mainBean.shape)
+            self.scene.addChild(self.beanPod.sideBean.shape)
+            
+            self.nextBeanPod = BeanPod(
+                activeBean: Bean(
+                    color: colors[random.nextInt()],
+                    cellSize: grid.cellSize,
+                    startingPosition: CGPoint(x: Int(bounds.size.width / 2.7), y: Int(bounds.size.width / 2)),
+                    showNumber: showNumber
+                ),
+                sideBean: Bean(
+                    color: colors[random.nextInt()],
+                    cellSize: grid.cellSize,
+                    startingPosition: CGPoint(x: Int(bounds.size.width / 2.7), y: Int(bounds.size.width / 2) + grid.cellSize),
+                    showNumber: showNumber
+                )
+            )
+            
+            if self.player != 2 {
+                self.scene.addChild(self.nextBeanPod!.mainBean.shape)
+                self.scene.addChild(self.nextBeanPod!.sideBean.shape)
+            }
+        } else {
+            self.beanPod = BeanPod(
+                activeBean: Bean(
+                    color: self.nextBeanPod!.mainBean.color,
+                    cellSize: grid.cellSize,
+                    startingPosition: grid.getStartingCell()!.shape.position,
+                    showNumber: showNumber
+                ),
+                sideBean: Bean(
+                    color:  self.nextBeanPod!.sideBean.color,
+                    cellSize: grid.cellSize,
+                    startingPosition: grid.getStartingCell()!.getUpCell(grid: grid)!.shape.position,
+                    showNumber: showNumber
+                )
+            )
+            
+            self.nextBeanPod!.mainBean.shape.removeFromParent()
+            self.nextBeanPod!.sideBean.shape.removeFromParent()
+            
+            self.nextBeanPod = BeanPod(
+                activeBean: Bean(
+                    color: colors[random.nextInt()],
+                    cellSize: grid.cellSize,
+                    startingPosition: CGPoint(x: Int(bounds.size.width / 2.7), y: Int(bounds.size.width / 2)),
+                    showNumber: showNumber
+                ),
+                sideBean: Bean(
+                    color: colors[random.nextInt()],
+                    cellSize: grid.cellSize,
+                    startingPosition: CGPoint(x: Int(bounds.size.width / 2.7), y: Int(bounds.size.width / 2) + grid.cellSize),
+                    showNumber: showNumber
+                )
+            )
+            
+            if self.player != 2 {
+                self.scene.addChild(self.nextBeanPod!.mainBean.shape)
+                self.scene.addChild(self.nextBeanPod!.sideBean.shape)
+            }
+            
+            
+            self.scene.addChild(self.beanPod.mainBean.shape)
+            self.scene.addChild(self.beanPod.sideBean.shape)
+        }
         
 
     }
@@ -672,6 +730,8 @@ class Game {
         }
         self.beanPod.mainBean.shape.removeFromParent()
         self.beanPod.sideBean.shape.removeFromParent()
+        self.nextBeanPod!.mainBean.shape.removeFromParent()
+        self.nextBeanPod!.sideBean.shape.removeFromParent()
         beans.removeAll()
         
         self.score.resetScoreForNewGame()

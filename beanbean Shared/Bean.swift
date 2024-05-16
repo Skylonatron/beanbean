@@ -14,6 +14,7 @@ class Bean {
     var markForDelete: Bool = false
     var group: [Bean]
     var color: SKColor
+    var beanImage: SKSpriteNode!
 
     
     init(color: SKColor, cellSize: Int, startingPosition: CGPoint, showNumber: Bool) {
@@ -35,9 +36,7 @@ class Bean {
         self.labelNode = SKLabelNode()
         self.checked = false
         self.color = color
-        
-        var beanImage: SKSpriteNode!
-        
+                
         if salmon{
             if color == .gray{
                 beanImage = createBean(beanSize: beanSize, bodyImage: "tile_grey", faceImage: "samFace")
