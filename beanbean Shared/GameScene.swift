@@ -27,7 +27,8 @@ class GameScene: SKScene {
     var newGamePushed: Bool = false
     var match: GKMatch?
     var localPlayerID: String?
-    
+    var pauseButton: SKSpriteNode!
+    var pauseMenu: SKNode!
     
     var games: [Game] = []
     
@@ -42,10 +43,9 @@ class GameScene: SKScene {
         scene.match = match
         scene.gameMode = mode
         scene.localPlayerID = GKLocalPlayer.local.gamePlayerID
-        // Set the scale mode to scale to fit the window
-//        scene.scaleMode = .aspectFill
         
         return scene
+
     }
     
     func setUpScene() {
@@ -57,6 +57,12 @@ class GameScene: SKScene {
         let columnCount = 5
         let rowCount = 12
         let seed = UInt64.random(in: 0...1000000)
+        // Set up your pause button
+        self.pauseButton = SKSpriteNode(imageNamed: "transparentDark12")
+        self.pauseButton.position = CGPoint(x: bounds.size.width / 2.6, y: bounds.size.height / 2.6)
+        self.pauseButton.zPosition = 20
+        self.addChild(self.pauseButton)
+        
         let controller1 = Controller(
             up: Keycode.w,
             down: Keycode.s,
@@ -197,6 +203,39 @@ class GameScene: SKScene {
             game.update()
         }
     }
+    
+    func showPauseMenu() {
+        pauseMenu = SKNode()
+        pauseMenu.zPosition = 20
+
+        let background = SKSpriteNode(
+            color: .white,
+            size: CGSize(width: self.view!.bounds.width / 1.3, height: self.view!.bounds.height / 2.5)
+        )
+        background.alpha = 0.90
+        background.position = CGPoint(x: 0, y: 0)
+        pauseMenu.addChild(background)
+
+        let resumeButton = SKLabelNode(text: "Resume")
+        resumeButton.position = CGPoint(x: 0, y: background.size.height / 4)
+        resumeButton.name = "resumeButton"
+        resumeButton.fontColor = .black
+        pauseMenu.addChild(resumeButton)
+
+        let restartButton = SKLabelNode(text: "Restart")
+        restartButton.position = CGPoint(x: 0, y: 0)
+        restartButton.name = "restartButton"
+        restartButton.fontColor = .black
+        pauseMenu.addChild(restartButton)
+
+        let mainMenuButton = SKLabelNode(text: "Main Menu")
+        mainMenuButton.position = CGPoint(x: 0, y: -background.size.height / 4)
+        mainMenuButton.name = "mainMenuButton"
+        mainMenuButton.fontColor = .black
+        pauseMenu.addChild(mainMenuButton)
+
+        self.addChild(pauseMenu)
+    }
 
 }
 
@@ -205,9 +244,10 @@ class GameScene: SKScene {
 extension GameScene {
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        games[0].touchesBegan(touches, with: event)
+        if self.isPaused == true {
+            return
+        }
         guard let touch = touches.first else { return }
-        
         let touchLocation = touch.location(in: self)
         let node = self.atPoint(touchLocation)
         
@@ -216,19 +256,39 @@ extension GameScene {
             self.newGamePushed = true
         }
         
+        if self.isPaused != true {
+            games[0].touchesBegan(touches, with: event)
+        }
     }
     
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if self.isPaused == true {
+            return
+        }
         games[0].touchesMoved(touches, with: event)
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        games[0].touchesEnded(touches, with: event)
         guard let touch = touches.first else { return }
-        
         let touchLocation = touch.location(in: self)
         let node = self.atPoint(touchLocation)
+        
+        if self.isPaused == true {
+            if node.name == "resumeButton" {
+                self.isPaused = false
+                pauseMenu.removeFromParent()
+                return
+            }
+            return
+        } else if pauseButton.contains(touchLocation) {
+            self.isPaused = true
+            showPauseMenu()
+            return
+        }
+        
+        games[0].touchesEnded(touches, with: event)
+        
         
         // Check if touch intersects with the node's frame
         if node.name == "New Game" && self.newGamePushed == true {
