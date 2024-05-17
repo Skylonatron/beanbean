@@ -25,10 +25,12 @@ class GameScene: SKScene {
     var player2CPU: Bool = true
     var totalGamesWon: Int = 0
     var newGamePushed: Bool = false
+    var backPushed: Bool = false
     var match: GKMatch?
     var localPlayerID: String?
     var pauseButton: SKSpriteNode!
     var pauseMenu: SKNode!
+    var leaderboardShowing: Bool = false
     
     var games: [Game] = []
     
@@ -252,8 +254,17 @@ extension GameScene {
         let node = self.atPoint(touchLocation)
         
         // Check if touch intersects with the node's frame
-        if node.name == "New Game" {
+        if node.name == "New Game" && !self.leaderboardShowing {
             self.newGamePushed = true
+        }
+        
+        if node.name == "Leaderboard" && !self.leaderboardShowing {
+            games[0].showLeaderboard()
+            self.leaderboardShowing = true
+        }
+        
+        if node.name == "Back" && self.leaderboardShowing {
+            self.backPushed = true
         }
         
         if self.isPaused != true {
@@ -291,11 +302,19 @@ extension GameScene {
         
         
         // Check if touch intersects with the node's frame
-        if node.name == "New Game" && self.newGamePushed == true {
+        if node.name == "New Game" && self.newGamePushed == true && !self.leaderboardShowing{
             for game in games {
                 game.startNewGame()
             }
             self.newGamePushed = false
+        }
+        
+        if node.name == "Back" && self.backPushed == true && self.leaderboardShowing {
+            if let leaderboardMenu = games[0].scene.childNode(withName: "leaderboardMenu") {
+                leaderboardMenu.removeFromParent()
+            }
+            self.backPushed = false
+            self.leaderboardShowing = false
         }
     }
 }

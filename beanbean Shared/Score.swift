@@ -105,9 +105,9 @@ class Score {
         scoreOutline.addChild(nuisanceLabel)
         
         
-        highScoreOutline = outline(width: bounds.size.width / 2, height: bounds.size.height, lineWidth: 8)
-        highScoreOutline.position.x = bounds.size.width / 1.75
-        highScoreOutline.position.y = -bounds.size.height / 8
+        highScoreOutline = outline(width: CGFloat(self.grid.cellSize * 5), height: CGFloat(self.grid.cellSize * 8), lineWidth: 8)
+        highScoreOutline.position.x = 0
+        highScoreOutline.position.y = 0
         
         let highScoreText = SKLabelNode(text: "High Scores")
         highScoreText.fontName = "Arial"
