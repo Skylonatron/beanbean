@@ -220,9 +220,9 @@ class Game {
                 self.setGameState(state: .endScreen)
             }
             if self.fastMovement {
-                self.movementSpeed = settings.movement.fastVerticalSpeed
+                self.movementSpeed = settings.movement.fastVerticalSpeed * Double(self.grid.cellSize)
             } else {
-                self.movementSpeed = settings.movement.defaultVerticalSpeed
+                self.movementSpeed = settings.movement.defaultVerticalSpeed * Double(self.grid.cellSize)
             }
             
             if beanPod.canMoveDown(grid: self.grid, speed: self.movementSpeed) {
@@ -280,10 +280,11 @@ class Game {
             }
             for bean in self.beans {
                 let currentCell = grid.getCell(x: bean.shape.position.x, y: bean.shape.position.y)
-                if bean.canMoveDown(grid: self.grid, speed: settings.movement.gravitySpeed) {
+                let gravityMovementSpeed = settings.movement.gravitySpeed * Double(self.grid.cellSize)
+                if bean.canMoveDown(grid: self.grid, speed: gravityMovementSpeed) {
                     // release the bean from the cell so others above can move down
                     currentCell?.bean = nil
-                    bean.shape.position.y -= settings.movement.gravitySpeed
+                    bean.shape.position.y -= gravityMovementSpeed
                 } else {
                     bean.shape.position = currentCell!.shape.position
                     currentCell!.bean = bean

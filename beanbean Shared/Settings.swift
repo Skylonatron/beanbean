@@ -25,9 +25,9 @@ struct Settings {
 
 let settings = Settings(
     movement: MovementSettings (
-        defaultVerticalSpeed: 2,
-        fastVerticalSpeed: 10,
-        gravitySpeed: 10
+        defaultVerticalSpeed: 2 / 47,
+        fastVerticalSpeed: 10 / 47,
+        gravitySpeed: 10 / 47
     ),
     debug: DebugSettings (
         showCells: false,
