@@ -291,6 +291,11 @@ extension GameScene {
                 pauseMenu.removeFromParent()
                 return
             }
+            if node.name == "restartButton" {
+                pauseMenu.removeFromParent()
+                let gameScene = GameScene.newGameScene(mode: self.gameMode)
+                self.view?.presentScene(gameScene)
+            }
             return
         } else if pauseButton.contains(touchLocation) {
             self.isPaused = true
