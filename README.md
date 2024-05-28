@@ -1,9 +1,9 @@
 #### TO DO 
 - [ ] add little intro to readme of what we are doing
-- [x ] make players have same beans for online
+- [ ] make players have same beans for online
 - [ ] score not showing for online
 - [ ] End Menu
-  - [x ] leaderboard
+  - [ ] leaderboard
   - [ ] new game: have both players confirm new game before starting
 - [ ] Add general settings menu
   - [ ]  to go back mid game
