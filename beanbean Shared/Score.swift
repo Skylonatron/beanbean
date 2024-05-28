@@ -241,9 +241,9 @@ class Score {
             // Initialize the chain count label if it's nil
             if chainCountLabel == nil {
                 chainCountLabel = SKLabelNode(text: "\(self.chainCount) chain!")
-                chainCountLabel?.position = grid.outline.position // Adjust position if necessary
+                chainCountLabel?.position = self.grid.outline.position // Adjust position if necessary
                 chainCountLabel?.fontName = "chalkduster"
-                chainCountLabel?.fontSize = 60
+                chainCountLabel?.fontSize = CGFloat(self.grid.cellSize)
                 chainCountLabel?.fontColor = .white
                 chainCountLabel?.horizontalAlignmentMode = .center
                 chainCountLabel?.verticalAlignmentMode = .center
