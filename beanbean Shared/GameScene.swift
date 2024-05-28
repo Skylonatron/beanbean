@@ -296,6 +296,19 @@ extension GameScene {
                 let gameScene = GameScene.newGameScene(mode: self.gameMode)
                 self.view?.presentScene(gameScene)
             }
+            if node.name == "mainMenuButton" {
+                pauseMenu.removeFromParent()
+                let scene = HomeScene.newHomeScene()
+                
+                // Present the scene
+                let skView = self.view as! SKView
+                skView.presentScene(scene)
+                
+                skView.ignoresSiblingOrder = true
+                
+                skView.showsFPS = true
+                skView.showsNodeCount = true
+            }
             return
         } else if pauseButton.contains(touchLocation) {
             self.isPaused = true
