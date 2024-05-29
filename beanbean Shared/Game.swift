@@ -701,19 +701,23 @@ class Game {
             return
         }
         else {
-            if self.primedNuisanceBeans < 7 {
-                for i in 0..<self.primedNuisanceBeans {
-                    let texture = SKTexture(imageNamed: "tile_coin")
-                    // Create an SKSpriteNode using the texture
-                    let startingX = self.grid.outline.position.x - CGFloat(2.5 * Double(self.grid.cellSize))
-                    let preRockSprite = SKSpriteNode(texture: texture)
-                    preRockSprite.size = CGSize(width: grid.cellSize / 2, height: grid.cellSize / 2)
-                    preRockSprite.position = CGPoint(x: startingX + CGFloat(i * self.grid.cellSize) , y: self.grid.outline.position.y + CGFloat(7 * self.grid.cellSize))
-                    preRockSprite.zPosition = 30
-                    self.scene.addChild(preRockSprite)
-                    preNuisanceBeanSprites.append(preRockSprite)
-                    print("added")
-                }
+            let numSingles = self.primedNuisanceBeans % 6
+            let numRedRocks = self.primedNuisanceBeans / 36
+            let numRows = self.primedNuisanceBeans / 6 - numRedRocks * 6
+            print("single: ", numSingles)
+            print("rows: ", numRows)
+            print("reds: ", numRedRocks)
+            for i in 0..<self.primedNuisanceBeans {
+                let texture = SKTexture(imageNamed: "tile_coin")
+                // Create an SKSpriteNode using the texture
+                let startingX = self.grid.outline.position.x - CGFloat(2.5 * Double(self.grid.cellSize))
+                let preRockSprite = SKSpriteNode(texture: texture)
+                preRockSprite.size = CGSize(width: grid.cellSize / 2, height: grid.cellSize / 2)
+                preRockSprite.position = CGPoint(x: startingX + CGFloat(i * self.grid.cellSize) , y: self.grid.outline.position.y + CGFloat(7 * self.grid.cellSize))
+                preRockSprite.zPosition = 30
+                self.scene.addChild(preRockSprite)
+                preNuisanceBeanSprites.append(preRockSprite)
+//                print("added")
             }
         }
     }
