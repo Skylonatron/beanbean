@@ -58,6 +58,7 @@ class Game {
     var samBot: samBot
     var useCPUControls: Bool = false
     var primedNuisanceBeans: Int = 0
+    var preNuisanceBeanSprites: [SKSpriteNode] = []
     var maxNuisanceSend: Int = 36
     var newBeanBeforeMoreNuisance: Bool = false
     var random: GKRandom
@@ -207,6 +208,7 @@ class Game {
             self.primedNuisanceBeans += Int(pNuisanceBeans)!
             pNuisanceBeans = ""
         }
+        showRocksBeforeSend()
         
         switch gameState {
         case .active:
@@ -613,6 +615,10 @@ class Game {
     }
     
     func generateNuisanceBeans(showNumber: Bool) {
+        for sprite in preNuisanceBeanSprites {
+            sprite.removeFromParent()
+        }
+        preNuisanceBeanSprites.removeAll()
         var rocksToSendNow = self.primedNuisanceBeans
         if self.primedNuisanceBeans > self.maxNuisanceSend {
             rocksToSendNow = self.maxNuisanceSend
@@ -688,6 +694,28 @@ class Game {
             
         print("end of dropping")
         self.beans = self.grid.getBeans()
+    }
+    
+    func showRocksBeforeSend() {
+        if preNuisanceBeanSprites.count == self.primedNuisanceBeans {
+            return
+        }
+        else {
+            if self.primedNuisanceBeans < 7 {
+                for i in 0..<self.primedNuisanceBeans {
+                    let texture = SKTexture(imageNamed: "tile_coin")
+                    // Create an SKSpriteNode using the texture
+                    let startingX = self.grid.outline.position.x - CGFloat(2.5 * Double(self.grid.cellSize))
+                    let preRockSprite = SKSpriteNode(texture: texture)
+                    preRockSprite.size = CGSize(width: grid.cellSize / 2, height: grid.cellSize / 2)
+                    preRockSprite.position = CGPoint(x: startingX + CGFloat(i * self.grid.cellSize) , y: self.grid.outline.position.y + CGFloat(7 * self.grid.cellSize))
+                    preRockSprite.zPosition = 30
+                    self.scene.addChild(preRockSprite)
+                    preNuisanceBeanSprites.append(preRockSprite)
+                    print("added")
+                }
+            }
+        }
     }
     
     func sendGameDataRocks(rocksToSendInt: Int) {
