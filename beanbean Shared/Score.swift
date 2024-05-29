@@ -79,7 +79,6 @@ class Score {
     init(bounds: CGRect, scene: SKScene, grid: Grid, player: Int?){
         self.scene = scene
         self.grid = grid
-        
         // Initialize the score label
         scoreOutline = outline(width: bounds.size.width / 2, height: bounds.size.height / 5, lineWidth: 8)
         scoreOutline.position.x = bounds.size.width / 1.75

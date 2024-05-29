@@ -914,6 +914,7 @@ class Game {
         if self.gameLost == false {
             self.totalGamesWon += 1
         }
+        print(self.player, ": ", self.totalGamesWon)
         self.primedNuisanceBeans = 0
         
         // Remove the end screen
@@ -922,6 +923,7 @@ class Game {
         }
         
         self.gameOver = false
+        self.gameLost = false
         self.endScreenGenerated = false
 //        self.otherPlayerGame?.gameOver = false
         
