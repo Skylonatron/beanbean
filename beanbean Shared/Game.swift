@@ -697,13 +697,14 @@ class Game {
     }
     
     func showRocksBeforeSend() {
-        if preNuisanceBeanSprites.count == self.primedNuisanceBeans {
+        let numSingleRocks = self.primedNuisanceBeans % 6
+        let numRedRocks = self.primedNuisanceBeans / 36
+        let numRowRocks = self.primedNuisanceBeans / 6 - numRedRocks * 6
+        
+        if preNuisanceBeanSprites.count == numSingleRocks + numRedRocks + numRowRocks {
             return
         }
         else {
-            let numSingleRocks = self.primedNuisanceBeans % 6
-            let numRedRocks = self.primedNuisanceBeans / 36
-            let numRowRocks = self.primedNuisanceBeans / 6 - numRedRocks * 6
             print("single: ", numSingleRocks)
             print("rows: ", numRowRocks)
             print("reds: ", numRedRocks)
