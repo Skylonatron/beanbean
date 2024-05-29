@@ -73,9 +73,10 @@ class Score {
     var highScores: SKLabelNode!
     
     var grid : Grid!
+
+
     
-    
-    init(bounds: CGRect, scene: SKScene, grid: Grid){
+    init(bounds: CGRect, scene: SKScene, grid: Grid, player: Int?){
         self.scene = scene
         self.grid = grid
         
@@ -85,7 +86,12 @@ class Score {
         scoreOutline.position.y = bounds.size.height / 1.7
         
         scoreLabel = SKLabelNode(text: "0")
-        scoreLabel.position = CGPoint(x: grid.outline.position.x, y: grid.outline.position.y - CGFloat(grid.cellSize) * 7.1)
+        if player == 2{
+            scoreLabel.position = CGPoint(x: grid.outline.position.x, y: grid.outline.position.y - CGFloat(grid.cellSize) * 10.5)
+        }
+        else {
+            scoreLabel.position = CGPoint(x: grid.outline.position.x, y: grid.outline.position.y - CGFloat(grid.cellSize) * 7.5)
+        }
         scoreLabel.fontName = "Arial"
         scoreLabel.fontSize = bounds.size.height / 20
         scoreLabel.fontColor = .cyan
