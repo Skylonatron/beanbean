@@ -70,6 +70,7 @@ class Game {
     var totalGamesWon: Int = 0
     let match: GKMatch?
     var nextBeanPod: BeanPod?
+    var showSparkleAnimation: Bool = true
     
 //  might need to change these speeds to int
     var defaultVerticalSpeed: Int!
@@ -705,9 +706,12 @@ class Game {
             return
         }
         else {
-            print("single: ", numSingleRocks)
-            print("rows: ", numRowRocks)
-            print("reds: ", numRedRocks)
+            if (numRowRocks > 0 || numRedRocks > 0) && showSparkleAnimation  {
+                sendSparkle()
+            }
+//            print("single: ", numSingleRocks)
+//            print("rows: ", numRowRocks)
+//            print("reds: ", numRedRocks)
             let startingX = self.grid.outline.position.x - CGFloat(2.5 * Double(self.grid.cellSize))
             
             for i in 0..<numRedRocks {
@@ -744,6 +748,44 @@ class Game {
                 preNuisanceBeanSprites.append(preRockSprite)
             }
         }
+    }
+    
+    func sendSparkle() {
+        let endingX = self.grid.outline.position.x - CGFloat(2.5 * Double(self.grid.cellSize))
+        // Create the sparkle sprite
+        let endPosition =  CGPoint(x: endingX , y: self.grid.outline.position.y + CGFloat(7.2 * Double(self.grid.cellSize)))
+        let startPosition = (self.otherPlayerGame?.grid.outline.position)!
+        
+        let controlPoint1 = CGPoint(x: (startPosition.x + endPosition.x) / 2, y: startPosition.y * 1.3)
+        let controlPoint2 = CGPoint(x: (startPosition.x + endPosition.x) / 2, y: endPosition.y * 1.3)
+        let sparkleTexture = SKTexture(imageNamed: "tile_cloud")
+        let sparkleSprite = SKSpriteNode(texture: sparkleTexture)
+        
+        // Set the initial position
+        sparkleSprite.position = startPosition
+        sparkleSprite.zPosition = 50  // Ensure it appears above other nodes
+        
+        // Add the sprite to the scene
+        self.scene.addChild(sparkleSprite)
+        
+        // Create a Bezier path
+        let path = UIBezierPath()
+        path.move(to: startPosition)
+        path.addCurve(to: endPosition, controlPoint1: controlPoint1, controlPoint2: controlPoint2)
+       
+        // Create an SKAction to follow the path
+        let moveAction = SKAction.follow(path.cgPath, asOffset: false, orientToPath: false, duration: 0.5)
+       
+       // Create additional actions if needed
+        let scaleAction = SKAction.scale(by: 1.5, duration: 0.5)
+        let fadeAction = SKAction.fadeOut(withDuration: 0.5)
+       
+       // Create a sequence to move, scale, fade, and then remove the sprite
+        let removeAction = SKAction.removeFromParent()
+        let sequenceAction = SKAction.sequence([moveAction, scaleAction, fadeAction, removeAction])
+       
+       // Run the action
+        sparkleSprite.run(sequenceAction)
     }
     
     func sendGameDataRocks(rocksToSendInt: Int) {
@@ -850,7 +892,10 @@ class Game {
         
     }
     func startNewGame() {
-//        self.scene.removeAllChildren()
+        for sprite in preNuisanceBeanSprites {
+            sprite.removeFromParent()
+        }
+        preNuisanceBeanSprites.removeAll()
         for column in grid.cells.values {
             for cell in column.values {
                 cell.bean?.shape.removeFromParent()
@@ -863,6 +908,7 @@ class Game {
         self.nextBeanPod!.sideBean.shape.removeFromParent()
         self.nextBeanPod = nil
         beans.removeAll()
+        
         
         self.score.resetScoreForNewGame()
         if self.gameLost == false {
