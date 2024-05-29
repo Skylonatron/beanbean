@@ -701,14 +701,40 @@ class Game {
             return
         }
         else {
-            let numSingles = self.primedNuisanceBeans % 6
+            let numSingleRocks = self.primedNuisanceBeans % 6
             let numRedRocks = self.primedNuisanceBeans / 36
-            let numRows = self.primedNuisanceBeans / 6 - numRedRocks * 6
-            print("single: ", numSingles)
-            print("rows: ", numRows)
+            let numRowRocks = self.primedNuisanceBeans / 6 - numRedRocks * 6
+            print("single: ", numSingleRocks)
+            print("rows: ", numRowRocks)
             print("reds: ", numRedRocks)
-            for i in 0..<self.primedNuisanceBeans {
-                let texture = SKTexture(imageNamed: "tile_coin")
+            
+            for i in 0..<numRedRocks {
+                let texture = SKTexture(imageNamed: "tile_exclamation")
+                // Create an SKSpriteNode using the texture
+                let startingX = self.grid.outline.position.x - CGFloat(2.5 * Double(self.grid.cellSize))
+                let preRockSprite = SKSpriteNode(texture: texture)
+                preRockSprite.size = CGSize(width: grid.cellSize, height: grid.cellSize)
+                preRockSprite.position = CGPoint(x: startingX + CGFloat(i * self.grid.cellSize) , y: self.grid.outline.position.y + CGFloat(7 * self.grid.cellSize))
+                preRockSprite.zPosition = 30
+                self.scene.addChild(preRockSprite)
+                preNuisanceBeanSprites.append(preRockSprite)
+            }
+            
+            for i in numRedRocks..<(numRedRocks + numRowRocks) {
+                let texture = SKTexture(imageNamed: "tile_grey")
+                // Create an SKSpriteNode using the texture
+                let startingX = self.grid.outline.position.x - CGFloat(2.5 * Double(self.grid.cellSize))
+                let preRockSprite = SKSpriteNode(texture: texture)
+                preRockSprite.size = CGSize(width: Double(grid.cellSize) * 0.9, height: Double(grid.cellSize) * 0.9)
+                preRockSprite.position = CGPoint(x: startingX + CGFloat(i * self.grid.cellSize) , y: self.grid.outline.position.y + CGFloat(7 * self.grid.cellSize))
+                preRockSprite.zPosition = 30
+                self.scene.addChild(preRockSprite)
+                preNuisanceBeanSprites.append(preRockSprite)
+                //                print("added")
+            }
+            
+            for i in (numRedRocks + numRowRocks)..<(numRedRocks + numRowRocks + numSingleRocks) {
+                let texture = SKTexture(imageNamed: "tile_grey")
                 // Create an SKSpriteNode using the texture
                 let startingX = self.grid.outline.position.x - CGFloat(2.5 * Double(self.grid.cellSize))
                 let preRockSprite = SKSpriteNode(texture: texture)
@@ -717,7 +743,6 @@ class Game {
                 preRockSprite.zPosition = 30
                 self.scene.addChild(preRockSprite)
                 preNuisanceBeanSprites.append(preRockSprite)
-//                print("added")
             }
         }
     }
