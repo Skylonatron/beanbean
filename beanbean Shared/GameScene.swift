@@ -32,6 +32,7 @@ class GameScene: SKScene {
     var pauseMenu: SKNode!
     var settingsMenu: SKNode!
     var leaderboardShowing: Bool = false
+    var isMuted: Bool = false
     
     var games: [Game] = []
     
@@ -265,12 +266,33 @@ class GameScene: SKScene {
         let yOffset = background.size.height / 4
 
         let backButton = SKLabelNode(text: "Back")
-        backButton.position = CGPoint(x: 0, y: background.size.height / 3)
+        backButton.position = CGPoint(x: 0, y: background.size.height / 3 - 3 * yOffset)
         backButton.name = "settingsBack"
         backButton.fontColor = .black
         settingsMenu.addChild(backButton)
         
+        let musicLabel = SKLabelNode(text: "Music")
+        musicLabel.position = CGPoint(x: -background.size.width / 4, y: background.size.height/3 - yOffset)
+        musicLabel.fontColor = .black
+        settingsMenu.addChild(musicLabel)
+        
+        let musicIconTexture = SKTexture(imageNamed: isMuted ? "music_off" : "music_on")
+        let muteCheckbox = SKSpriteNode(texture: musicIconTexture)
+        muteCheckbox.position = CGPoint(x: background.size.width / 4, y: background.size.height / 3 - yOffset)
+        muteCheckbox.name = "muteCheckbox"
+        settingsMenu.addChild(muteCheckbox)
+        
         self.addChild(settingsMenu)
+    }
+    func updateMuteCheckbox() {
+        if let muteCheckbox = settingsMenu.childNode(withName: "muteCheckbox") as? SKSpriteNode {
+            let newTexture = SKTexture(imageNamed: isMuted ? "music_off" : "music_on")
+            muteCheckbox.texture = newTexture
+        }
+        for game in games {
+            game.isMuted = self.isMuted
+        }
+        
     }
 
 }
@@ -351,6 +373,10 @@ extension GameScene {
             if node.name == "settingsBack" {
                 settingsMenu.removeFromParent()
                 showPauseMenu()
+            }
+            if node.name == "muteCheckbox" {
+                isMuted.toggle()
+                updateMuteCheckbox()
             }
             return
         } else if pauseButton.contains(touchLocation) {

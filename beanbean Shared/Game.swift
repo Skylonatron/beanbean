@@ -64,6 +64,7 @@ class Game {
     var random: GKRandom
     var backgroundNode: SKSpriteNode?
     var sounds: Sounds!
+    var isMuted: Bool = false
     var gameMode: GameMode!
     var player: Int?
     var endScreenGenerated: Bool = false
@@ -352,7 +353,9 @@ class Game {
             }
             explosionPause = 0
             
-            sounds.playPopSound(chainCount: self.score.chainCount)
+            if !self.isMuted {
+                sounds.playPopSound(chainCount: self.score.chainCount)
+            }
             
             self.score.calculateChainStep(cellsToExplode: self.cellsToExplode)
                         
@@ -372,7 +375,7 @@ class Game {
             self.score.sumFullChain()
             self.submitScoreToLeaderboard(score: Int(self.score.numNuisanceBeans))
             otherPlayerGame?.primedNuisanceBeans += self.score.nuisanceBeansInt
-            if self.score.nuisanceBeansInt > 30 {
+            if self.score.nuisanceBeansInt > 30 && !self.isMuted{
                 self.sounds.playRedRockSound()
             }
             sendGameDataRocks(rocksToSendInt: self.score.nuisanceBeansInt)
