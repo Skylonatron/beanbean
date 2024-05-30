@@ -8,11 +8,10 @@
 import AVFoundation
 
 var backgroundMusicPlayer: AVAudioPlayer?
-var playMusic: Bool = false
 
-func playBackgroundMusic() {
+func playBackgroundMusic(muteMusic: Bool) {
     
-    if playMusic {
+    if !muteMusic {
         if let musicURL = Bundle.main.url(forResource: "orbDorbTest", withExtension: "flac") {
             do {
                 try backgroundMusicPlayer = AVAudioPlayer(contentsOf: musicURL)
@@ -26,6 +25,12 @@ func playBackgroundMusic() {
             print("Background music file not found")
         }
         
+    }
+}
+
+func stopBackgroundMusic(muteMusic: Bool) {
+    if muteMusic {
+        backgroundMusicPlayer?.stop()
     }
 }
 

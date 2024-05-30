@@ -32,7 +32,8 @@ class GameScene: SKScene {
     var pauseMenu: SKNode!
     var settingsMenu: SKNode!
     var leaderboardShowing: Bool = false
-    var isMuted: Bool = false
+    var muteSounds: Bool = false
+    var muteMusic: Bool = false
     
     var games: [Game] = []
     
@@ -271,26 +272,42 @@ class GameScene: SKScene {
         backButton.fontColor = .black
         settingsMenu.addChild(backButton)
         
+        let soundsLabel = SKLabelNode(text: "Sounds")
+        soundsLabel.position = CGPoint(x: -background.size.width / 4, y: background.size.height/3 - yOffset)
+        soundsLabel.fontColor = .black
+        settingsMenu.addChild(soundsLabel)
+        
         let musicLabel = SKLabelNode(text: "Music")
-        musicLabel.position = CGPoint(x: -background.size.width / 4, y: background.size.height/3 - yOffset)
+        musicLabel.position = CGPoint(x: -background.size.width / 4, y: background.size.height/3 - 2 * yOffset)
         musicLabel.fontColor = .black
         settingsMenu.addChild(musicLabel)
         
-        let musicIconTexture = SKTexture(imageNamed: isMuted ? "music_off" : "music_on")
-        let muteCheckbox = SKSpriteNode(texture: musicIconTexture)
-        muteCheckbox.position = CGPoint(x: background.size.width / 4, y: background.size.height / 3 - yOffset)
-        muteCheckbox.name = "muteCheckbox"
-        settingsMenu.addChild(muteCheckbox)
+        let musicIconTexture = SKTexture(imageNamed: muteSounds ? "music_off" : "music_on")
+        let muteMusicCheckbox = SKSpriteNode(texture: musicIconTexture)
+        muteMusicCheckbox.position = CGPoint(x: background.size.width / 4, y: background.size.height / 3 - 2 * yOffset)
+        muteMusicCheckbox.name = "muteMusicCheckbox"
+        settingsMenu.addChild(muteMusicCheckbox)
+        
+        let soundsIconTexture = SKTexture(imageNamed: muteSounds ? "sounds_off" : "sounds_on")
+        let muteSoundsCheckbox = SKSpriteNode(texture: soundsIconTexture)
+        muteSoundsCheckbox.position = CGPoint(x: background.size.width / 4, y: background.size.height / 3 - yOffset)
+        muteSoundsCheckbox.name = "muteSoundsCheckbox"
+        settingsMenu.addChild(muteSoundsCheckbox)
         
         self.addChild(settingsMenu)
     }
     func updateMuteCheckbox() {
-        if let muteCheckbox = settingsMenu.childNode(withName: "muteCheckbox") as? SKSpriteNode {
-            let newTexture = SKTexture(imageNamed: isMuted ? "music_off" : "music_on")
-            muteCheckbox.texture = newTexture
+        if let muteMusicCheckbox = settingsMenu.childNode(withName: "muteMusicCheckbox") as? SKSpriteNode {
+            let newTexture = SKTexture(imageNamed: muteMusic ? "music_off" : "music_on")
+            muteMusicCheckbox.texture = newTexture
+        }
+        if let muteSoundsCheckbox = settingsMenu.childNode(withName: "muteSoundsCheckbox") as? SKSpriteNode {
+            let newTexture = SKTexture(imageNamed: muteSounds ? "sounds_off" : "sounds_on")
+            muteSoundsCheckbox.texture = newTexture
         }
         for game in games {
-            game.isMuted = self.isMuted
+            game.muteSounds = self.muteSounds
+            game.muteMusic = self.muteMusic
         }
         
     }
@@ -374,8 +391,12 @@ extension GameScene {
                 settingsMenu.removeFromParent()
                 showPauseMenu()
             }
-            if node.name == "muteCheckbox" {
-                isMuted.toggle()
+            if node.name == "muteSoundsCheckbox" {
+                muteSounds.toggle()
+                updateMuteCheckbox()
+            }
+            if node.name == "muteMusicCheckbox" {
+                muteMusic.toggle()
                 updateMuteCheckbox()
             }
             return

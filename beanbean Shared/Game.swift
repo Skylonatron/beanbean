@@ -64,7 +64,8 @@ class Game {
     var random: GKRandom
     var backgroundNode: SKSpriteNode?
     var sounds: Sounds!
-    var isMuted: Bool = false
+    var muteSounds: Bool = false
+    var muteMusic: Bool = true
     var gameMode: GameMode!
     var player: Int?
     var endScreenGenerated: Bool = false
@@ -154,7 +155,7 @@ class Game {
         
         if params.player != 1 {
             print("play background music")
-            playBackgroundMusic()
+            playBackgroundMusic(muteMusic: self.muteMusic)
         }
 
     }
@@ -206,6 +207,8 @@ class Game {
             
             return
         }
+        
+        
         if pNuisanceBeans != "" {
             self.primedNuisanceBeans += Int(pNuisanceBeans)!
             pNuisanceBeans = ""
@@ -353,7 +356,7 @@ class Game {
             }
             explosionPause = 0
             
-            if !self.isMuted {
+            if !self.muteSounds {
                 sounds.playPopSound(chainCount: self.score.chainCount)
             }
             
@@ -375,7 +378,7 @@ class Game {
             self.score.sumFullChain()
             self.submitScoreToLeaderboard(score: Int(self.score.numNuisanceBeans))
             otherPlayerGame?.primedNuisanceBeans += self.score.nuisanceBeansInt
-            if self.score.nuisanceBeansInt > 30 && !self.isMuted{
+            if self.score.nuisanceBeansInt > 30 && !self.muteSounds{
                 self.sounds.playRedRockSound()
             }
             sendGameDataRocks(rocksToSendInt: self.score.nuisanceBeansInt)
