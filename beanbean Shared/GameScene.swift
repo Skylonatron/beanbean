@@ -30,6 +30,7 @@ class GameScene: SKScene {
     var localPlayerID: String?
     var pauseButton: SKSpriteNode!
     var pauseMenu: SKNode!
+    var settingsMenu: SKNode!
     var leaderboardShowing: Bool = false
     
     var games: [Game] = []
@@ -209,6 +210,7 @@ class GameScene: SKScene {
     func showPauseMenu() {
         pauseMenu = SKNode()
         pauseMenu.zPosition = 20
+        
 
         let background = SKSpriteNode(
             color: .white,
@@ -217,26 +219,58 @@ class GameScene: SKScene {
         background.alpha = 0.90
         background.position = CGPoint(x: 0, y: 0)
         pauseMenu.addChild(background)
+        
+        let yOffset = background.size.height / 4
 
         let resumeButton = SKLabelNode(text: "Resume")
-        resumeButton.position = CGPoint(x: 0, y: background.size.height / 4)
+        resumeButton.position = CGPoint(x: 0, y: background.size.height / 3)
         resumeButton.name = "resumeButton"
         resumeButton.fontColor = .black
         pauseMenu.addChild(resumeButton)
 
         let restartButton = SKLabelNode(text: "Restart")
-        restartButton.position = CGPoint(x: 0, y: 0)
+        restartButton.position = CGPoint(x: 0, y: background.size.height / 3 - yOffset)
         restartButton.name = "restartButton"
         restartButton.fontColor = .black
         pauseMenu.addChild(restartButton)
 
         let mainMenuButton = SKLabelNode(text: "Main Menu")
-        mainMenuButton.position = CGPoint(x: 0, y: -background.size.height / 4)
+        mainMenuButton.position = CGPoint(x: 0, y: background.size.height / 3 - 2 * yOffset)
         mainMenuButton.name = "mainMenuButton"
         mainMenuButton.fontColor = .black
         pauseMenu.addChild(mainMenuButton)
+        
+        let settingsButton = SKLabelNode(text: "Settings")
+        settingsButton.position = CGPoint(x: 0, y: background.size.height / 3 - 3 * yOffset)
+        settingsButton.name = "settingsButton"
+        settingsButton.fontColor = .black
+        pauseMenu.addChild(settingsButton)
 
         self.addChild(pauseMenu)
+    }
+    
+    func showSettingsMenu() {
+        settingsMenu = SKNode()
+        settingsMenu.zPosition = 21
+        
+
+        let background = SKSpriteNode(
+            color: .white,
+            size: CGSize(width: self.view!.bounds.width / 1.3, height: self.view!.bounds.height / 2.5)
+        )
+        background.alpha = 0.90
+        background.position = CGPoint(x: 0, y: 0)
+        settingsMenu.addChild(background)
+        
+        let yOffset = background.size.height / 4
+
+        let backButton = SKLabelNode(text: "Back")
+        backButton.position = CGPoint(x: 0, y: background.size.height / 3)
+        backButton.name = "settingsBack"
+        backButton.fontColor = .black
+        settingsMenu.addChild(backButton)
+        
+        self.addChild(settingsMenu)
     }
 
 }
@@ -308,6 +342,15 @@ extension GameScene {
                 
                 skView.showsFPS = true
                 skView.showsNodeCount = true
+            }
+            if node.name == "settingsButton" {
+                pauseMenu.removeFromParent()
+                showSettingsMenu()
+                return
+            }
+            if node.name == "settingsBack" {
+                settingsMenu.removeFromParent()
+                showPauseMenu()
             }
             return
         } else if pauseButton.contains(touchLocation) {
