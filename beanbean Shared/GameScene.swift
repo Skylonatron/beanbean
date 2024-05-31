@@ -264,6 +264,10 @@ class GameScene: SKScene {
         background.position = CGPoint(x: 0, y: 0)
         settingsMenu.addChild(background)
         
+        if backgroundMusicPlayer?.isPlaying == false {
+            self.muteMusic = true
+        }
+        
         let yOffset = background.size.height / 4
 
         let backButton = SKLabelNode(text: "Back")
@@ -282,7 +286,7 @@ class GameScene: SKScene {
         musicLabel.fontColor = .black
         settingsMenu.addChild(musicLabel)
         
-        let musicIconTexture = SKTexture(imageNamed: muteSounds ? "music_off" : "music_on")
+        let musicIconTexture = SKTexture(imageNamed: muteMusic ? "music_off" : "music_on")
         let muteMusicCheckbox = SKSpriteNode(texture: musicIconTexture)
         muteMusicCheckbox.position = CGPoint(x: background.size.width / 4, y: background.size.height / 3 - 2 * yOffset)
         muteMusicCheckbox.name = "muteMusicCheckbox"
