@@ -11,6 +11,9 @@ import AVFoundation
 class HomeScene: SKScene {
     
     var game: Game!
+    var settingsMenu: SKNode!
+    var muteSounds: Bool = false
+    var muteMusic: Bool = false
         
     class func newHomeScene() -> HomeScene {
         // Load 'GameScene.sks' as an SKScene.
@@ -41,6 +44,12 @@ class HomeScene: SKScene {
         let matchmakingButton = addButton(outlineFrame: outline.frame, name: "Online")
         matchmakingButton.position = CGPoint(x: 0, y: -frame.width / 10)
         outline.addChild(matchmakingButton)
+        
+        let settingsIconTexture = SKTexture(imageNamed: "settings_icon")
+        let settingsButton = SKSpriteNode(texture: settingsIconTexture)
+        settingsButton.position = CGPoint(x: frame.width / 7, y: frame.height / 5)
+        settingsButton.name = "settingsButton"
+        outline.addChild(settingsButton)
     }
     
     func addButton(outlineFrame: CGRect, name: String) -> SKShapeNode {
@@ -80,6 +89,67 @@ class HomeScene: SKScene {
     
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
+        
+    }
+    
+    func showSettingsMenu() {
+        settingsMenu = SKNode()
+        settingsMenu.zPosition = 21
+        
+
+        let background = SKSpriteNode(
+            color: .white,
+            size: CGSize(width: self.view!.bounds.width / 1.3, height: self.view!.bounds.height / 2.5)
+        )
+//        background.alpha = 0.90
+        background.position = CGPoint(x: 0, y: 0)
+        settingsMenu.addChild(background)
+        
+        if backgroundMusicPlayer?.isPlaying == false {
+            self.muteMusic = true
+        }
+        
+        let yOffset = background.size.height / 4
+
+        let backButton = SKLabelNode(text: "Back")
+        backButton.position = CGPoint(x: 0, y: background.size.height / 3 - 3 * yOffset)
+        backButton.name = "settingsBack"
+        backButton.fontColor = .black
+        settingsMenu.addChild(backButton)
+        
+        let soundsLabel = SKLabelNode(text: "Sounds")
+        soundsLabel.position = CGPoint(x: background.size.width / 4, y: background.size.height/3 - yOffset / 2)
+        soundsLabel.fontColor = .black
+        settingsMenu.addChild(soundsLabel)
+        
+        let musicLabel = SKLabelNode(text: "Music")
+        musicLabel.position = CGPoint(x: -background.size.width / 4, y: background.size.height/3 - yOffset / 2)
+        musicLabel.fontColor = .black
+        settingsMenu.addChild(musicLabel)
+        
+        let musicIconTexture = SKTexture(imageNamed: muteMusic ? "music_off" : "music_on")
+        let muteMusicCheckbox = SKSpriteNode(texture: musicIconTexture)
+        muteMusicCheckbox.position = CGPoint(x: -background.size.width / 4, y: background.size.height / 3 - yOffset)
+        muteMusicCheckbox.name = "muteMusicCheckbox"
+        settingsMenu.addChild(muteMusicCheckbox)
+        
+        let soundsIconTexture = SKTexture(imageNamed: muteSounds ? "sounds_off" : "sounds_on")
+        let muteSoundsCheckbox = SKSpriteNode(texture: soundsIconTexture)
+        muteSoundsCheckbox.position = CGPoint(x: background.size.width / 4, y: background.size.height / 3 - yOffset)
+        muteSoundsCheckbox.name = "muteSoundsCheckbox"
+        settingsMenu.addChild(muteSoundsCheckbox)
+        
+        self.addChild(settingsMenu)
+    }
+    func updateMuteCheckbox() {
+        if let muteMusicCheckbox = settingsMenu.childNode(withName: "muteMusicCheckbox") as? SKSpriteNode {
+            let newTexture = SKTexture(imageNamed: muteMusic ? "music_off" : "music_on")
+            muteMusicCheckbox.texture = newTexture
+        }
+        if let muteSoundsCheckbox = settingsMenu.childNode(withName: "muteSoundsCheckbox") as? SKSpriteNode {
+            let newTexture = SKTexture(imageNamed: muteSounds ? "sounds_off" : "sounds_on")
+            muteSoundsCheckbox.texture = newTexture
+        }
         
     }
     
@@ -131,6 +201,22 @@ extension HomeScene {
         if node.name == "Online" {
             let matchmakingScene = MatchmakingScene.newMatchmakingScene()
             self.view?.presentScene(matchmakingScene, transition: SKTransition.doorsOpenHorizontal(withDuration: 1.0))
+        }
+        if node.name == "settingsButton" {
+            showSettingsMenu()
+            return
+        }
+        if node.name == "settingsBack" {
+            settingsMenu.removeFromParent()
+        }
+        if node.name == "muteSoundsCheckbox" {
+            muteSounds.toggle()
+            updateMuteCheckbox()
+        }
+        if node.name == "muteMusicCheckbox" {
+            muteMusic.toggle()
+            updateMuteCheckbox()
+            handleMusicVolume(muteMusic: self.muteMusic)
         }
     }
 }
