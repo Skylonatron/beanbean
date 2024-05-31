@@ -65,7 +65,7 @@ class Game {
     var backgroundNode: SKSpriteNode?
     var sounds: Sounds!
     var muteSounds: Bool = false
-    var muteMusic: Bool = true
+    var muteMusic: Bool = false
     var gameMode: GameMode!
     var player: Int?
     var endScreenGenerated: Bool = false
@@ -153,10 +153,10 @@ class Game {
 //        self.scene.addChild(score.highScoreOutline)
         addBackground()
         
-        if params.player != 1 {
-            print("play background music")
-            playBackgroundMusic(muteMusic: self.muteMusic)
-        }
+//        if params.player != 1 {
+//            print("play background music")
+//            playBackgroundMusic(muteMusic: self.muteMusic)
+//        }
 
     }
     
@@ -207,6 +207,7 @@ class Game {
             
             return
         }
+        
         
         
         if pNuisanceBeans != "" {

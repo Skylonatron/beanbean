@@ -6,6 +6,7 @@
 //sss
 
 import SpriteKit
+import AVFoundation
 
 class HomeScene: SKScene {
     
@@ -74,12 +75,16 @@ class HomeScene: SKScene {
         self.size = CGSize(width: 1366.0, height: 1024.0)
         self.anchorPoint = CGPoint(x: 0.5, y: 0.5)
         self.setUpScene()
+        playBackgroundMusic(muteMusic: false)
     }
     
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
         
     }
+    
+   
+    
 
 }
 

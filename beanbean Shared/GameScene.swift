@@ -398,6 +398,7 @@ extension GameScene {
             if node.name == "muteMusicCheckbox" {
                 muteMusic.toggle()
                 updateMuteCheckbox()
+                handleMusicVolume(muteMusic: self.muteMusic)
             }
             return
         } else if pauseButton.contains(touchLocation) {
