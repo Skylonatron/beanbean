@@ -13,7 +13,7 @@ func playBackgroundMusic(muteMusic: Bool) {
     if backgroundMusicPlayer?.isPlaying == true || backgroundMusicPlayer?.isPlaying == false {
         return // Don't restart if already exists
     }
-    if let musicURL = Bundle.main.url(forResource: "Harlequin Stars", withExtension: "wav") {
+    if let musicURL = Bundle.main.url(forResource: "orbDorb", withExtension: "flac") {
         do {
             try backgroundMusicPlayer = AVAudioPlayer(contentsOf: musicURL)
             backgroundMusicPlayer?.numberOfLoops = -1 // Loop indefinitely

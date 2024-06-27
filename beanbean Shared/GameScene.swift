@@ -33,7 +33,7 @@ class GameScene: SKScene {
     var settingsMenu: SKNode!
     var leaderboardShowing: Bool = false
     var muteSounds: Bool = false
-    var muteMusic: Bool = true
+    var muteMusic: Bool = false
     
     var games: [Game] = []
     

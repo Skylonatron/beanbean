@@ -12,8 +12,10 @@ class HomeScene: SKScene {
     
     var game: Game!
     var settingsMenu: SKNode!
+    var settingsDisplayed: Bool = false
     var muteSounds: Bool = false
-    var muteMusic: Bool = true
+    var muteMusic: Bool = false
+    
         
     class func newHomeScene() -> HomeScene {
         // Load 'GameScene.sks' as an SKScene.
@@ -201,12 +203,14 @@ extension HomeScene {
             let matchmakingScene = MatchmakingScene.newMatchmakingScene()
             self.view?.presentScene(matchmakingScene, transition: SKTransition.doorsOpenHorizontal(withDuration: 1.0))
         }
-        if node.name == "settingsButton" {
+        if node.name == "settingsButton" && self.settingsDisplayed == false{
             showSettingsMenu()
+            self.settingsDisplayed = true
             return
         }
         if node.name == "settingsBack" {
             settingsMenu.removeFromParent()
+            self.settingsDisplayed = false
         }
         if node.name == "muteSoundsCheckbox" {
             muteSounds.toggle()
