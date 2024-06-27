@@ -14,7 +14,7 @@ class HomeScene: SKScene {
     var settingsMenu: SKNode!
     var settingsDisplayed: Bool = false
     var muteSounds: Bool = false
-    var muteMusic: Bool = false
+    var muteMusic: Bool = true
     
         
     class func newHomeScene() -> HomeScene {
@@ -86,7 +86,6 @@ class HomeScene: SKScene {
         self.size = CGSize(width: 1366.0, height: 1024.0)
         self.anchorPoint = CGPoint(x: 0.5, y: 0.5)
         self.setUpScene()
-        self.muteMusic = !(backgroundMusicPlayer?.isPlaying ?? false)
         playBackgroundMusic(muteMusic: self.muteMusic)
     }
     
@@ -107,8 +106,6 @@ class HomeScene: SKScene {
 //        background.alpha = 0.90
         background.position = CGPoint(x: 0, y: 0)
         settingsMenu.addChild(background)
-        
-        self.muteMusic = !(backgroundMusicPlayer?.isPlaying ?? false)
         
         let yOffset = background.size.height / 4
 

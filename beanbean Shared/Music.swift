@@ -13,7 +13,7 @@ func playBackgroundMusic(muteMusic: Bool) {
     if backgroundMusicPlayer?.isPlaying == true || backgroundMusicPlayer?.isPlaying == false {
         return // Don't restart if already exists
     }
-    if let musicURL = Bundle.main.url(forResource: "orbDorb", withExtension: "flac") {
+    if let musicURL = Bundle.main.url(forResource: "orbDorbTest", withExtension: "flac") {
         do {
             try backgroundMusicPlayer = AVAudioPlayer(contentsOf: musicURL)
             backgroundMusicPlayer?.numberOfLoops = -1 // Loop indefinitely
@@ -37,7 +37,7 @@ func handleMusicVolume(muteMusic: Bool) {
         backgroundMusicPlayer?.volume = 0.4
         backgroundMusicPlayer?.stop()
     }
-    if !muteMusic && backgroundMusicPlayer?.volume == 0.4 {
+    if !muteMusic && (backgroundMusicPlayer?.volume == 0.4 || backgroundMusicPlayer?.volume == 0) {
         backgroundMusicPlayer?.volume = 0.5
         backgroundMusicPlayer?.play()
     }
