@@ -390,6 +390,7 @@ class Game {
             
             if self.grid.getEndGameCell()!.bean != nil {
                 self.setGameOver()
+                self.sendOnlineJSON(type: "gameOver", data: "")
                 return
             }
             if self.primedNuisanceBeans > 0 && self.otherPlayerGame != nil && !self.newBeanBeforeMoreNuisance{

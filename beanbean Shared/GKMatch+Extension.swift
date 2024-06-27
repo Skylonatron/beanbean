@@ -29,6 +29,8 @@ func handleJSON(_ json: [String: Any]) {
           onlineOtherPlayCells = json["info"] as! [String: [String: [String: String]]]
       case "rocks":
           pNuisanceBeans = json["info"] as! Int
+      case "gameOver":
+          gameOverOnline = true
       default:
           print("Unknown message type: \(messageType)")
       }
