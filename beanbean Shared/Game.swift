@@ -36,6 +36,7 @@ struct GameParams {
 
 var onlineOtherPlayCells: [String: [String: [String: String]]] = [:]
 var pNuisanceBeans: Int = 0
+var gameOverOnline: Bool = false
 
 class Game {
     var num: Int!
@@ -199,12 +200,8 @@ class Game {
                         scene.addChild(bean.shape)
                         continue
                     }
-                    
                 }
             }
-       
-            
-            
             return
         }
         
@@ -214,6 +211,12 @@ class Game {
             self.primedNuisanceBeans += pNuisanceBeans
             pNuisanceBeans = 0
         }
+        
+        if gameOverOnline == true {
+            setGameOver()
+            gameOverOnline = false
+        }
+        
         showRocksBeforeSend()
         
         switch gameState {
@@ -375,21 +378,18 @@ class Game {
             self.beans = grid.getBeans()
             setGameState(state: .gravity)
         case .new:
-            sendGameData()
+            sendOnlineJSON(type: "gameState", data: self.grid.getCellsJSON())
             self.score.sumFullChain()
             self.submitScoreToLeaderboard(score: Int(self.score.numNuisanceBeans))
             otherPlayerGame?.primedNuisanceBeans += self.score.nuisanceBeansInt
             if self.score.nuisanceBeansInt > 30 && !self.muteSounds{
                 self.sounds.playRedRockSound()
             }
-            sendGameDataRocks(rocksToSendInt: self.score.nuisanceBeansInt)
+            sendOnlineJSON(type: "rocks", data: self.score.nuisanceBeansInt)
             self.score.resetCombos()
             
             if self.grid.getEndGameCell()!.bean != nil {
-                self.gameLost = true
-                self.gameOver = true
-                self.otherPlayerGame?.gameOver = true
-                setGameState(state: .endScreen)
+                self.setGameOver()
                 return
             }
             if self.primedNuisanceBeans > 0 && self.otherPlayerGame != nil && !self.newBeanBeforeMoreNuisance{
@@ -531,6 +531,13 @@ class Game {
             print("Setting state to \(state)")
         }
         gameState = state
+    }
+    
+    func setGameOver() {
+        self.gameLost = true
+        self.gameOver = true
+        self.otherPlayerGame?.gameOver = true
+        setGameState(state: .endScreen)
     }
     
     func generateNewBeans(showNumber: Bool){
@@ -795,61 +802,28 @@ class Game {
         sparkleSprite.run(sequenceAction)
     }
     
-    func sendGameDataRocks(rocksToSendInt: Int) {
+    func sendOnlineJSON(type: String, data: Any) {
         guard let match = self.match else {
             return
         }
         
         var jsonData: Data!
-        var rocksJSON: [String: Any] = [
-            "type": "rocks",
-            "info": rocksToSendInt
+        var jsonToSend: [String: Any] = [
+            "type": type,
+            "info": data
         ]
         do {
             do {
-                jsonData = try JSONSerialization.data(withJSONObject: rocksJSON, options: [])
+                jsonData = try JSONSerialization.data(withJSONObject: jsonToSend, options: [])
             } catch {
                 print("Error converting dictionary to JSON string: \(error)")
             }
             try match.sendData(toAllPlayers: jsonData, with: .reliable)
         } catch {
             print("Failed to send game data:", error)
-        }
-        
-        if let dataToSend = String(rocksToSendInt).data(using: .utf8) {
-            do {
-                try match.sendData(toAllPlayers: dataToSend, with: .reliable)
-            } catch {
-                print("Failed to send data: \(error.localizedDescription)")
-            }
-        } else {
-            print("Failed to convert string to data")
         }
     }
     
-    func sendGameData() {
-        guard let match = self.match else {
-            return
-        }
-
-//        let jsonData = try! JSONSerialization.data(withJSONObject: self.grid.cells, options: [])
-//        let stringToSend = "randomString"
-        var jsonData: Data!
-        var gameJSON: [String: Any] = [
-            "type": "gameState",
-            "info": self.grid.getCellsJSON()
-        ]
-        do {
-            do {
-                jsonData = try JSONSerialization.data(withJSONObject: gameJSON, options: [])
-            } catch {
-                print("Error converting dictionary to JSON string: \(error)")
-            }
-            try match.sendData(toAllPlayers: jsonData, with: .reliable)
-        } catch {
-            print("Failed to send game data:", error)
-        }
-    }
     
     func loadLeaderboard() async {
         let leaderboards = try! await GKLeaderboard.loadLeaderboards(IDs: ["BestCombo"])
