@@ -35,7 +35,7 @@ struct GameParams {
 }
 
 var onlineOtherPlayCells: [String: [String: [String: String]]] = [:]
-var pNuisanceBeans: String = ""
+var pNuisanceBeans: Int = 0
 
 class Game {
     var num: Int!
@@ -210,9 +210,9 @@ class Game {
         
         
         
-        if pNuisanceBeans != "" {
-            self.primedNuisanceBeans += Int(pNuisanceBeans)!
-            pNuisanceBeans = ""
+        if pNuisanceBeans > 0 {
+            self.primedNuisanceBeans += pNuisanceBeans
+            pNuisanceBeans = 0
         }
         showRocksBeforeSend()
         
@@ -800,6 +800,22 @@ class Game {
             return
         }
         
+        var jsonData: Data!
+        var rocksJSON: [String: Any] = [
+            "type": "rocks",
+            "info": rocksToSendInt
+        ]
+        do {
+            do {
+                jsonData = try JSONSerialization.data(withJSONObject: rocksJSON, options: [])
+            } catch {
+                print("Error converting dictionary to JSON string: \(error)")
+            }
+            try match.sendData(toAllPlayers: jsonData, with: .reliable)
+        } catch {
+            print("Failed to send game data:", error)
+        }
+        
         if let dataToSend = String(rocksToSendInt).data(using: .utf8) {
             do {
                 try match.sendData(toAllPlayers: dataToSend, with: .reliable)
@@ -819,9 +835,13 @@ class Game {
 //        let jsonData = try! JSONSerialization.data(withJSONObject: self.grid.cells, options: [])
 //        let stringToSend = "randomString"
         var jsonData: Data!
+        var gameJSON: [String: Any] = [
+            "type": "gameState",
+            "info": self.grid.getCellsJSON()
+        ]
         do {
             do {
-                jsonData = try JSONSerialization.data(withJSONObject: self.grid.getCellsJSON(), options: [])
+                jsonData = try JSONSerialization.data(withJSONObject: gameJSON, options: [])
             } catch {
                 print("Error converting dictionary to JSON string: \(error)")
             }
