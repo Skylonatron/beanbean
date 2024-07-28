@@ -267,7 +267,13 @@ class Game {
                 beanPod.totalTimeNil += 1/60
                 beanPod.timeSinceNil = 0
                 let setCells = beanPod.snapToCell(grid: grid)
-                
+                if setCells.0.bean != nil {
+                    print("setCell0 has bean")
+                }
+                if setCells.1.bean != nil {
+                    print("setCell1 has bean")
+                }
+
                 
                 if self.fastMovement{
                     beanPod.currentTimeOverNil += 2/60

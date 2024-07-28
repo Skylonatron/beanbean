@@ -11,7 +11,9 @@ import AVFoundation
 class HomeScene: SKScene {
     
     var game: Game!
-    var settingsMenu: SKNode!
+    var settingsButton: SKSpriteNode!
+    var muteMusicCheckbox: SKSpriteNode!
+    var muteSoundsCheckbox: SKSpriteNode!
     var settingsDisplayed: Bool = false
     var muteSounds: Bool = false
     var muteMusic: Bool = true
@@ -22,41 +24,64 @@ class HomeScene: SKScene {
         let scene = HomeScene()
         
         // Set the scale mode to scale to fit the window
-        scene.scaleMode = .aspectFill
+//        scene.scaleMode = .aspectFll
         
         return scene
     }
     
     func setUpScene() {
-        let outline = outline(
-            width: self.size.width / 2,
-            height: self.size.height / 2,
-            lineWidth: 8
-        )
-        self.addChild(outline)
+        let background = SKSpriteNode(imageNamed: "homescreen") // Replace with your image name
+          background.position = CGPoint(x: self.frame.midX, y: self.frame.midY)
+          background.size = self.size
+          background.zPosition = -1 // Ensure the background is behind other nodes
+          self.addChild(background)
+        
+//        let outline = outline(
+//            width: self.size.width / 2,
+//            height: self.size.height / 2,
+//            lineWidth: 8
+//        )
+//        self.addChild(outline)
 
-        let soloButton = addButton(outlineFrame: outline.frame, name: "Solo")
-        soloButton.position = CGPoint(x: 0, y: frame.width / 10)
-        outline.addChild(soloButton)
+        let soloButton = addButton(outlineFrame: self.frame, name: "Solo")
+        soloButton.position = CGPoint(x: 0, y: frame.height / 16)
+        self.addChild(soloButton)
         
-        let multiButton = addButton(outlineFrame: outline.frame, name: "Multi")
-        multiButton.position = CGPoint(x: 0, y: 0)
-        outline.addChild(multiButton)
+        let multiButton = addButton(outlineFrame: self.frame, name: "Multi")
+        multiButton.position = CGPoint(x: 0, y: -frame.height / 20)
+        self.addChild(multiButton)
         
-        let matchmakingButton = addButton(outlineFrame: outline.frame, name: "Online")
-        matchmakingButton.position = CGPoint(x: 0, y: -frame.width / 10)
-        outline.addChild(matchmakingButton)
+        let matchmakingButton = addButton(outlineFrame: self.frame, name: "Online")
+        matchmakingButton.position = CGPoint(x: 0, y: -frame.height / 6)
+        self.addChild(matchmakingButton)
         
-        let settingsIconTexture = SKTexture(imageNamed: "settings_icon")
-        let settingsButton = SKSpriteNode(texture: settingsIconTexture)
-        settingsButton.position = CGPoint(x: frame.width / 7, y: frame.height / 5)
+        muteMusicCheckbox = SKSpriteNode(imageNamed: muteMusic ? "music_off" : "music_on")
+        muteMusicCheckbox.size = CGSize(width: 50, height: 50)
+        muteMusicCheckbox.position = CGPoint(x: frame.width / 2.5, y: frame.height / 2.2)
+        muteMusicCheckbox.name = "muteMusicCheckbox"
+        muteMusicCheckbox.zPosition = 1
+        muteMusicCheckbox.isHidden = true
+        self.addChild(muteMusicCheckbox)
+        
+        muteSoundsCheckbox = SKSpriteNode(imageNamed: muteSounds ? "sounds_off" : "sounds_on")
+        muteMusicCheckbox.size = CGSize(width: 50, height: 50)
+        muteSoundsCheckbox.position = CGPoint(x: frame.width / 2.5, y: frame.height / 2.2)
+        muteSoundsCheckbox.name = "muteSoundsCheckbox"
+        muteSoundsCheckbox.zPosition = 1
+        muteSoundsCheckbox.isHidden = true
+        self.addChild(muteSoundsCheckbox)
+        
+        settingsButton = SKSpriteNode(imageNamed: "settings")
+        settingsButton.size = CGSize(width: 50, height: 50)
+        settingsButton.position = CGPoint(x: frame.width / 2.5, y: frame.height / 2.2)
         settingsButton.name = "settingsButton"
-        outline.addChild(settingsButton)
+        settingsButton.zPosition = 2
+        self.addChild(settingsButton)
     }
     
     func addButton(outlineFrame: CGRect, name: String) -> SKShapeNode {
         let button = SKShapeNode(rectOf: CGSize(
-            width: frame.width / 10,
+            width: frame.width / 4,
             height: frame.height / 10
         ))
         button.position = CGPoint(x: 0, y: 0)
@@ -70,7 +95,7 @@ class HomeScene: SKScene {
         labelNode.name = name
         labelNode.position = CGPoint(x: 0, y: 0) // Adjust position relative to shape node
         labelNode.fontColor = .black
-        labelNode.fontSize = 40
+        labelNode.fontSize = 32
         labelNode.fontName = "ChalkboardSE-Bold"
         labelNode.horizontalAlignmentMode = .center // Center horizontally
         labelNode.verticalAlignmentMode = .center // Center vertically
@@ -82,8 +107,8 @@ class HomeScene: SKScene {
     
     
     override func didMove(to view: SKView) {
-//        self.size = view.bounds.size
-        self.size = CGSize(width: 1366.0, height: 1024.0)
+        self.size = view.bounds.size
+//        self.size = CGSize(width: 1366.0, height: 1024.0)
         self.anchorPoint = CGPoint(x: 0.5, y: 0.5)
         self.setUpScene()
         playBackgroundMusic(muteMusic: self.muteMusic)
@@ -95,56 +120,36 @@ class HomeScene: SKScene {
     }
     
     func showSettingsMenu() {
-        settingsMenu = SKNode()
-        settingsMenu.zPosition = 21
+        muteMusicCheckbox.isHidden = false
+        muteSoundsCheckbox.isHidden = false
         
-
-        let background = SKSpriteNode(
-            color: .white,
-            size: CGSize(width: self.view!.bounds.width / 1.3, height: self.view!.bounds.height / 2.5)
-        )
-//        background.alpha = 0.90
-        background.position = CGPoint(x: 0, y: 0)
-        settingsMenu.addChild(background)
+        var moveDown = SKAction.moveBy(x: 0, y: -muteMusicCheckbox.size.height, duration: 0.5)
+        muteMusicCheckbox.run(moveDown)
         
-        let yOffset = background.size.height / 4
-
-        let backButton = SKLabelNode(text: "Back")
-        backButton.position = CGPoint(x: 0, y: background.size.height / 3 - 3 * yOffset)
-        backButton.name = "settingsBack"
-        backButton.fontColor = .black
-        settingsMenu.addChild(backButton)
-        
-        let soundsLabel = SKLabelNode(text: "Sounds")
-        soundsLabel.position = CGPoint(x: background.size.width / 4, y: background.size.height/3 - yOffset / 2)
-        soundsLabel.fontColor = .black
-        settingsMenu.addChild(soundsLabel)
-        
-        let musicLabel = SKLabelNode(text: "Music")
-        musicLabel.position = CGPoint(x: -background.size.width / 4, y: background.size.height/3 - yOffset / 2)
-        musicLabel.fontColor = .black
-        settingsMenu.addChild(musicLabel)
-        
-        let musicIconTexture = SKTexture(imageNamed: muteMusic ? "music_off" : "music_on")
-        let muteMusicCheckbox = SKSpriteNode(texture: musicIconTexture)
-        muteMusicCheckbox.position = CGPoint(x: -background.size.width / 4, y: background.size.height / 3 - yOffset)
-        muteMusicCheckbox.name = "muteMusicCheckbox"
-        settingsMenu.addChild(muteMusicCheckbox)
-        
-        let soundsIconTexture = SKTexture(imageNamed: muteSounds ? "sounds_off" : "sounds_on")
-        let muteSoundsCheckbox = SKSpriteNode(texture: soundsIconTexture)
-        muteSoundsCheckbox.position = CGPoint(x: background.size.width / 4, y: background.size.height / 3 - yOffset)
-        muteSoundsCheckbox.name = "muteSoundsCheckbox"
-        settingsMenu.addChild(muteSoundsCheckbox)
-        
-        self.addChild(settingsMenu)
+        moveDown = SKAction.moveBy(x: 0, y: -muteSoundsCheckbox.size.height * 2 - 7, duration: 0.5)
+        muteSoundsCheckbox.run(moveDown)
     }
+    
+    func hideSettingsMenu() {
+        
+        var moveDown = SKAction.moveBy(x: 0, y: muteMusicCheckbox.size.height, duration: 0.5)
+        muteMusicCheckbox.run(moveDown) {
+            self.muteMusicCheckbox.isHidden = true
+        }
+        
+        moveDown = SKAction.moveBy(x: 0, y: muteSoundsCheckbox.size.height * 2 + 7, duration: 0.5)
+        muteSoundsCheckbox.run(moveDown) {
+            self.muteSoundsCheckbox.isHidden = true
+        }
+    }
+    
+    
     func updateMuteCheckbox() {
-        if let muteMusicCheckbox = settingsMenu.childNode(withName: "muteMusicCheckbox") as? SKSpriteNode {
+        if let muteMusicCheckbox = self.childNode(withName: "muteMusicCheckbox") as? SKSpriteNode {
             let newTexture = SKTexture(imageNamed: muteMusic ? "music_off" : "music_on")
             muteMusicCheckbox.texture = newTexture
         }
-        if let muteSoundsCheckbox = settingsMenu.childNode(withName: "muteSoundsCheckbox") as? SKSpriteNode {
+        if let muteSoundsCheckbox = self.childNode(withName: "muteSoundsCheckbox") as? SKSpriteNode {
             let newTexture = SKTexture(imageNamed: muteSounds ? "sounds_off" : "sounds_on")
             muteSoundsCheckbox.texture = newTexture
         }
@@ -200,14 +205,20 @@ extension HomeScene {
             let matchmakingScene = MatchmakingScene.newMatchmakingScene()
             self.view?.presentScene(matchmakingScene, transition: SKTransition.doorsOpenHorizontal(withDuration: 1.0))
         }
-        if node.name == "settingsButton" && self.settingsDisplayed == false{
-            showSettingsMenu()
-            self.settingsDisplayed = true
+        if node.name == "settingsButton"{
+            if self.settingsDisplayed == true {
+                hideSettingsMenu()
+                let rotateAction = SKAction.rotate(byAngle: CGFloat.pi * 2, duration: 0.5)
+                settingsButton.run(rotateAction)
+                self.settingsDisplayed = false
+            } else {
+                showSettingsMenu()
+                let rotateAction = SKAction.rotate(byAngle: -CGFloat.pi * 2, duration: 0.5)
+                settingsButton.run(rotateAction)
+                self.settingsDisplayed = true
+            }
+            
             return
-        }
-        if node.name == "settingsBack" {
-            settingsMenu.removeFromParent()
-            self.settingsDisplayed = false
         }
         if node.name == "muteSoundsCheckbox" {
             muteSounds.toggle()
