@@ -59,13 +59,18 @@ class Bean {
         else{
             switch self.color {
             case .green:
-                beanImage = createBean(beanSize: beanSize, bodyImage: "green_body_circle", faceImage: "face_a")
+                beanImage = newCreateBean(beanSize: beanSize, image: "blue-boy")
+//                beanImage = createBean(beanSize: beanSize, bodyImage: "green_body_circle", faceImage: "face_a")
             case .purple:
-                beanImage = createBean(beanSize: beanSize, bodyImage: "purple_body_circle", faceImage: "face_b")
+//                beanImage = createBean(beanSize: beanSize, bodyImage: "purple_body_circle", faceImage: "face_b")
+                  beanImage = newCreateBean(beanSize: beanSize, image: "green-boy")
             case .red:
-                beanImage = createBean(beanSize: beanSize, bodyImage: "red_body_circle", faceImage: "face_c")
+                beanImage = newCreateBean(beanSize: beanSize, image: "new-orange")
+//                beanImage = createBean(beanSize: beanSize, bodyImage: "red_body_circle", faceImage: "face_c")
             case .yellow:
-                beanImage = createBean(beanSize: beanSize, bodyImage: "yellow_body_circle", faceImage: "face_d")
+//                beanImage = createBean(beanSize: beanSize, bodyImage: "yellow_body_circle", faceImage: "face_d")
+                beanImage = newCreateBean(beanSize: beanSize, image: "yellow-boy")
+
             case .gray:
                 beanImage = createBean(beanSize: beanSize, bodyImage: "tile_grey", faceImage: "face_j")
                 
@@ -157,6 +162,15 @@ func getColorFromString(color: String) -> SKColor {
     default:
         .white
     }
+}
+
+func newCreateBean(beanSize: CGSize, image: String) -> SKSpriteNode {
+    let body = SKSpriteNode(imageNamed: image)
+    body.position = CGPoint(x: 0, y: 0)
+    body.size = beanSize
+    body.zPosition = 1
+    
+    return body
 }
 
 func createBean(beanSize: CGSize, bodyImage: String, faceImage: String) -> SKSpriteNode {
