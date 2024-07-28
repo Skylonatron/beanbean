@@ -231,9 +231,9 @@ class Game {
                 self.setGameState(state: .endScreen)
             }
             if self.fastMovement {
-                self.movementSpeed = settings.movement.fastVerticalSpeed * Double(self.grid.cellSize)
+                self.movementSpeed = round(settings.movement.fastVerticalSpeed * Double(self.grid.cellSize))
             } else {
-                self.movementSpeed = settings.movement.defaultVerticalSpeed * Double(self.grid.cellSize)
+                self.movementSpeed = round(settings.movement.defaultVerticalSpeed * Double(self.grid.cellSize))
             }
             
             if beanPod.canMoveDown(grid: self.grid, speed: self.movementSpeed) {
