@@ -55,16 +55,16 @@ class HomeScene: SKScene {
         matchmakingButton.position = CGPoint(x: 0, y: -frame.height / 6)
         self.addChild(matchmakingButton)
         
-        muteMusicCheckbox = SKSpriteNode(imageNamed: muteMusic ? "music_off" : "music_on")
+        muteMusicCheckbox = SKSpriteNode(imageNamed: muteMusic ? "music-icon-mute" : "music-icon")
         muteMusicCheckbox.size = CGSize(width: 50, height: 50)
-        muteMusicCheckbox.position = CGPoint(x: frame.width / 2.5, y: frame.height / 2.2)
+        muteMusicCheckbox.position = CGPoint(x: frame.width / 2.5, y: frame.height / 2.21)
         muteMusicCheckbox.name = "muteMusicCheckbox"
-        muteMusicCheckbox.zPosition = 1
+        muteMusicCheckbox.zPosition = 2
         muteMusicCheckbox.isHidden = true
         self.addChild(muteMusicCheckbox)
         
-        muteSoundsCheckbox = SKSpriteNode(imageNamed: muteSounds ? "sounds_off" : "sounds_on")
-        muteMusicCheckbox.size = CGSize(width: 50, height: 50)
+        muteSoundsCheckbox = SKSpriteNode(imageNamed: muteSounds ? "sound-icon-mute" : "sound-icon")
+        muteSoundsCheckbox.size = CGSize(width: 50, height: 50)
         muteSoundsCheckbox.position = CGPoint(x: frame.width / 2.5, y: frame.height / 2.2)
         muteSoundsCheckbox.name = "muteSoundsCheckbox"
         muteSoundsCheckbox.zPosition = 1
@@ -75,7 +75,7 @@ class HomeScene: SKScene {
         settingsButton.size = CGSize(width: 50, height: 50)
         settingsButton.position = CGPoint(x: frame.width / 2.5, y: frame.height / 2.2)
         settingsButton.name = "settingsButton"
-        settingsButton.zPosition = 2
+        settingsButton.zPosition = 3
         self.addChild(settingsButton)
     }
     
@@ -146,11 +146,11 @@ class HomeScene: SKScene {
     
     func updateMuteCheckbox() {
         if let muteMusicCheckbox = self.childNode(withName: "muteMusicCheckbox") as? SKSpriteNode {
-            let newTexture = SKTexture(imageNamed: muteMusic ? "music_off" : "music_on")
+            let newTexture = SKTexture(imageNamed: muteMusic ? "music-icon-mute" : "music-icon")
             muteMusicCheckbox.texture = newTexture
         }
         if let muteSoundsCheckbox = self.childNode(withName: "muteSoundsCheckbox") as? SKSpriteNode {
-            let newTexture = SKTexture(imageNamed: muteSounds ? "sounds_off" : "sounds_on")
+            let newTexture = SKTexture(imageNamed: muteSounds ? "sound-icon-mute" : "sound-icon")
             muteSoundsCheckbox.texture = newTexture
         }
         
